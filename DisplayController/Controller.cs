@@ -12,14 +12,11 @@ namespace DisplayController
 {
     internal class Controller
     {
-        private IConfigurationRoot _config;
         private DisplayWrapper _displayApi;
+        // TODO: Trigger the changing with something.
 
         internal Controller()
         {
-            _config = new ConfigurationBuilder().AddJsonFile("appsettings.json", optional: true, reloadOnChange: true).Build();
-            LogManager.Configuration = new NLogLoggingConfiguration(_config.GetSection("NLog"));
-
             _displayApi = new DisplayWrapper();
         }
     }

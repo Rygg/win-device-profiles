@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+﻿using System.Windows.Forms;
 
 namespace DisplayController
 {
@@ -6,7 +6,7 @@ namespace DisplayController
     {
         static void Main(string[] args)
         {
-            var control = new Controller();
+            Application.Run(new DisplayControllerApplicationContext());
         }
     }
 }
