@@ -12,12 +12,12 @@ namespace DisplayController.App.Control
 {
     internal class MainController
     {
-        private DisplayWrapper _displayApi;
+        private DisplayController _displayApi;
         // TODO: Trigger the changing with something.
 
         internal MainController()
         {
-            _displayApi = new DisplayWrapper();
+            _displayApi = new DisplayController();
         }
     }
 }

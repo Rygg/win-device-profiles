@@ -7,7 +7,7 @@ namespace WinApi.User32.Display
     /// <summary>
     /// Import display methods from user32.dll
     /// </summary>
-    internal static class NativeMethods
+    public static class NativeMethods
     {
         /// <summary>
         /// The ChangeDisplaySettingsEx function changes the settings of the specified display device to the specified graphics mode.
@@ -20,7 +20,7 @@ namespace WinApi.User32.Display
         /// <param name="lParam">If dwFlags is CDS_VIDEOPARAMETERS, lParam is a pointer to a VIDEOPARAMETERS structure. Otherwise lParam must be NULL.</param>
         /// <returns></returns>
         [DllImport("user32.dll")]
-        internal static extern DISP_CHANGE ChangeDisplaySettingsEx(string lpszDeviceName, ref DEVMODE lpDevMode, IntPtr hwnd, ChangeDisplaySettingsFlags dwflags, IntPtr lParam);
+        public static extern DISP_CHANGE ChangeDisplaySettingsEx(string lpszDeviceName, ref DEVMODE lpDevMode, IntPtr hwnd, ChangeDisplaySettingsFlags dwflags, IntPtr lParam);
 
         /// <summary>
         /// The ChangeDisplaySettingsEx function changes the settings of the specified display device to the specified graphics mode.
@@ -34,7 +34,7 @@ namespace WinApi.User32.Display
         /// <param name="lParam">If dwFlags is CDS_VIDEOPARAMETERS, lParam is a pointer to a VIDEOPARAMETERS structure. Otherwise lParam must be NULL.</param>
         /// <returns></returns>
         [DllImport("user32.dll")]
-        internal static extern DISP_CHANGE ChangeDisplaySettingsEx(string lpszDeviceName, IntPtr lpDevMode, IntPtr hwnd, ChangeDisplaySettingsFlags dwflags, IntPtr lParam);
+        public static extern DISP_CHANGE ChangeDisplaySettingsEx(string lpszDeviceName, IntPtr lpDevMode, IntPtr hwnd, ChangeDisplaySettingsFlags dwflags, IntPtr lParam);
 
         /// <summary>
         /// The EnumDisplayDevices function lets you obtain information about the display devices in the current session.
@@ -46,7 +46,7 @@ namespace WinApi.User32.Display
         /// The resulting device interface name can be used with SetupAPI functions and serves as a link between GDI monitor devices and SetupAPI monitor devices.</param>
         /// <returns></returns>
         [DllImport("user32.dll")]
-        internal static extern bool EnumDisplayDevices(string lpDevice, uint iDevNum, ref DISPLAY_DEVICE lpDisplayDevice, uint dwFlags);
+        public static extern bool EnumDisplayDevices(string lpDevice, uint iDevNum, ref DISPLAY_DEVICE lpDisplayDevice, uint dwFlags);
         /// <summary>
         /// The EnumDisplaySettings function retrieves information about one of the graphics modes for a display device. 
         /// To retrieve information for all the graphics modes of a display device, make a series of calls to this function.
@@ -56,6 +56,6 @@ namespace WinApi.User32.Display
         /// <param name="devMode">A pointer to a DEVMODE structure into which the function stores information about the specified graphics mode. Before calling EnumDisplaySettings, set the dmSize member to sizeof(DEVMODE), and set the dmDriverExtra member to indicate the size, in bytes, of the additional space available to receive private driver data.</param>
         /// <returns></returns>
         [DllImport("user32.dll")]
-        internal static extern bool EnumDisplaySettings(string deviceName, int modeNum, ref DEVMODE devMode);
+        public static extern bool EnumDisplaySettings(string deviceName, int modeNum, ref DEVMODE devMode);
     }
 }

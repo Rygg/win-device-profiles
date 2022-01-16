@@ -1,21 +1,21 @@
-﻿using NLog;
+﻿using DisplayController.App.Control.Types;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using WinApi.User32.Display;
-using WinApi.User32.Display.Models;
 using WinApi.User32.Display.NativeTypes;
 
-namespace WinApi
+namespace DisplayController.App.Control
 {
-    public class DisplayWrapper
+    internal class DisplayController
     {
         private static readonly Logger Log = LogManager.GetCurrentClassLogger();
 
         private readonly Dictionary<uint, DisplayData> _displays = new Dictionary<uint, DisplayData>();
 
-        public DisplayWrapper()
+        public DisplayController()
         {
             RefreshDisplayDevices(); // Get initial display devices.
         }
@@ -25,21 +25,21 @@ namespace WinApi
         /// </summary>
         private void RefreshDisplayDevices()
         {
-            if(_displays.Any())
+            if (_displays.Any())
             {
                 Log.Debug("Clearing old display devices.");
                 _displays.Clear(); // Clear old displays.
-            }            
+            }
             Log.Info("Retrieving display devices..");
             uint displayId = 0;
-            while(true) // TODO: Some other condition?
+            while (true) // TODO: Some other condition?
             {
                 var device = new DISPLAY_DEVICE();
                 device.cb = Marshal.SizeOf(device);
-                if(!NativeMethods.EnumDisplayDevices(null, displayId, ref device, 0)) // Loop uints until EnumDisplayDevices returns false. (No display device at this id).
+                if (!NativeMethods.EnumDisplayDevices(null, displayId, ref device, 0)) // Loop uints until EnumDisplayDevices returns false. (No display device at this id).
                 {
                     break; // Break out.
-                }                
+                }
                 Log.Debug("DisplayId: " + displayId);
                 Log.Debug("Device.ToString(): " + device);
                 Log.Debug("DeviceName: " + device.DeviceName);
@@ -72,36 +72,36 @@ namespace WinApi
         {
             RefreshDisplayDevices(); // Refresh display devices for accurate data.
             Log.Info($"Setting Display {displayId} as the primary monitor.");
-            if(!_displays.ContainsKey(displayId))
+            if (!_displays.ContainsKey(displayId))
             {
                 Log.Warn("DisplayId not found. Returning.");
                 return;
             }
 
             var newPrimary = _displays[displayId];
-            if(newPrimary.Device.StateFlags.HasFlag(DisplayDeviceStateFlags.PrimaryDevice))
+            if (newPrimary.Device.StateFlags.HasFlag(DisplayDeviceStateFlags.PrimaryDevice))
             {
                 Log.Info("Display is already primary display. Returning");
                 return;
             }
 
-            var offsetx = newPrimary.DeviceMode.dmPosition.x; // Get old position.
-            int offsety = newPrimary.DeviceMode.dmPosition.y; 
+            var offsetX = newPrimary.DeviceMode.dmPosition.x; // Get old position.
+            int offsetY = newPrimary.DeviceMode.dmPosition.y;
             newPrimary.DeviceMode.dmPosition.x = 0; // Set new as 0,0 (Primary is always 0,0)
             newPrimary.DeviceMode.dmPosition.y = 0;
 
             // Change values to registry. Don't take effect yet.
-            NativeMethods.ChangeDisplaySettingsEx(newPrimary.Device.DeviceName, ref newPrimary.DeviceMode, (IntPtr) null, (ChangeDisplaySettingsFlags.CDS_SET_PRIMARY | ChangeDisplaySettingsFlags.CDS_UPDATEREGISTRY | ChangeDisplaySettingsFlags.CDS_NORESET), IntPtr.Zero);
+            NativeMethods.ChangeDisplaySettingsEx(newPrimary.Device.DeviceName, ref newPrimary.DeviceMode, (IntPtr)null, (ChangeDisplaySettingsFlags.CDS_SET_PRIMARY | ChangeDisplaySettingsFlags.CDS_UPDATEREGISTRY | ChangeDisplaySettingsFlags.CDS_NORESET), IntPtr.Zero);
             Log.Debug($"Updated registry settings for monitor {displayId}");
             // Update the offsets of the rest of the displays:
             var otherDisplays = _displays.Where(d => d.Key != displayId);
 
-            foreach(var display in otherDisplays)
+            foreach (var display in otherDisplays)
             {
-                display.Value.DeviceMode.dmPosition.x -= offsetx; // TODO: does this actually work?
-                display.Value.DeviceMode.dmPosition.y -= offsety;
+                display.Value.DeviceMode.dmPosition.x -= offsetX; // Substract old primary display offset to get correct new screen position.
+                display.Value.DeviceMode.dmPosition.y -= offsetY;
                 // Chaange values to registry, don't apply changes yet.
-                NativeMethods.ChangeDisplaySettingsEx(display.Value.Device.DeviceName, ref display.Value.DeviceMode, (IntPtr) null, (ChangeDisplaySettingsFlags.CDS_UPDATEREGISTRY | ChangeDisplaySettingsFlags.CDS_NORESET), IntPtr.Zero);
+                NativeMethods.ChangeDisplaySettingsEx(display.Value.Device.DeviceName, ref display.Value.DeviceMode, (IntPtr)null, (ChangeDisplaySettingsFlags.CDS_UPDATEREGISTRY | ChangeDisplaySettingsFlags.CDS_NORESET), IntPtr.Zero);
                 Log.Debug($"Updated registry settings for monitor {display.Key}");
             }
             Log.Debug("Applying settings");

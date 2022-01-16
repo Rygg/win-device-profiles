@@ -1,6 +1,6 @@
 ﻿using WinApi.User32.Display.NativeTypes;
 
-namespace WinApi.User32.Display.Models
+namespace DisplayController.App.Control.Types
 {
     internal class DisplayData
     {

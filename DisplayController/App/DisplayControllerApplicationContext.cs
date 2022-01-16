@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 using NLog;
 using NLog.Extensions.Logging;
 using DisplayController.App.Control;
-using DisplayController.Resources.Text;
+using DisplayController.App.Resources.Text;
 
 namespace DisplayController.App
 {

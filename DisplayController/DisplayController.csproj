@@ -5,11 +5,11 @@
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWindowsForms>True</UseWindowsForms>
     <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
-    <ApplicationIcon>Resources\Images\app.ico</ApplicationIcon>
+    <ApplicationIcon>App\Resources\Images\app.ico</ApplicationIcon>
   </PropertyGroup>
   
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Images\app.ico" />
+    <EmbeddedResource Include="App\Resources\Images\app.ico" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Resources\Text\Strings.Designer.cs">
+    <Compile Update="App\Resources\Text\Strings.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Strings.resx</DependentUpon>
@@ -36,7 +36,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Update="Resources\Text\Strings.resx">
+    <EmbeddedResource Update="App\Resources\Text\Strings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
