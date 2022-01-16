@@ -3,7 +3,7 @@ using System.Windows.Forms;
 using Microsoft.Extensions.Configuration;
 using NLog;
 using NLog.Extensions.Logging;
-using DisplayController.Resources;
+using DisplayController.Resources.Text;
 
 namespace DisplayController
 {
@@ -33,7 +33,7 @@ namespace DisplayController
             var icon = new NotifyIcon()
             {
                 Text = Strings.TrayIconTooltip,
-                Icon = null, // TODO: Get icon.
+                Icon = new System.Drawing.Icon(typeof(DisplayControllerApplicationContext), "Resources.Images.app.ico"),
                 Visible = true,
                 ContextMenuStrip = CreateTrayIconContextMenu()
             };
