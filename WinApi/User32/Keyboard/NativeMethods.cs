@@ -7,7 +7,7 @@ namespace WinApi.User32.Keyboard
     /// <summary>
     /// Import hot key methods from user32.dll
     /// </summary>
-    public class NativeMethods
+    public static class NativeMethods
     {
         /// <summary>
         /// Defines a system-wide hot key.

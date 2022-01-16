@@ -9,12 +9,20 @@ using WinApi.User32.Display.NativeTypes;
 
 namespace DisplayController.App.Control
 {
-    internal class DisplayController
+    /// <summary>
+    /// Class containing the functionality for controlling the displays of the system.
+    /// </summary>
+    internal sealed class DisplayController
     {
         private static readonly Logger Log = LogManager.GetCurrentClassLogger();
-
+        /// <summary>
+        /// Variable containing the current displays of the system.
+        /// </summary>
         private readonly Dictionary<uint, DisplayData> _displays = new Dictionary<uint, DisplayData>();
 
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
         public DisplayController()
         {
             RefreshDisplayDevices(); // Get initial display devices.
@@ -30,7 +38,7 @@ namespace DisplayController.App.Control
                 Log.Debug("Clearing old display devices.");
                 _displays.Clear(); // Clear old displays.
             }
-            Log.Info("Retrieving display devices..");
+            Log.Debug("Retrieving display devices..");
             uint displayId = 0;
             while (true) // TODO: Some other condition?
             {
@@ -62,6 +70,7 @@ namespace DisplayController.App.Control
 
                 displayId++;
             }
+            Log.Info("DisplayDevices refreshed.");
         }
 
         /// <summary>

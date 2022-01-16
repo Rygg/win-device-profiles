@@ -8,14 +8,27 @@ using DisplayController.App.Resources.Text;
 
 namespace DisplayController.App
 {
+    /// <summary>
+    /// Application context for the DisplayController application.
+    /// </summary>
     internal class DisplayControllerApplicationContext : ApplicationContext
     {
         private static readonly Logger Log = LogManager.GetCurrentClassLogger();
-
+        /// <summary>
+        /// The configuration file.
+        /// </summary>
         private IConfigurationRoot _config;
+        /// <summary>
+        /// Applications tray icon.
+        /// </summary>
         private readonly NotifyIcon _trayIcon;
+        /// <summary>
+        /// Controller responsible for application functionality.
+        /// </summary>
         private readonly MainController _controller;
-
+        /// <summary>
+        /// Default constructor for the application context.
+        /// </summary>
         public DisplayControllerApplicationContext()
         {
             _config = new ConfigurationBuilder().AddJsonFile("appsettings.json", optional: true, reloadOnChange: true).Build(); // Read config.
@@ -23,6 +36,8 @@ namespace DisplayController.App
 
             _trayIcon = CreateTrayIcon(); // Initialize Tray Icon            
             _controller = new MainController(); // Create the actual controller class.
+
+            _controller.Start(_config);
         }
 
         /// <summary>
@@ -76,7 +91,7 @@ namespace DisplayController.App
         {
             Log.Debug("Shutting down the application..");
             _trayIcon.Visible = false; // Hide tray icon, so it won't remain there until hovered on.
-            // TODO: Release event handlers and stuff.
+            _controller.Dispose(); // // Dispose the main controller.
             Log.Info("Application shutting down.");
             Application.Exit();
         }
