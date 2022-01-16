@@ -2,6 +2,7 @@
 using NLog;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices;
 using WinApi.User32.Display;
@@ -48,13 +49,13 @@ namespace DisplayController.App.Control
                 {
                     break; // Break out.
                 }
-                Log.Debug("DisplayId: " + displayId);
-                Log.Debug("Device.ToString(): " + device);
-                Log.Debug("DeviceName: " + device.DeviceName);
-                Log.Debug("DeviceID: " + device.DeviceID);
-                Log.Debug("DeviceString: " + device.DeviceString);
-                Log.Debug("DeviceKey: " + device.DeviceKey);
-                Log.Debug("StateFlags: " + device.StateFlags);
+                Log.Trace("DisplayId: " + displayId);
+                Log.Trace("Device.ToString(): " + device);
+                Log.Trace("DeviceName: " + device.DeviceName);
+                Log.Trace("DeviceID: " + device.DeviceID);
+                Log.Trace("DeviceString: " + device.DeviceString);
+                Log.Trace("DeviceKey: " + device.DeviceKey);
+                Log.Trace("StateFlags: " + device.StateFlags);
 
                 if (!device.StateFlags.HasFlag(DisplayDeviceStateFlags.AttachedToDesktop))
                 {
@@ -62,15 +63,119 @@ namespace DisplayController.App.Control
                     Log.Debug("Device is not attached to the desktop. Ignoring");
                     continue;
                 }
-                Log.Trace("Retrieving DeviceMode.");
+                Log.Debug("Retrieving DeviceMode.");
                 var deviceMode = new DEVMODE();
-                NativeMethods.EnumDisplaySettings(device.DeviceName, -1, ref deviceMode);
-                Log.Debug($"DeviceMode: {deviceMode.dmPelsWidth}x{deviceMode.dmPelsHeight}@{deviceMode.dmDisplayFrequency}Hz");
+                if(!NativeMethods.EnumDisplaySettings(device.DeviceName, -1, ref deviceMode))
+                {
+                    throw new Win32Exception("DeviceMode not located."); // Every device should have a device mode.
+                }
+                Log.Trace($"dmPelsWidth: {deviceMode.dmPelsWidth}");
+                Log.Trace($"dmPelsHeight: {deviceMode.dmPelsHeight}");
+                Log.Trace($"dmDisplayFrequency: {deviceMode.dmDisplayFrequency}");
                 _displays.Add(displayId, new DisplayData(device, deviceMode));
 
                 displayId++;
             }
-            Log.Info("DisplayDevices refreshed.");
+            UpdateDisplayConfigAdvancedInformation(); // Update advanced additional information to the retrieved displays.
+            // Log data for debugging.
+            Log.Debug("Retrieved displays:");
+            foreach(var display in _displays)
+            {
+                Log.Debug($"DisplayId: {display.Key}, Data: {Environment.NewLine + display.Value + Environment.NewLine}");
+            }
+            Log.Info("Refreshed displays.");
+        }
+
+        /// <summary>
+        /// Method uses additional CCD API to retrieve additional information for the retrieved display devices.
+        /// Method must be called after the _displays dictionary has been initialized.
+        /// </summary>
+        /// <exception cref="Win32Exception"></exception>
+        /// <exception cref="InvalidOperationException"></exception>
+        private void UpdateDisplayConfigAdvancedInformation()
+        {
+            Log.Debug("Retrieving additional display information.");
+            if(!_displays.Any())
+            {
+                throw new InvalidOperationException("No displays retrieved. Invalid operation.");
+            }
+            // Get buffer sizes for the active displays.
+            var err = NativeMethods.GetDisplayConfigBufferSizes(QDC.QDC_ONLY_ACTIVE_PATHS, out var pathCount, out var modeCount);
+            if (err != ResultErrorCode.ERROR_SUCCESS)
+            {
+                throw new Win32Exception((int)err);
+            }
+
+            var paths = new DISPLAYCONFIG_PATH_INFO[pathCount]; // Create arrays to hold the info.
+            var modes = new DISPLAYCONFIG_MODE_INFO[modeCount]; 
+            // Get display configs from CCD API:
+            err = NativeMethods.QueryDisplayConfig(QDC.QDC_ONLY_ACTIVE_PATHS, ref pathCount, paths, ref modeCount, modes, IntPtr.Zero);
+            if (err != ResultErrorCode.ERROR_SUCCESS)
+            {
+                throw new Win32Exception((int)err);
+            }
+
+            // Loop through the active display paths:
+            foreach (var path in paths)
+            {
+                // Check if the display exists.
+                if(!_displays.ContainsKey(path.sourceInfo.id))
+                {
+                    Log.Warn("Retrieved device source was not located in DisplayData. Skipping the device.");
+                    continue;
+                }
+
+                // Get the source information. This is to further check mapping so that each device data is mapped correctly.
+                var sourceInfo = new DISPLAYCONFIG_SOURCE_DEVICE_NAME();
+                sourceInfo.header.type = DISPLAYCONFIG_DEVICE_INFO_TYPE.DISPLAYCONFIG_DEVICE_INFO_GET_SOURCE_NAME;
+                sourceInfo.header.size = Marshal.SizeOf<DISPLAYCONFIG_SOURCE_DEVICE_NAME>();
+                sourceInfo.header.adapterId = path.sourceInfo.adapterId;
+                sourceInfo.header.id = path.sourceInfo.id;
+                err = NativeMethods.DisplayConfigGetDeviceInfo(ref sourceInfo); // Call for info.
+                if (err != ResultErrorCode.ERROR_SUCCESS)
+                {
+                    throw new Win32Exception((int)err);
+                }
+
+                // Check if the device names match.
+                if(_displays[path.sourceInfo.id].DisplayDevice.DeviceName != sourceInfo.viewGdiDeviceName)
+                {
+                    Log.Error("DeviceNames did not match.");
+                    throw new InvalidOperationException("DeviceNames did not match");
+                }
+
+                // Get the target device name.
+                var targetInfo = new DISPLAYCONFIG_TARGET_DEVICE_NAME();
+                targetInfo.header.type = DISPLAYCONFIG_DEVICE_INFO_TYPE.DISPLAYCONFIG_DEVICE_INFO_GET_TARGET_NAME;
+                targetInfo.header.size = Marshal.SizeOf<DISPLAYCONFIG_TARGET_DEVICE_NAME>();
+                targetInfo.header.adapterId = path.targetInfo.adapterId;
+                targetInfo.header.id = path.targetInfo.id;
+                err = NativeMethods.DisplayConfigGetDeviceInfo(ref targetInfo); // Request target device information:
+                if (err != ResultErrorCode.ERROR_SUCCESS)
+                {
+                    throw new Win32Exception((int)err);
+                }
+
+                Log.Trace("Monitor Friendly Name: " + targetInfo.monitorFriendlyDeviceName);
+                _displays[path.sourceInfo.id].MonitorFriendlyName = targetInfo.monitorFriendlyDeviceName; // Set to the private variable.
+
+                // Get advanced color info (HDR).
+                var colorInfo = new DISPLAYCONFIG_ADVANCED_COLOR_INFO();
+                colorInfo.header.type = DISPLAYCONFIG_DEVICE_INFO_TYPE.DISPLAYCONFIG_DEVICE_INFO_GET_ADVANCED_COLOR_INFO;
+                colorInfo.header.size = Marshal.SizeOf<DISPLAYCONFIG_ADVANCED_COLOR_INFO>();
+                colorInfo.header.adapterId = path.targetInfo.adapterId;
+                colorInfo.header.id = path.targetInfo.id;
+                err = NativeMethods.DisplayConfigGetDeviceInfo(ref colorInfo);
+                if (err != ResultErrorCode.ERROR_SUCCESS)
+                {
+                    throw new Win32Exception((int)err);
+                }
+                Log.Trace("Color encoding: " + colorInfo.colorEncoding);
+                Log.Trace("Bits: " + colorInfo.bitsPerColorChannel);
+                Log.Trace("Advanced Color Info Flags: " + colorInfo.stateFlags);
+
+                _displays[path.sourceInfo.id].AdvancedColorInformation = colorInfo; // Save to memory.
+            }
         }
 
         /// <summary>
@@ -88,7 +193,7 @@ namespace DisplayController.App.Control
             }
 
             var newPrimary = _displays[displayId];
-            if (newPrimary.Device.StateFlags.HasFlag(DisplayDeviceStateFlags.PrimaryDevice))
+            if (newPrimary.DisplayDevice.StateFlags.HasFlag(DisplayDeviceStateFlags.PrimaryDevice))
             {
                 Log.Info("Display is already primary display. Returning");
                 return;
@@ -100,7 +205,7 @@ namespace DisplayController.App.Control
             newPrimary.DeviceMode.dmPosition.y = 0;
 
             // Change values to registry. Don't take effect yet.
-            NativeMethods.ChangeDisplaySettingsEx(newPrimary.Device.DeviceName, ref newPrimary.DeviceMode, (IntPtr)null, (ChangeDisplaySettingsFlags.CDS_SET_PRIMARY | ChangeDisplaySettingsFlags.CDS_UPDATEREGISTRY | ChangeDisplaySettingsFlags.CDS_NORESET), IntPtr.Zero);
+            NativeMethods.ChangeDisplaySettingsEx(newPrimary.DisplayDevice.DeviceName, ref newPrimary.DeviceMode, (IntPtr)null, (ChangeDisplaySettingsFlags.CDS_SET_PRIMARY | ChangeDisplaySettingsFlags.CDS_UPDATEREGISTRY | ChangeDisplaySettingsFlags.CDS_NORESET), IntPtr.Zero);
             Log.Debug($"Updated registry settings for monitor {displayId}");
             // Update the offsets of the rest of the displays:
             var otherDisplays = _displays.Where(d => d.Key != displayId);
@@ -110,7 +215,7 @@ namespace DisplayController.App.Control
                 display.Value.DeviceMode.dmPosition.x -= offsetX; // Substract old primary display offset to get correct new screen position.
                 display.Value.DeviceMode.dmPosition.y -= offsetY;
                 // Chaange values to registry, don't apply changes yet.
-                NativeMethods.ChangeDisplaySettingsEx(display.Value.Device.DeviceName, ref display.Value.DeviceMode, (IntPtr)null, (ChangeDisplaySettingsFlags.CDS_UPDATEREGISTRY | ChangeDisplaySettingsFlags.CDS_NORESET), IntPtr.Zero);
+                NativeMethods.ChangeDisplaySettingsEx(display.Value.DisplayDevice.DeviceName, ref display.Value.DeviceMode, (IntPtr)null, (ChangeDisplaySettingsFlags.CDS_UPDATEREGISTRY | ChangeDisplaySettingsFlags.CDS_NORESET), IntPtr.Zero);
                 Log.Debug($"Updated registry settings for monitor {display.Key}");
             }
             Log.Debug("Applying settings");

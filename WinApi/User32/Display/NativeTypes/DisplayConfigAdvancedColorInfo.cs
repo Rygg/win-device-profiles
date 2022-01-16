@@ -15,7 +15,7 @@ namespace WinApi.User32.Display.NativeTypes
         /// <summary>
         /// Value received from the API. Bitwise or flags.
         /// </summary>
-        public DISPLAYCONFIG_ADVANCED_COLOR_INFO_FLAGS value;
+        public DISPLAYCONFIG_ADVANCED_COLOR_INFO_FLAGS stateFlags;
         /// <summary>
         /// Color encoding of the device.
         /// </summary>
