@@ -72,6 +72,8 @@ namespace DisplayController.App.Control
                 Log.Trace($"dmPelsWidth: {deviceMode.dmPelsWidth}");
                 Log.Trace($"dmPelsHeight: {deviceMode.dmPelsHeight}");
                 Log.Trace($"dmDisplayFrequency: {deviceMode.dmDisplayFrequency}");
+                Log.Trace($"dmPosition.x: {deviceMode.dmPosition.x}");
+                Log.Trace($"dmPosition.y: {deviceMode.dmPosition.y}");
                 _displays.Add(displayId, new DisplayData(device, deviceMode));
 
                 displayId++;
@@ -157,12 +159,12 @@ namespace DisplayController.App.Control
                 }
 
                 Log.Trace("Monitor Friendly Name: " + targetInfo.monitorFriendlyDeviceName);
-                _displays[path.sourceInfo.id].MonitorFriendlyName = targetInfo.monitorFriendlyDeviceName; // Set to the private variable.
+                _displays[path.sourceInfo.id].DisplayTargetInfo = targetInfo; // save to memory.
 
                 // Get advanced color info (HDR).
-                var colorInfo = new DISPLAYCONFIG_ADVANCED_COLOR_INFO();
+                var colorInfo = new DISPLAYCONFIG_GET_ADVANCED_COLOR_INFO();
                 colorInfo.header.type = DISPLAYCONFIG_DEVICE_INFO_TYPE.DISPLAYCONFIG_DEVICE_INFO_GET_ADVANCED_COLOR_INFO;
-                colorInfo.header.size = Marshal.SizeOf<DISPLAYCONFIG_ADVANCED_COLOR_INFO>();
+                colorInfo.header.size = Marshal.SizeOf<DISPLAYCONFIG_GET_ADVANCED_COLOR_INFO>();
                 colorInfo.header.adapterId = path.targetInfo.adapterId;
                 colorInfo.header.id = path.targetInfo.id;
                 err = NativeMethods.DisplayConfigGetDeviceInfo(ref colorInfo);
@@ -172,7 +174,7 @@ namespace DisplayController.App.Control
                 }
                 Log.Trace("Color encoding: " + colorInfo.colorEncoding);
                 Log.Trace("Bits: " + colorInfo.bitsPerColorChannel);
-                Log.Trace("Advanced Color Info Flags: " + colorInfo.stateFlags);
+                Log.Trace("Advanced Color Info Flags: " + colorInfo.value);
 
                 _displays[path.sourceInfo.id].AdvancedColorInformation = colorInfo; // Save to memory.
             }
@@ -225,6 +227,78 @@ namespace DisplayController.App.Control
             // For future long term service functionality:
             Log.Debug("Updating displays.");
             RefreshDisplayDevices(); // Update current display devices.
+        }
+
+        /// <summary>
+        /// Method sets the advanced color state of the given monitor to the desired value.
+        /// </summary>
+        /// <param name="displayId">DisplayId to be operated.</param>
+        /// <param name="newState">New state of the advanced color mode.</param>
+        /// <returns>A boolean value indicating the success of the operation. Returns true if the display is set to or already is in the the desired state.</returns>
+        /// <exception cref="Win32Exception">Exception is thrown if the WinAPI call fails.</exception>
+        public bool SetDisplayAdvancedColorState(uint displayId, bool newState)
+        {
+            RefreshDisplayDevices(); // Refresh display devices for accurate data.
+            Log.Info($"Setting advanced color state for display {displayId}. New state: {newState}");
+            if (!_displays.ContainsKey(displayId))
+            {
+                Log.Error("DisplayId not found. Returning.");
+                return false;
+            }
+            var displayData = _displays[displayId];
+            if(displayData.AdvancedColorInformation == null)
+            {
+                Log.Error("Missing required data. Cannot change advanced color state");
+                return false;
+            }
+            if (!displayData.AdvancedColorInformation.Value.value.HasFlag(DISPLAYCONFIG_ADVANCED_COLOR_INFO_VALUE_FLAGS.AdvancedColorSupported))
+            {
+                Log.Error("Selected display does not support advanced color modes.");
+                return false;
+            }
+            var advancedColorStateEnabled = displayData.AdvancedColorInformation.Value.value.HasFlag(DISPLAYCONFIG_ADVANCED_COLOR_INFO_VALUE_FLAGS.AdvancedColorEnabled);
+            if (advancedColorStateEnabled && newState)
+            {
+                Log.Info("Advanced color state is already enabled.");
+                return true;
+            }
+            if(!advancedColorStateEnabled && !newState)
+            {
+                Log.Info("Advanced color state is already disabled.");
+                return true;
+            }
+
+            // Create the object for setting the state.
+            var newColorState = new DISPLAYCONFIG_SET_ADVANCED_COLOR_STATE
+            {
+                header = new DISPLAYCONFIG_DEVICE_INFO_HEADER {
+                    type = DISPLAYCONFIG_DEVICE_INFO_TYPE.DISPLAYCONFIG_DEVICE_INFO_SET_ADVANCED_COLOR_STATE,
+                    adapterId = displayData.AdvancedColorInformation.Value.header.adapterId,
+                    id = displayData.AdvancedColorInformation.Value.header.id,
+                    size = Marshal.SizeOf<DISPLAYCONFIG_SET_ADVANCED_COLOR_STATE>()
+                },
+                value = newState ? DisplayConfigSetAdvancedColorStateValue.Enable : DisplayConfigSetAdvancedColorStateValue.Disable,
+            };
+            Log.Trace("Calling DisplayConfigSetDeviceInfo");
+            var err = NativeMethods.DisplayConfigSetDeviceInfo(ref newColorState);
+            if (err != ResultErrorCode.ERROR_SUCCESS)
+            {
+                throw new Win32Exception((int)err);
+            }
+            Log.Debug("DeviceInfo set.");
+            Log.Debug("Updating displays to validate the result.");
+            RefreshDisplayDevices(); // Refresh the display devices.
+            var advancedColorEnabled = _displays[displayId].AdvancedColorInformation.Value.value.HasFlag(DISPLAYCONFIG_ADVANCED_COLOR_INFO_VALUE_FLAGS.AdvancedColorEnabled);
+            if (newState == advancedColorEnabled)
+            {
+                Log.Info("Advanced color state changed.");
+                return true;
+            }
+            else
+            {
+                Log.Error("Changing advanced color state failed.");
+                return false;
+            }
         }
     }
 }

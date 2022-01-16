@@ -41,6 +41,9 @@
         /// Specifies the advanced color information. If the DisplayConfigGetDeviceInfo function is successful, DisplayConfigGetDeviceInfo returns the advanced color information in the DISPLAYCONFIG_GET_ADVANCED_COLOR_INFO structure.
         /// </summary>
         DISPLAYCONFIG_DEVICE_INFO_GET_ADVANCED_COLOR_INFO = 9,
+        /// <summary>
+        /// Specifies how to set the state of advanced color information. If the DisplayConfigSetDeviceInfo function is successful, DisplayConfigSetDeviceInfo uses info in the DISPLAYCONFIG_SET_ADVANCED_COLOR_STATE structure to change the state of advanced color mode.
+        /// </summary>
         DISPLAYCONFIG_DEVICE_INFO_SET_ADVANCED_COLOR_STATE = 10,
         /// <summary>
         /// Specifies the current SDR white level for an HDR monitor. If the DisplayConfigGetDeviceInfo function is successful, DisplayConfigGetDeviceInfo return SDR white level info in the DISPLAYCONFIG_SDR_WHITE_LEVEL structure. Supported starting in Windows 10 Fall Creators Update (Version 1709).
