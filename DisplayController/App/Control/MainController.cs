@@ -8,14 +8,14 @@ using System.Text;
 using System.Threading.Tasks;
 using WinApi;
 
-namespace DisplayController
+namespace DisplayController.App.Control
 {
-    internal class Controller
+    internal class MainController
     {
         private DisplayWrapper _displayApi;
         // TODO: Trigger the changing with something.
 
-        internal Controller()
+        internal MainController()
         {
             _displayApi = new DisplayWrapper();
         }
