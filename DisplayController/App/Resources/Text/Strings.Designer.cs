@@ -61,7 +61,7 @@ namespace DisplayController.App.Resources.Text {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Exit DisplaySwapper.
+        ///   Looks up a localized string similar to Close DisplayProfiles.
         /// </summary>
         internal static string TrayIconExitText {
             get {
@@ -70,7 +70,25 @@ namespace DisplayController.App.Resources.Text {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to DisplaySwapper.
+        ///   Looks up a localized string similar to Profile.
+        /// </summary>
+        internal static string TrayIconProfile {
+            get {
+                return ResourceManager.GetString("TrayIconProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Switch Profile.
+        /// </summary>
+        internal static string TrayIconSwitchProfiles {
+            get {
+                return ResourceManager.GetString("TrayIconSwitchProfiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DisplayProfiles.
         /// </summary>
         internal static string TrayIconTooltip {
             get {

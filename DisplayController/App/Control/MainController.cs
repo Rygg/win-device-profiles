@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using DisplayController.App.Configuration;
 
 namespace DisplayController.App.Control
 {
@@ -39,7 +40,7 @@ namespace DisplayController.App.Control
         /// Method starts the controller functionality with the configuration given as a parameter.
         /// </summary>
         /// <param name="config">Configuration for the controller.</param>
-        internal void Start(IConfigurationRoot config)
+        internal void Start(AppConfiguration config)
         {
             Log.Debug("Starting MainController functionality.");
             // TODO: Create the functionality.

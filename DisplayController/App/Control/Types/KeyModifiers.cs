@@ -8,6 +8,7 @@ namespace DisplayController.App.Control.Types
 	[Flags]
     public enum KeyModifiers : uint
     {
+		None = 0,
 		/// <summary>
 		/// Either ALT key must be held down.
 		/// </summary>
