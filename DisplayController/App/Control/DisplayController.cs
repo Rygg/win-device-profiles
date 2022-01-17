@@ -50,7 +50,6 @@ namespace DisplayController.App.Control
                     break; // Break out.
                 }
                 Log.Trace("DisplayId: " + displayId);
-                Log.Trace("Device.ToString(): " + device);
                 Log.Trace("DeviceName: " + device.DeviceName);
                 Log.Trace("DeviceID: " + device.DeviceID);
                 Log.Trace("DeviceString: " + device.DeviceString);
