@@ -1,4 +1,5 @@
-﻿using DisplayController.App.Control.Types;
+﻿using DisplayController.App.Configuration;
+using DisplayController.App.Control.Types;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -24,7 +25,7 @@ namespace DisplayController.App.Control
         /// <summary>
         /// Default constructor.
         /// </summary>
-        public DisplayController()
+        internal DisplayController()
         {
             RefreshDisplayDevices(); // Get initial display devices.
         }
@@ -183,7 +184,7 @@ namespace DisplayController.App.Control
         /// Gets retrieved display information as a string.
         /// </summary>
         /// <returns></returns>
-        public string GetRetrievedDisplayInformationString()
+        internal string GetRetrievedDisplayInformationString()
         {
             var str = string.Empty;
             foreach(var display in _displays)
@@ -194,24 +195,97 @@ namespace DisplayController.App.Control
         }
 
         /// <summary>
-        /// Method sets the parameter as the new primary display.
+        /// Method applies the display profile given as a parameter.
+        /// </summary>
+        /// <param name="displaySettings">DisplaySettings of the profile.</param>
+        /// <returns>A task representing the operation.</returns>
+        internal void SetDisplayProfile(ProfileDisplaySetting[] displaySettings)
+        {
+            const int waitTimeoutBeforeAdvancedColorChangesMs = 500;
+
+            Log.Trace($"Entering {nameof(SetDisplayProfile)}");
+
+            // Filter displays to the required api methods.
+            var displaysForChangeDisplaySettingsEx = displaySettings.Where(ds => ds.PrimaryDisplay != null || (ds.RefreshRate != null && ds.RefreshRate != 0));
+            var displaysForAdvancedColorState = displaySettings.Where(ds => ds.EnableHdr != null);
+
+            Log.Debug("Refresh DisplayDevices to have the most recent current information.");
+            RefreshDisplayDevices();
+
+            var anyRegistryChanges = false;
+            var primaryDisplaySet = false;
+            foreach(var display in displaysForChangeDisplaySettingsEx) // Set all the required configuration values to the registry.
+            {
+                if(display.PrimaryDisplay == true)
+                {
+                    if(!primaryDisplaySet)
+                    {
+                        Log.Info($"Setting Display {display.DisplayId} as the new primary display.");
+                        if(SetPrimaryDisplayToRegistry(display.DisplayId))
+                        {
+                            Log.Info("Values updated");
+                            anyRegistryChanges = true;
+                        }                        
+                        primaryDisplaySet = true;
+                    }
+                    else
+                    {
+                        Log.Warn("Primary Display was already set in this profile. PrimaryDisplay change ignored.");
+                    }
+                }
+                if(display.RefreshRate != null && display.RefreshRate != 0)
+                {
+                    Log.Info($"Setting Display {display.DisplayId} refresh rate to {display.RefreshRate}Hz");
+                    if(SetDisplayRefreshRateToRegistry(display.DisplayId, display.RefreshRate.Value))
+                    {
+                        anyRegistryChanges = true;
+                        Log.Info("Values updated");
+                    }
+                }
+            }
+            if(anyRegistryChanges) // No need to apply unless changes were made.
+            {
+                Log.Debug("Applying the changes");
+                ApplyDisplayDeviceSettings();
+            }
+
+            // TODO: is this required? 
+            Log.Debug($"Waiting {waitTimeoutBeforeAdvancedColorChangesMs}ms before changing advanced color mode settings.");
+            //await Task.Delay(waitTimeoutBeforeAdvancedColorChangesMs);
+
+            foreach(var display in displaysForAdvancedColorState) // Update advanced color state values for required displays.
+            {
+                var newStateStr = display.EnableHdr == true ? "Enabled" : "Disabled";
+                Log.Info($"Changing advanced color state for Display {display.DisplayId}. New state: {newStateStr}");
+                if(SetDisplayAdvancedColorState(display.DisplayId, display.EnableHdr.Value))
+                {
+                    Log.Info("Values updated.");
+                }
+            }
+
+            Log.Info("DisplayProfile changed.");
+            RefreshDisplayDevices(); // Refresh the display devices after all the changes.
+        }
+
+        /// <summary>
+        /// Method sets the parameter as the new primary display to the registry, does not apply changes.
         /// </summary>
         /// <param name="displayId">Id of the new primary display.</param>
-        public void SetPrimaryDisplay(uint displayId)
+        /// <returns>Returns true if any changes were made to the registry.</returns>
+        private bool SetPrimaryDisplayToRegistry(uint displayId)
         {
-            RefreshDisplayDevices(); // Refresh display devices for accurate data.
-            Log.Info($"Setting Display {displayId} as the primary monitor.");
+            var changesMade = false;
             if (!_displays.ContainsKey(displayId))
             {
                 Log.Warn("DisplayId not found. Returning.");
-                return;
+                return false;
             }
 
             var newPrimary = _displays[displayId];
             if (newPrimary.DisplayDevice.StateFlags.HasFlag(DisplayDeviceStateFlags.PrimaryDevice))
             {
                 Log.Info("Display is already primary display. Returning");
-                return;
+                return false;
             }
 
             var offsetX = newPrimary.DeviceMode.dmPosition.x; // Get old position.
@@ -222,6 +296,7 @@ namespace DisplayController.App.Control
             // Change values to registry. Don't take effect yet.
             NativeMethods.ChangeDisplaySettingsEx(newPrimary.DisplayDevice.DeviceName, ref newPrimary.DeviceMode, (IntPtr)null, (ChangeDisplaySettingsFlags.CDS_SET_PRIMARY | ChangeDisplaySettingsFlags.CDS_UPDATEREGISTRY | ChangeDisplaySettingsFlags.CDS_NORESET), IntPtr.Zero);
             Log.Debug($"Updated registry settings for monitor {displayId}");
+            changesMade = true;
             // Update the offsets of the rest of the displays:
             var otherDisplays = _displays.Where(d => d.Key != displayId);
 
@@ -233,31 +308,28 @@ namespace DisplayController.App.Control
                 NativeMethods.ChangeDisplaySettingsEx(display.Value.DisplayDevice.DeviceName, ref display.Value.DeviceMode, (IntPtr)null, (ChangeDisplaySettingsFlags.CDS_UPDATEREGISTRY | ChangeDisplaySettingsFlags.CDS_NORESET), IntPtr.Zero);
                 Log.Debug($"Updated registry settings for monitor {display.Key}");
             }
-
-            ApplyDisplayDeviceSettings(); // Apply device settings.
-
-            RefreshDisplayDevices(); // Update current display devices.
+            return changesMade;
         }
 
         /// <summary>
-        /// Method sets the parameter as the new primary display.
+        /// Method sets the displays refresh rate to the new value, if it is supported.
         /// </summary>
         /// <param name="displayId">Id of the new primary display.</param>
-        public void SetDisplayRefreshRate(uint displayId, int newRefreshRate)
+        /// <param name="newRefreshRate">New refresh rate for the display.</param>
+        /// <returns>Returns a boolean indicating whether changes were made to the registry</returns>
+        private bool SetDisplayRefreshRateToRegistry(uint displayId, int newRefreshRate)
         {
-            RefreshDisplayDevices(); // Refresh display devices for accurate data.
-            Log.Info($"Updating display {displayId} refresh rate to {newRefreshRate}.");
             if (!_displays.ContainsKey(displayId))
             {
                 Log.Warn("DisplayId not found. Returning.");
-                return;
+                return false;
             }
             var display = _displays[displayId];
             var oldRefreshRate = display.DeviceMode.dmDisplayFrequency;
             if (oldRefreshRate == newRefreshRate)
             {
                 Log.Info("Display refresh rate is already set to the desired value. Returning.");
-                return;
+                return false;
             }
             Log.Debug("Testing monitor support for new refresh rate.");
             display.DeviceMode.dmDisplayFrequency = newRefreshRate;
@@ -267,9 +339,9 @@ namespace DisplayController.App.Control
             {
                 Log.Error("Selected refresh rate is not supported for this monitor.");
                 display.DeviceMode.dmDisplayFrequency = oldRefreshRate;
-                return;
+                return false;
             }
-            Log.Info("New refresh rate is supported by the monitor.");
+            Log.Debug("New refresh rate is supported by the monitor. Updating.");
             // Valid refresh rate. Update to registry.
             var result = NativeMethods.ChangeDisplaySettingsEx(display.DisplayDevice.DeviceName, ref display.DeviceMode, (IntPtr)null, (ChangeDisplaySettingsFlags.CDS_UPDATEREGISTRY | ChangeDisplaySettingsFlags.CDS_NORESET), IntPtr.Zero);
             if(result != DISP_CHANGE.Successful)
@@ -278,18 +350,16 @@ namespace DisplayController.App.Control
                 throw new Win32Exception("Updating monitor refresh rate failed.");
             }
             Log.Debug($"Updated registry settings for monitor {displayId}");
-            
-            ApplyDisplayDeviceSettings(); // Apply device settings.
-
-            RefreshDisplayDevices(); // Update current display devices.
+            return true;
         }
 
+        /// <summary>
+        /// Method applies the values previously updated with <see cref="NativeMethods.ChangeDisplaySettingsEx"/>.
+        /// </summary>
         private void ApplyDisplayDeviceSettings()
         {
-            Log.Debug("Applying settings");
-            // Apply settings:
-            NativeMethods.ChangeDisplaySettingsEx(null, IntPtr.Zero, (IntPtr)null, ChangeDisplaySettingsFlags.CDS_NONE, (IntPtr)null);
-            Log.Info("Applied");
+            NativeMethods.ChangeDisplaySettingsEx(null, IntPtr.Zero, (IntPtr)null, ChangeDisplaySettingsFlags.CDS_NONE, (IntPtr)null); // Apply settings:
+            Log.Info("Changes applied");
         }
 
         /// <summary>
@@ -301,8 +371,6 @@ namespace DisplayController.App.Control
         /// <exception cref="Win32Exception">Exception is thrown if the WinAPI call fails.</exception>
         public bool SetDisplayAdvancedColorState(uint displayId, bool newState)
         {
-            RefreshDisplayDevices(); // Refresh display devices for accurate data.
-            Log.Info($"Setting advanced color state for display {displayId}. New state: {newState}");
             if (!_displays.ContainsKey(displayId))
             {
                 Log.Error("DisplayId not found. Returning.");
@@ -348,20 +416,8 @@ namespace DisplayController.App.Control
             {
                 throw new Win32Exception((int)err);
             }
-            Log.Debug("DeviceInfo set.");
-            Log.Debug("Updating displays to validate the result.");
-            RefreshDisplayDevices(); // Refresh the display devices.
-            var advancedColorEnabled = _displays[displayId].AdvancedColorInformation.Value.value.HasFlag(DISPLAYCONFIG_ADVANCED_COLOR_INFO_VALUE_FLAGS.AdvancedColorEnabled);
-            if (newState == advancedColorEnabled)
-            {
-                Log.Info("Advanced color state changed.");
-                return true;
-            }
-            else
-            {
-                Log.Error("Changing advanced color state failed.");
-                return false;
-            }
+            Log.Debug("DeviceInfo set with no errors");
+            return true;
         }
     }
 }

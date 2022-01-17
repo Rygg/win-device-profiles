@@ -121,7 +121,7 @@ namespace DisplayController.App.Configuration
         /// <summary>
         /// Display identifier to be used to link the display to the WinApi structures.
         /// </summary>
-        public int DisplayId { get; }
+        public uint DisplayId { get; }
         /// <summary>
         /// Should this display be set as primary. Null for no change.
         /// </summary>
@@ -142,7 +142,7 @@ namespace DisplayController.App.Configuration
         internal ProfileDisplaySetting(IConfigurationSection displaySetting)
         {
             // Get display identifier or throw.
-            DisplayId = int.Parse(displaySetting.GetRequiredSection("DisplayId").Value);
+            DisplayId = uint.Parse(displaySetting.GetRequiredSection("DisplayId").Value);
             // Others are optional.
             var primaryStr = displaySetting.GetSection("Primary")?.Value;
             PrimaryDisplay = primaryStr != null ? Convert.ToBoolean(primaryStr) : null;

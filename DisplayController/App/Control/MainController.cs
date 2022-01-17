@@ -78,7 +78,7 @@ namespace DisplayController.App.Control
                 var registrationEvent = await _hotkeys.GetHotKeyPressAsync(_backgroundLoopCts.Token);
                 _backgroundLoopCts.Token.ThrowIfCancellationRequested(); // Throw from the loop if cancelled.
                 Log.Debug($"HotKeyPress detected: Profile: {registrationEvent.ProfileName}, Modifiers: {(KeyModifiers)registrationEvent.Modifiers}, Key: {(Keys)registrationEvent.Key}");
-                Log.Info($"User switched profile by hot key. Selected profile: {registrationEvent.ProfileName}");
+                Log.Info($"User switched profile by hotkey. Selected profile: {registrationEvent.ProfileName}");
 
                 if(await SetDisplayProfile(registrationEvent.ProfileName, _backgroundLoopCts.Token)) // Set the requested profile.
                 {
@@ -109,10 +109,20 @@ namespace DisplayController.App.Control
                 {
                     Log.Debug($"Attempting to enter semaphore, timeout {lockTimeoutMs}ms.");
                     await _profileSwitchLock.WaitAsync(linkedCts.Token); // Throws if not passed after cts timeout.
-                    reserved = true;
                     Log.Trace("Semaphore entered.");
-                    // TODO: Actually set profile.
-                    return true;
+                    reserved = true;
+                    // Get profile data.
+                    var profileData = _displayProfiles.Where(p => p.Name == profileName).FirstOrDefault();
+                    if(profileData == null)
+                    {
+                        Log.Error($"No profile data found for profile: {profileName}");
+                        return false;
+                    }
+                    // Otherwise, apply the display profile.
+                    Log.Info($"Applying Profile {profileName}");
+                    _displays.SetDisplayProfile(profileData.DisplaySettings);
+                    Log.Info($"Profile applied.");
+                    return true; // Return true if no exceptions.
                 }
             }
             catch(Exception ex)
@@ -125,9 +135,11 @@ namespace DisplayController.App.Control
                 if (reserved) // Release lock if it was reserved.
                 {
                     _profileSwitchLock.Release();
+                    Log.Trace("Semaphore released.");
                 }
             }
         }
+
         /// <summary>
         /// Get retrieved display information as a string.
         /// </summary>
