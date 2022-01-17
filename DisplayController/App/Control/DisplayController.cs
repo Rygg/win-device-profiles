@@ -180,6 +180,20 @@ namespace DisplayController.App.Control
         }
 
         /// <summary>
+        /// Gets retrieved display information as a string.
+        /// </summary>
+        /// <returns></returns>
+        public string GetRetrievedDisplayInformationString()
+        {
+            var str = string.Empty;
+            foreach(var display in _displays)
+            {
+                str += $"DisplayId {display.Key}: {Environment.NewLine}{display.Value}" + Environment.NewLine + Environment.NewLine;
+            }
+            return str;
+        }
+
+        /// <summary>
         /// Method sets the parameter as the new primary display.
         /// </summary>
         /// <param name="displayId">Id of the new primary display.</param>

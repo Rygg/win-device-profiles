@@ -80,6 +80,8 @@ namespace DisplayController.App
                 Log.Debug($"Added {profileText} to context menu profiles");
             }
             switchProfileItem.DropDown = switchProfileDropDownMenu; // Set as dropdown menu for the main item.
+
+            contextMenu.Items.Add(Strings.TrayIconCopyDataToClipboard, null, OnCopyDataToClipboard);
             contextMenu.Items.Add(switchProfileItem); // Add the created profile container.
             contextMenu.Items.Add(new ToolStripSeparator()); // Add a separator.
             contextMenu.Items.Add(Strings.TrayIconExitText, null, OnContextMenuExit); // Add an exit button.
@@ -128,6 +130,17 @@ namespace DisplayController.App
             {
                 Log.Error("Profile could not be changed.");
             }
+        }
+
+        /// <summary>
+        /// Sets retrieved display data to the clipboard so users can create profiles.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnCopyDataToClipboard(object sender, EventArgs e)
+        {
+            var displayData = _controller.GetRetrievedDisplayDataString();
+            Clipboard.SetText(displayData);
         }
 
         /// <summary>

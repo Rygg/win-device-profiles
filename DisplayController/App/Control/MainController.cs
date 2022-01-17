@@ -127,7 +127,14 @@ namespace DisplayController.App.Control
                     _profileSwitchLock.Release();
                 }
             }
-
+        }
+        /// <summary>
+        /// Get retrieved display information as a string.
+        /// </summary>
+        /// <returns></returns>
+        public string GetRetrievedDisplayDataString()
+        {
+            return _displays.GetRetrievedDisplayInformationString();
         }
 
         /// <summary>

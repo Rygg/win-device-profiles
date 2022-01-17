@@ -61,6 +61,15 @@ namespace DisplayController.App.Resources.Text {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Copy display information to clipboard.
+        /// </summary>
+        internal static string TrayIconCopyDataToClipboard {
+            get {
+                return ResourceManager.GetString("TrayIconCopyDataToClipboard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Close DisplayProfiles.
         /// </summary>
         internal static string TrayIconExitText {
