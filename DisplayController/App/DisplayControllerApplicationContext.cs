@@ -96,7 +96,8 @@ namespace DisplayController.App
         /// <returns></returns>
         private static string GetProfileContextMenuText(Profile profile, int index)
         {
-            return $"{Strings.TrayIconProfile} #{index + 1}: {profile.Name}";
+            var hotkeyString = profile.HotKey != null ? $"({profile.HotKey.ToString()}) | " : string.Empty;
+            return $"{Strings.TrayIconProfile} #{index + 1}: {hotkeyString}{profile.Name}";
         }
 
         /// <summary>

@@ -99,6 +99,19 @@ namespace DisplayController.App.Configuration
                 | (shift ? KeyModifiers.Shift : KeyModifiers.None)
                 | (win ? KeyModifiers.Win : KeyModifiers.None);
         }
+        /// <summary>
+        /// Returns a regular hotkey format.
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            var modifierStr = string.Empty;
+            if(Modifiers != KeyModifiers.None)
+            {
+                modifierStr = Modifiers.ToString().Replace(", ", "+");
+            } 
+            return string.IsNullOrEmpty(modifierStr) ? Key.ToString() : modifierStr+"+"+Key.ToString();
+        }
     }
     /// <summary>
     /// Display settings.
@@ -108,19 +121,19 @@ namespace DisplayController.App.Configuration
         /// <summary>
         /// Display identifier to be used to link the display to the WinApi structures.
         /// </summary>
-        public string DisplayIdentifier { get; } // TODO: figure out.
+        public int DisplayId { get; }
         /// <summary>
-        /// Should this display be set as primary. Can be null for no change.
+        /// Should this display be set as primary. Null for no change.
         /// </summary>
         public bool? PrimaryDisplay { get; } = null;
         /// <summary>
-        /// Should HDR be enabled for this display. Can be null for no change.
+        /// Should HDR be enabled for this display. Null for no change.
         /// </summary>
         public bool? EnableHdr { get; } = null;
         /// <summary>
-        /// Should RefreshRate be switched for this display. Can be null for no change.
+        /// Should RefreshRate be switched for this display. Null for no change.
         /// </summary>
-        public double? RefreshRate { get; } = null;
+        public int? RefreshRate { get; } = null;
 
         /// <summary>
         /// Build class from configuration section.
@@ -129,14 +142,14 @@ namespace DisplayController.App.Configuration
         internal ProfileDisplaySetting(IConfigurationSection displaySetting)
         {
             // Get display identifier or throw.
-            DisplayIdentifier = displaySetting.GetRequiredSection("DisplayIdentifier").Value;
+            DisplayId = int.Parse(displaySetting.GetRequiredSection("DisplayId").Value);
             // Others are optional.
             var primaryStr = displaySetting.GetSection("Primary")?.Value;
             PrimaryDisplay = primaryStr != null ? Convert.ToBoolean(primaryStr) : null;
             var hdrStr = displaySetting.GetSection("HDR")?.Value;
             EnableHdr = hdrStr != null ? Convert.ToBoolean(hdrStr) : null;
             var refreshRateStr = displaySetting.GetSection("RefreshRate")?.Value;
-            RefreshRate = refreshRateStr != null ? Convert.ToDouble(refreshRateStr) : null;
+            RefreshRate = refreshRateStr != null ? Convert.ToInt32(refreshRateStr) : null;
         }
     }
 
