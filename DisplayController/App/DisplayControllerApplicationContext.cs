@@ -5,6 +5,8 @@ using Microsoft.Extensions.Configuration;
 using NLog;
 using System;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace DisplayController.App
@@ -12,7 +14,7 @@ namespace DisplayController.App
     /// <summary>
     /// Application context for the DisplayController application.
     /// </summary>
-    internal class DisplayControllerApplicationContext : ApplicationContext
+    internal class DisplayControllerApplicationContext : ApplicationContext, IDisposable
     {
         private static readonly Logger Log = LogManager.GetCurrentClassLogger();
         /// <summary>
@@ -73,7 +75,7 @@ namespace DisplayController.App
             {
                 var profileText = GetProfileContextMenuText(profile.value, profile.index);
                 // Populate with menu items.
-                var menuItem = new ToolStripMenuItem(profileText, null, OnProfileClick, profile.value.Name); // Set ProfileName as name.
+                var menuItem = new ToolStripMenuItem(profileText, null, async(s,e) => await OnProfileClick(s,e), profile.value.Name); // Set ProfileName as name.
                 switchProfileDropDownMenu.Items.Add(menuItem);
                 Log.Debug($"Added {profileText} to context menu profiles");
             }
@@ -102,7 +104,7 @@ namespace DisplayController.App
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void OnProfileClick(object sender, EventArgs e)
+        private async Task OnProfileClick(object sender, EventArgs e)
         {
             if (sender is not ToolStripMenuItem menuItem)
             {
@@ -117,7 +119,14 @@ namespace DisplayController.App
             }
             Log.Info($"User selected profile {clickedProfile.Name} from the tray icon. Switching profile.");
 
-            // TODO: Actually switch profile.
+            if(await _controller.SetDisplayProfile(clickedProfile.Name, CancellationToken.None))
+            {
+                Log.Info("Profile changed successfully!");
+            }
+            else
+            {
+                Log.Error("Profile could not be changed.");
+            }
         }
 
         /// <summary>

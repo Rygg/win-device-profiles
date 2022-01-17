@@ -1,6 +1,9 @@
-﻿using DisplayController.App.Control.Types;
+﻿using DisplayController.App.Configuration;
+using DisplayController.App.Control.Types;
 using NLog;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -15,11 +18,14 @@ namespace DisplayController.App.Control
     internal sealed class HotKeyController : IDisposable
     {
         private static readonly Logger Log = LogManager.GetCurrentClassLogger();
-
         /// <summary>
         /// The actual windows responsible for handling the hot keys.
         /// </summary>
-        private readonly HotKeyWindow _window; 
+        private readonly HotKeyWindow _window;
+        /// <summary>
+        /// List tracking the currently registered hot keys.
+        /// </summary>
+        private readonly List<HotKeyRegistration> _registeredHotKeys;
         /// <summary>
         /// Variable tracking the registered hotkey identifiers.
         /// </summary>
@@ -31,24 +37,36 @@ namespace DisplayController.App.Control
         {
             _window = new HotKeyWindow();
             _currentHotKeyRegistrationId = 0; // Start hotkey registeration from 0.
+            _registeredHotKeys = new List<HotKeyRegistration>();
         }
 
         /// <summary>
         /// Register a hot key.
         /// </summary>
-        /// <param name="modifiers">Keyboard modifiers required for the key to trigger</param>
-        /// <param name="key">Requested key</param>
+        /// <param name="profileName">Link to the profile.</param>
+        /// <param name="hotKey">Requested key configuration.</param>
         /// <exception cref="InvalidOperationException">Hot key could not be registered.</exception>
-        internal void RegisterHotKey(KeyModifiers modifiers, Keys key)
+        internal void RegisterHotKey(string profileName, ProfileHotKey hotKey)
         {
+            var fsModifiers = (FsModifiers)hotKey.Modifiers;
+            var key = (uint)hotKey.Key;
+
+            var alreadyRegistered = _registeredHotKeys.Any(r => r.Key == key && (int)r.Modifiers == (int)fsModifiers); // Check if key combination is already registered.
+            if(alreadyRegistered)
+            {
+                Log.Warn("Key combination is already registered. Returning");
+                return;
+            }
+
             _currentHotKeyRegistrationId++; // Increment the operation counter. Registration starts from 1 -->
-            Log.Debug($"Registering global hot key for application. HotKeyId: {_currentHotKeyRegistrationId}. Modifiers: {modifiers}, Key: {key}");
-            // register the hot key.
-            if (!NativeMethods.RegisterHotKey(_window.Handle, _currentHotKeyRegistrationId, (FsModifiers)modifiers, (uint)key))
+            Log.Debug($"Registering global hot key for the application. HotKeyId: {_currentHotKeyRegistrationId}. Modifiers: {hotKey.Modifiers}, Key: {hotKey.Key}");
+
+            if (!NativeMethods.RegisterHotKey(_window.Handle, _currentHotKeyRegistrationId, fsModifiers, key)) // Register the hot key.
             {
                 throw new InvalidOperationException("Hot key could not be registered.");
             }
-            Log.Debug($"HotKey registered.");
+            _registeredHotKeys.Add(new HotKeyRegistration(profileName, _currentHotKeyRegistrationId, fsModifiers, key)); // Add to registered hot keys.
+            Log.Info("HotKey registered.");
         }
 
         /// <summary>
@@ -56,11 +74,22 @@ namespace DisplayController.App.Control
         /// </summary>
         /// <param name="ct"></param>
         /// <returns></returns>
-        internal Task<KeyPressedEventArgs> GetHotKeyPressAsync(CancellationToken ct)
+        internal Task<HotKeyRegistration> GetHotKeyPressAsync(CancellationToken ct)
         {
-            var tcs = new TaskCompletionSource<KeyPressedEventArgs>(); // Create tcs.
+            var tcs = new TaskCompletionSource<HotKeyRegistration>(); // Create tcs.
 
-            void requestAction(KeyPressedEventArgs args) => tcs.TrySetResult(args); // Action for the event
+            // local function as action for the event.
+            void requestAction(KeyPressedEventArgs args) {
+                
+                var registrationId = args.RegistrationId;
+                var registration = _registeredHotKeys.FirstOrDefault(r => r.HotKeyRegistrationId == registrationId); // Get registration.
+                if (registration == null)
+                {
+                    Log.Error("HotKeyRegistration not found for the received event.");
+                    tcs.TrySetException(new IndexOutOfRangeException("HotKeyRegistration not found for the received event."));
+                }
+                tcs.TrySetResult(registration); 
+            }
 
             _window.HotKeyPressed += requestAction; // Subscribe to event.
 
@@ -127,9 +156,9 @@ namespace DisplayController.App.Control
                     // Key is stored in bits 4 to 7:
                     Keys key = (Keys)(((int)m.LParam >> 16) & 0xFFFF); //  Get the values of the bits using shifting 4 bits to the right and using a bitwise and-operation.
                     KeyModifiers modifiers = (KeyModifiers)((int)m.LParam & 0xFFFF); // Modifiers are stored in bits from 0 to 3. Use bitwise and-operation to get the value.
-
+                    var registrationId = (int)m.WParam; // The identifier of the hot key that generated the message. If the message was generated by a system-defined hot key, this parameter will be one of the following values.
                     // Invoke the event in case parent is listening.
-                    HotKeyPressed?.Invoke(new KeyPressedEventArgs(modifiers, key));
+                    HotKeyPressed?.Invoke(new KeyPressedEventArgs(modifiers, key, registrationId));
                 }
             }
             /// <summary>

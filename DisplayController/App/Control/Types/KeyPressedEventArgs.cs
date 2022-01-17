@@ -10,11 +10,13 @@ namespace DisplayController.App.Control.Types
     {
         private KeyModifiers _modifier;
         private Keys _key;
+        private int _registrationId;
 
-        internal KeyPressedEventArgs(KeyModifiers modifier, Keys key)
+        internal KeyPressedEventArgs(KeyModifiers modifier, Keys key, int registrationId)
         {
             _modifier = modifier;
             _key = key;
+            _registrationId = registrationId;
         }
         /// <summary>
         /// Pressed Modifier keys.
@@ -29,6 +31,13 @@ namespace DisplayController.App.Control.Types
         public Keys Key
         {
             get { return _key; }
+        }
+        /// <summary>
+        /// Hotkey registration Id.
+        /// </summary>
+        public int RegistrationId
+        {
+            get { return _registrationId; }
         }
     }
 }

@@ -7,7 +7,7 @@ namespace DisplayController
     {
         static void Main(string[] args)
         {
-            Application.Run(new DisplayControllerApplicationContext());
+            Application.Run(new DisplayControllerApplicationContext()); // TODO: is this properly disposed when exiting?
         }
     }
 }
