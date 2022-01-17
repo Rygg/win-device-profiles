@@ -220,13 +220,63 @@ namespace DisplayController.App.Control
                 NativeMethods.ChangeDisplaySettingsEx(display.Value.DisplayDevice.DeviceName, ref display.Value.DeviceMode, (IntPtr)null, (ChangeDisplaySettingsFlags.CDS_UPDATEREGISTRY | ChangeDisplaySettingsFlags.CDS_NORESET), IntPtr.Zero);
                 Log.Debug($"Updated registry settings for monitor {display.Key}");
             }
+
+            ApplyDisplayDeviceSettings(); // Apply device settings.
+
+            RefreshDisplayDevices(); // Update current display devices.
+        }
+
+        /// <summary>
+        /// Method sets the parameter as the new primary display.
+        /// </summary>
+        /// <param name="displayId">Id of the new primary display.</param>
+        public void SetDisplayRefreshRate(uint displayId, int newRefreshRate)
+        {
+            RefreshDisplayDevices(); // Refresh display devices for accurate data.
+            Log.Info($"Updating display {displayId} refresh rate to {newRefreshRate}.");
+            if (!_displays.ContainsKey(displayId))
+            {
+                Log.Warn("DisplayId not found. Returning.");
+                return;
+            }
+            var display = _displays[displayId];
+            var oldRefreshRate = display.DeviceMode.dmDisplayFrequency;
+            if (oldRefreshRate == newRefreshRate)
+            {
+                Log.Info("Display refresh rate is already set to the desired value. Returning.");
+                return;
+            }
+            Log.Debug("Testing monitor support for new refresh rate.");
+            display.DeviceMode.dmDisplayFrequency = newRefreshRate;
+            // Test can the refresh mode be set for this display:
+            var testResult = NativeMethods.ChangeDisplaySettingsEx(display.DisplayDevice.DeviceName, ref display.DeviceMode, (IntPtr)null, ChangeDisplaySettingsFlags.CDS_TEST, IntPtr.Zero);
+            if(testResult != DISP_CHANGE.Successful)
+            {
+                Log.Error("Selected refresh rate is not supported for this monitor.");
+                display.DeviceMode.dmDisplayFrequency = oldRefreshRate;
+                return;
+            }
+            Log.Info("New refresh rate is supported by the monitor.");
+            // Valid refresh rate. Update to registry.
+            var result = NativeMethods.ChangeDisplaySettingsEx(display.DisplayDevice.DeviceName, ref display.DeviceMode, (IntPtr)null, (ChangeDisplaySettingsFlags.CDS_UPDATEREGISTRY | ChangeDisplaySettingsFlags.CDS_NORESET), IntPtr.Zero);
+            if(result != DISP_CHANGE.Successful)
+            {
+                Log.Error("Updating refresh rate failed.");
+                throw new Win32Exception("Updating monitor refresh rate failed.");
+            }
+            Log.Debug($"Updated registry settings for monitor {displayId}");
+            
+            ApplyDisplayDeviceSettings(); // Apply device settings.
+
+            RefreshDisplayDevices(); // Update current display devices.
+        }
+
+        private void ApplyDisplayDeviceSettings()
+        {
             Log.Debug("Applying settings");
             // Apply settings:
             NativeMethods.ChangeDisplaySettingsEx(null, IntPtr.Zero, (IntPtr)null, ChangeDisplaySettingsFlags.CDS_NONE, (IntPtr)null);
             Log.Info("Applied");
-            // For future long term service functionality:
-            Log.Debug("Updating displays.");
-            RefreshDisplayDevices(); // Update current display devices.
         }
 
         /// <summary>
