@@ -132,4 +132,7 @@
   <data name="TrayIconTooltip" xml:space="preserve">
     <value>DisplayProfiles</value>
   </data>
+  <data name="TrayIconNoProfilesAvailable" xml:space="preserve">
+    <value>No profiles available</value>
+  </data>
 </root>

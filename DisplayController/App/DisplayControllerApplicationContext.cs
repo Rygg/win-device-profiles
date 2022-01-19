@@ -50,7 +50,7 @@ namespace DisplayController.App
         /// Create the NotifyIcon for system tray.
         /// </summary>
         /// <returns></returns>
-        private NotifyIcon CreateTrayIcon(IEnumerable<Profile> profiles)
+        private NotifyIcon CreateTrayIcon(Profile[] profiles)
         {           
             var icon = new NotifyIcon
             {
@@ -66,24 +66,31 @@ namespace DisplayController.App
         /// Create the context menu for the tray icon.
         /// </summary>
         /// <returns></returns>
-        private ContextMenuStrip CreateTrayIconContextMenu(IEnumerable<Profile> profiles)
+        private ContextMenuStrip CreateTrayIconContextMenu(Profile[] profiles)
         {
             var contextMenu = new ContextMenuStrip();
-
-            var switchProfileItem = new ToolStripMenuItem(Strings.TrayIconSwitchProfiles); // Create SwitchProfiles container.
-            var switchProfileDropDownMenu = new ContextMenuStrip(); // Create the inner menu:
-            foreach(var profile in profiles.Select((value, index) => new { value, index }))
+            ToolStripMenuItem profileItem;
+            if (!profiles.Any())
             {
-                var profileText = GetProfileContextMenuText(profile.value, profile.index);
-                // Populate with menu items.
-                var menuItem = new ToolStripMenuItem(profileText, null, async(s,e) => await OnProfileClick(s,e), profile.value.Name); // Set ProfileName as name.
-                switchProfileDropDownMenu.Items.Add(menuItem);
-                Log.Debug($"Added {profileText} to context menu profiles");
+                profileItem = new ToolStripMenuItem(Strings.TrayIconNoProfilesAvailable);
+                profileItem.Enabled = false;
             }
-            switchProfileItem.DropDown = switchProfileDropDownMenu; // Set as dropdown menu for the main item.
-
+            else
+            {
+                profileItem = new ToolStripMenuItem(Strings.TrayIconSwitchProfiles); // Create SwitchProfiles container.
+                var switchProfileDropDownMenu = new ContextMenuStrip(); // Create the inner menu:
+                foreach (var profile in profiles.Select((value, index) => new { value, index }))
+                {
+                    var profileText = GetProfileContextMenuText(profile.value, profile.index);
+                    // Populate with menu items.
+                    var menuItem = new ToolStripMenuItem(profileText, null, async (s, e) => await OnProfileClick(s, e), profile.value.Name); // Set ProfileName as name.
+                    switchProfileDropDownMenu.Items.Add(menuItem);
+                    Log.Debug($"Added {profileText} to context menu profiles");
+                }
+                profileItem.DropDown = switchProfileDropDownMenu; // Set as dropdown menu for the main item.
+            }
             contextMenu.Items.Add(Strings.TrayIconCopyDataToClipboard, null, OnCopyDataToClipboard);
-            contextMenu.Items.Add(switchProfileItem); // Add the created profile container.
+            contextMenu.Items.Add(profileItem); // Add the created profile container.
             contextMenu.Items.Add(new ToolStripSeparator()); // Add a separator.
             contextMenu.Items.Add(Strings.TrayIconExitText, null, OnContextMenuExit); // Add an exit button.
 

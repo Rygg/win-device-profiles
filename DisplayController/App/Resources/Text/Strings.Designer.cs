@@ -79,6 +79,15 @@ namespace DisplayController.App.Resources.Text {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No profiles available.
+        /// </summary>
+        internal static string TrayIconNoProfilesAvailable {
+            get {
+                return ResourceManager.GetString("TrayIconNoProfilesAvailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Profile.
         /// </summary>
         internal static string TrayIconProfile {
