@@ -4,6 +4,7 @@ using DisplayController.App.Resources.Text;
 using Microsoft.Extensions.Configuration;
 using NLog;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,7 +15,7 @@ namespace DisplayController.App
     /// <summary>
     /// Application context for the DisplayController application.
     /// </summary>
-    internal class DisplayControllerApplicationContext : ApplicationContext, IDisposable
+    internal sealed class DisplayControllerApplicationContext : ApplicationContext
     {
         private static readonly Logger Log = LogManager.GetCurrentClassLogger();
         /// <summary>
@@ -49,9 +50,9 @@ namespace DisplayController.App
         /// Create the NotifyIcon for system tray.
         /// </summary>
         /// <returns></returns>
-        private NotifyIcon CreateTrayIcon(Profile[] profiles)
+        private NotifyIcon CreateTrayIcon(IEnumerable<Profile> profiles)
         {           
-            var icon = new NotifyIcon()
+            var icon = new NotifyIcon
             {
                 Text = Strings.TrayIconTooltip,
                 Icon = new System.Drawing.Icon(typeof(DisplayControllerApplicationContext), "Resources.Images.app.ico"),
@@ -65,7 +66,7 @@ namespace DisplayController.App
         /// Create the context menu for the tray icon.
         /// </summary>
         /// <returns></returns>
-        private ContextMenuStrip CreateTrayIconContextMenu(Profile[] profiles)
+        private ContextMenuStrip CreateTrayIconContextMenu(IEnumerable<Profile> profiles)
         {
             var contextMenu = new ContextMenuStrip();
 
@@ -98,7 +99,7 @@ namespace DisplayController.App
         /// <returns></returns>
         private static string GetProfileContextMenuText(Profile profile, int index)
         {
-            var hotkeyString = profile.HotKey != null ? $"({profile.HotKey.ToString()}) | " : string.Empty;
+            var hotkeyString = profile.HotKey != null ? $"({profile.HotKey}) | " : string.Empty;
             return $"{Strings.TrayIconProfile} #{index + 1}: {hotkeyString}{profile.Name}";
         }
 
@@ -107,7 +108,7 @@ namespace DisplayController.App
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private async Task OnProfileClick(object sender, EventArgs e)
+        private async Task OnProfileClick(object? sender, EventArgs e)
         {
             if (sender is not ToolStripMenuItem menuItem)
             {
@@ -137,7 +138,7 @@ namespace DisplayController.App
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void OnCopyDataToClipboard(object sender, EventArgs e)
+        private void OnCopyDataToClipboard(object? sender, EventArgs e)
         {
             var displayData = _controller.GetRetrievedDisplayDataString();
             Clipboard.SetText(displayData);
@@ -148,7 +149,7 @@ namespace DisplayController.App
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void OnContextMenuExit(object sender, EventArgs e)
+        private void OnContextMenuExit(object? sender, EventArgs e)
         {
             Log.Info("Application close requested from tray icon context menu.");
             Exit();

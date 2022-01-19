@@ -7,37 +7,33 @@ namespace DisplayController.App.Control.Types
     /// Event Arguments for the key press events.
     /// </summary>
     internal class KeyPressedEventArgs : EventArgs
-    {
-        private KeyModifiers _modifier;
-        private Keys _key;
-        private int _registrationId;
-
-        internal KeyPressedEventArgs(KeyModifiers modifier, Keys key, int registrationId)
-        {
-            _modifier = modifier;
-            _key = key;
-            _registrationId = registrationId;
-        }
+    {   
         /// <summary>
         /// Pressed Modifier keys.
         /// </summary>
-        public KeyModifiers Modifier
-        {
-            get { return _modifier; }
-        }
+        public KeyModifiers Modifier { get; }
+
         /// <summary>
         /// Pressed key.
         /// </summary>
-        public Keys Key
-        {
-            get { return _key; }
-        }
+        public Keys Key { get; }
+
         /// <summary>
         /// Hotkey registration Id.
         /// </summary>
-        public int RegistrationId
+        public int RegistrationId { get; }
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="modifier"></param>
+        /// <param name="key"></param>
+        /// <param name="registrationId"></param>
+        internal KeyPressedEventArgs(KeyModifiers modifier, Keys key, int registrationId)
         {
-            get { return _registrationId; }
+            Modifier = modifier;
+            Key = key;
+            RegistrationId = registrationId;
         }
+
     }
 }

@@ -3,7 +3,7 @@
 namespace DisplayController.App.Control.Types
 {
     /// <summary>
-    /// Class structure for holding the necessary information about hot key registerations.
+    /// Class structure for holding the necessary information about hot key registrations.
     /// </summary>
     public class HotKeyRegistration
     {

@@ -12,7 +12,7 @@ namespace DisplayController.App.Control
     /// <summary>
     /// MainController class responsible for the application functionality.
     /// </summary>
-    internal class MainController : IDisposable
+    internal sealed class MainController : IDisposable
     {
         private static readonly Logger Log = LogManager.GetCurrentClassLogger();
         /// <summary>
@@ -30,11 +30,11 @@ namespace DisplayController.App.Control
         /// <summary>
         /// CancellationTokenSource controlling the background loop.
         /// </summary>
-        private CancellationTokenSource _backgroundLoopCts;
+        private CancellationTokenSource? _backgroundLoopCts;
         /// <summary>
-        /// Lock to prevent concurrent profile switchings.
+        /// Lock to prevent concurrent profile switching.
         /// </summary>
-        private readonly SemaphoreSlim _profileSwitchLock = new SemaphoreSlim(1, 1);
+        private readonly SemaphoreSlim _profileSwitchLock = new(1, 1);
         /// <summary>
         /// Default constructor for the MainController.
         /// </summary>
@@ -42,6 +42,14 @@ namespace DisplayController.App.Control
         {
             _displays = new DisplayController();
             _hotkeys = new HotKeyController();
+            _displayProfiles = Array.Empty<Profile>();
+        }
+        /// <summary>
+        /// Destructor for Disposing.
+        /// </summary>
+        ~MainController()
+        {
+            Dispose();
         }
 
         /// <summary>
@@ -65,12 +73,11 @@ namespace DisplayController.App.Control
             _backgroundLoopCts?.Cancel();
             _backgroundLoopCts?.Dispose();
             _backgroundLoopCts = new CancellationTokenSource();
-                       
-            var profilesWithHotKeys = _displayProfiles.Where(p => p.HotKey != null && p.HotKey.Key != null).ToArray(); // Get profiles with hotkeys.
-            foreach(var profile in profilesWithHotKeys)
+            
+            foreach(var profile in _displayProfiles.Where(p => p.HotKey?.Key != null)) // Loop through profiles with hotkeys.
             {
                 Log.Debug($"Registering global hotkey for profile: {profile.Name}");
-                _hotkeys.RegisterHotKey(profile.Name, profile.HotKey); // Register configured hotkey.
+                _hotkeys.RegisterHotKey(profile.Name, profile.HotKey!); // Register configured hotkey.
             }
             Log.Debug("HotKeys registered");
             while(!_backgroundLoopCts.Token.IsCancellationRequested)
@@ -112,7 +119,7 @@ namespace DisplayController.App.Control
                     Log.Trace("Semaphore entered.");
                     reserved = true;
                     // Get profile data.
-                    var profileData = _displayProfiles.Where(p => p.Name == profileName).FirstOrDefault();
+                    var profileData = _displayProfiles.FirstOrDefault(p => p.Name == profileName);
                     if(profileData == null)
                     {
                         Log.Error($"No profile data found for profile: {profileName}");
@@ -157,8 +164,8 @@ namespace DisplayController.App.Control
             Log.Trace("Disposing..");
             _backgroundLoopCts?.Cancel();
             _backgroundLoopCts?.Dispose();
-            _profileSwitchLock?.Dispose();
-            _hotkeys?.Dispose(); // Dispose the hotkeys handler.
+            _profileSwitchLock.Dispose();
+            _hotkeys.Dispose(); // Dispose the hotkeys handler.
             Log.Trace("Disposed.");
         }
     }

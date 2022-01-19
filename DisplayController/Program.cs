@@ -7,14 +7,13 @@ namespace DisplayController
     /// <summary>
     /// DisplayController program.
     /// </summary>
-    class Program
+    internal class Program
     {
         /// <summary>
         /// The program starting point.
         /// </summary>
-        /// <param name="args"></param>
         [STAThread]
-        static void Main(string[] args)
+        private static void Main()
         {
             Application.Run(new DisplayControllerApplicationContext()); // TODO: is this properly disposed when exiting?
         }

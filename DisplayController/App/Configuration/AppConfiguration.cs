@@ -24,9 +24,10 @@ namespace DisplayController.App.Configuration
         /// Builds configuration from read Configuration section.
         /// </summary>
         /// <param name="configuration"></param>
-        internal AppConfiguration(IConfigurationSection configuration)
+        internal AppConfiguration(IConfiguration configuration)
         {
-            Profiles = configuration.GetRequiredSection("Profiles").GetChildren().Select(c => new Profile(c)).ToArray(); // Required.
+            var profiles = configuration.GetSection("Profiles").GetChildren()?.ToArray();
+            Profiles = profiles?.Any() == true ? profiles.Select(c => new Profile(c)).ToArray() : Array.Empty<Profile>();
             NLog = new NLogLoggingConfiguration(configuration.GetRequiredSection("NLog")); // Required.
         }
     }
@@ -40,9 +41,9 @@ namespace DisplayController.App.Configuration
         /// </summary>
         public string Name { get; }
         /// <summary>
-        /// Hotkey for triggering the profile. Not required.
+        /// HotKey for triggering the profile. Not required.
         /// </summary>
-        public ProfileHotKey HotKey { get; }
+        public ProfileHotKey? HotKey { get; }
         /// <summary>
         /// DisplaySettings for the profile. Required.
         /// </summary>
@@ -86,9 +87,9 @@ namespace DisplayController.App.Configuration
                 Key = null; // Set key to null and return.
                 return;
             }
-            Key = (Keys)keyValue; // Key found, set it.
-                                  // Get modifier flags.
-            var modifiers = hotkeySection.GetSection("Modifiers");
+            Key = (Keys)(keyValue ?? throw new InvalidOperationException("Key was parsed to null.")); // Key found, set it.
+                                  
+            var modifiers = hotkeySection.GetSection("Modifiers"); // Get modifier flags.
             var ctrl = Convert.ToBoolean(modifiers.GetSection("Ctrl").Value);
             var alt = Convert.ToBoolean(modifiers.GetSection("Alt").Value);
             var shift = Convert.ToBoolean(modifiers.GetSection("Shift").Value);
@@ -110,7 +111,7 @@ namespace DisplayController.App.Configuration
             {
                 modifierStr = Modifiers.ToString().Replace(", ", "+");
             } 
-            return string.IsNullOrEmpty(modifierStr) ? Key.ToString() : modifierStr+"+"+Key.ToString();
+            return (string.IsNullOrEmpty(modifierStr) ? Key.ToString() : modifierStr+"+"+Key) ?? string.Empty;
         }
     }
     /// <summary>
