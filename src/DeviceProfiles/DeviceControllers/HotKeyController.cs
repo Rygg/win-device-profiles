@@ -7,8 +7,8 @@ using System.Windows.Forms;
 using DeviceProfiles.Classes;
 using DeviceProfiles.Enums;
 using NLog;
-using WinApi.User32.Keyboard;
-using WinApi.User32.Keyboard.NativeTypes;
+using Win32NativeMethods.User32.Keyboard;
+using Win32NativeMethods.User32.Keyboard.NativeTypes;
 
 namespace DeviceProfiles.DeviceControllers
 {

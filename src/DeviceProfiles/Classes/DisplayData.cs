@@ -1,5 +1,5 @@
 ﻿using System;
-using WinApi.User32.Display.NativeTypes;
+using Win32NativeMethods.User32.Display.NativeTypes;
 
 namespace DeviceProfiles.Classes
 {

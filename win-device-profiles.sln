@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeviceProfiles", "src\DeviceProfiles\DeviceProfiles.csproj", "{25090841-5C54-4BB7-AA34-52AC384FD9AC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WinApi", "src\WinApi\WinApi.csproj", "{8474B628-4175-4042-ACA0-311C45337899}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Win32NativeMethods", "src\Win32NativeMethods\Win32NativeMethods.csproj", "{8474B628-4175-4042-ACA0-311C45337899}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

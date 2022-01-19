@@ -5,8 +5,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using DeviceProfiles.Classes;
 using NLog;
-using WinApi.User32.Display;
-using WinApi.User32.Display.NativeTypes;
+using Win32NativeMethods.User32.Display;
+using Win32NativeMethods.User32.Display.NativeTypes;
 
 namespace DeviceProfiles.DeviceControllers
 {

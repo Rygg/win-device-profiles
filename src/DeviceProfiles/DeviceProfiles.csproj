@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\WinApi\WinApi.csproj" />
+    <ProjectReference Include="..\Win32NativeMethods\Win32NativeMethods.csproj" />
   </ItemGroup>
 
   <ItemGroup>

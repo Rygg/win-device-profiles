@@ -1,4 +1,4 @@
-﻿using WinApi.User32.Keyboard.NativeTypes;
+﻿using Win32NativeMethods.User32.Keyboard.NativeTypes;
 
 namespace DeviceProfiles.Classes
 {
