@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using DeviceProfiles.Enums;
+using DeviceProfiles.Resources.Text;
 using Microsoft.Extensions.Configuration;
 
 namespace DeviceProfiles.Classes
@@ -14,19 +16,19 @@ namespace DeviceProfiles.Classes
         /// <summary>
         /// Identifier of the profile.
         /// </summary>
-        public int Id { get; }
+        internal int Id { get; }
         /// <summary>
         /// Name of the profile.
         /// </summary>
-        public string Name { get; }
+        internal string Name { get; }
         /// <summary>
         /// HotKey for triggering the profile. Not required.
         /// </summary>
-        public DeviceProfileHotKey? HotKey { get; }
+        internal DeviceProfileHotKey? HotKey { get; }
         /// <summary>
         /// DisplaySettings for the profile. Required.
         /// </summary>
-        public DeviceProfileDisplaySettings[] DisplaySettings { get; }
+        internal DeviceProfileDisplaySettings[] DisplaySettings { get; }
         /// <summary>
         /// Construct the class from configuration.
         /// </summary>
@@ -40,6 +42,37 @@ namespace DeviceProfiles.Classes
                                                            // Get display settings. Required.
             DisplaySettings = profile.GetRequiredSection("DisplaySettings").GetChildren().Select(c => new DeviceProfileDisplaySettings(c)).ToArray();
         }
+        /// <summary>
+        /// Method returns a summary string for the profile.
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            var str = Name;
+            var displays = new List<string>();
+            foreach (var displaySetting in DisplaySettings)
+            {
+                var str2 = $"Display {displaySetting.DisplayId}: ";
+                var details = new List<string>();
+                if (displaySetting.PrimaryDisplay == true)
+                {
+                    details.Add(Strings.ProfileSummaryPrimary);
+                }
+                if (displaySetting.EnableHdr.HasValue)
+                {
+                    details.Add(displaySetting.EnableHdr == true ? Strings.ProfileSummaryHdr : Strings.ProfileSummarySdr);
+                }
+                if (displaySetting.RefreshRate.HasValue)
+                {
+                    details.Add($"{displaySetting.RefreshRate.Value}{Strings.ProfileSummaryHz}");
+                }
+                str2 += string.Join('/',details.ToArray());
+                displays.Add(str2);
+            }
+
+            str += $" ({string.Join(", ", displays.ToArray())})";
+            return str;
+        }
     }
     /// <summary>
     /// HotKey configuration. Contains flags for Modifiers and the actual key.
@@ -49,16 +82,16 @@ namespace DeviceProfiles.Classes
         /// <summary>
         /// Modifier keys required for the hotkey to trigger.
         /// </summary>
-        public EKeyModifiers Modifiers { get; }
+        internal EKeyModifiers Modifiers { get; }
         /// <summary>
         /// HotKey.
         /// </summary>
-        public Keys? Key { get; }
+        internal Keys? Key { get; }
         /// <summary>
         /// Build from configuration section.
         /// </summary>
         /// <param name="hotkeySection">HotKey section</param>
-        public DeviceProfileHotKey(IConfiguration hotkeySection)
+        internal DeviceProfileHotKey(IConfiguration hotkeySection)
         {
             // Try to parse key.
             if (!Enum.TryParse(typeof(Keys), hotkeySection.GetSection("Key")?.Value, out var keyValue))
@@ -101,19 +134,19 @@ namespace DeviceProfiles.Classes
         /// <summary>
         /// Display identifier to be used to link the display to the WinApi structures.
         /// </summary>
-        public uint DisplayId { get; }
+        internal uint DisplayId { get; }
         /// <summary>
         /// Should this display be set as primary. Null for no change.
         /// </summary>
-        public bool? PrimaryDisplay { get; } = null;
+        internal bool? PrimaryDisplay { get; } = null;
         /// <summary>
         /// Should HDR be enabled for this display. Null for no change.
         /// </summary>
-        public bool? EnableHdr { get; } = null;
+        internal bool? EnableHdr { get; } = null;
         /// <summary>
         /// Should RefreshRate be switched for this display. Null for no change.
         /// </summary>
-        public int? RefreshRate { get; } = null;
+        internal int? RefreshRate { get; } = null;
 
         /// <summary>
         /// Build class from configuration section.

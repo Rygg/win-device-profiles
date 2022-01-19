@@ -56,10 +56,21 @@ namespace DeviceProfiles.Configuration
         /// <exception cref="InvalidOperationException"></exception>
         private static void ValidateConfiguration(DeviceProfile[] profiles)
         {
-            var uniqueIds = profiles.DistinctBy(p => p.Id).ToArray().Length == profiles.Length; // Check that there is a correct amount of Ids.
+            // Check that there is a correct amount of unique profile ids.
+            var uniqueIds = profiles.DistinctBy(p => p.Id).ToArray().Length == profiles.Length; 
             if (!uniqueIds)
             {
                 throw new InvalidOperationException("ProfileIds were not unique.");
+            }
+            // Check for more than one primary monitor.
+            if (profiles.Any(profile => profile.DisplaySettings.SingleOrDefault(ds => ds.PrimaryDisplay == true) == null))
+            {
+                throw new InvalidOperationException("More than one primary monitor set in a profile."); // Not reached.
+            }
+            // Check if displayIds are not unique in within a single profile.
+            if (profiles.Select(profile => profile.DisplaySettings.Select(ds => ds.DisplayId).ToArray()).Any(displayIds => displayIds.Length != displayIds.Distinct().Count()))
+            {
+                throw new InvalidOperationException("DisplayIds were not unique within a profile.");
             }
         }
     }

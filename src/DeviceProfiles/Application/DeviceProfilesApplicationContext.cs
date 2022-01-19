@@ -110,7 +110,7 @@ namespace DeviceProfiles.Application
         private static string GetProfileContextMenuText(DeviceProfile profile, int index)
         {
             var hotkeyString = profile.HotKey != null ? $"({profile.HotKey}) | " : string.Empty;
-            return $"{Strings.TrayIconProfile} #{index + 1}: {hotkeyString}{profile.Name}";
+            return $"{Strings.TrayIconProfile} #{index + 1}: {hotkeyString}{profile}";
         }
 
         /// <summary>

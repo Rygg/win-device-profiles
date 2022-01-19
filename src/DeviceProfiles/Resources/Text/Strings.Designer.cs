@@ -61,6 +61,42 @@ namespace DeviceProfiles.Resources.Text {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to HDR.
+        /// </summary>
+        internal static string ProfileSummaryHdr {
+            get {
+                return ResourceManager.GetString("ProfileSummaryHdr", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hz.
+        /// </summary>
+        internal static string ProfileSummaryHz {
+            get {
+                return ResourceManager.GetString("ProfileSummaryHz", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Primary.
+        /// </summary>
+        internal static string ProfileSummaryPrimary {
+            get {
+                return ResourceManager.GetString("ProfileSummaryPrimary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SDR.
+        /// </summary>
+        internal static string ProfileSummarySdr {
+            get {
+                return ResourceManager.GetString("ProfileSummarySdr", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Copy display information to clipboard.
         /// </summary>
         internal static string TrayIconCopyDataToClipboard {

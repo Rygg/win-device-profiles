@@ -135,4 +135,16 @@
   <data name="TrayIconNoProfilesAvailable" xml:space="preserve">
     <value>No profiles available</value>
   </data>
+  <data name="ProfileSummaryPrimary" xml:space="preserve">
+    <value>Primary</value>
+  </data>
+  <data name="ProfileSummaryHdr" xml:space="preserve">
+    <value>HDR</value>
+  </data>
+  <data name="ProfileSummaryHz" xml:space="preserve">
+    <value>Hz</value>
+  </data>
+  <data name="ProfileSummarySdr" xml:space="preserve">
+    <value>SDR</value>
+  </data>
 </root>
