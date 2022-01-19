@@ -3,24 +3,27 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using DeviceProfiles.App.Configuration;
-using DeviceProfiles.App.Control;
-using DeviceProfiles.App.Resources.Text;
+using DeviceProfiles.Classes;
+using DeviceProfiles.Configuration;
+using DeviceProfiles.Resources.Text;
 using Microsoft.Extensions.Configuration;
 using NLog;
 
-namespace DeviceProfiles.App
+namespace DeviceProfiles.Application
 {
     /// <summary>
     /// Application context for the DisplayController application.
     /// </summary>
     internal sealed class DeviceProfilesApplicationContext : ApplicationContext
     {
+        /// <summary>
+        /// Current class logger.
+        /// </summary>
         private static readonly Logger Log = LogManager.GetCurrentClassLogger();
         /// <summary>
         /// Profile configuration.
         /// </summary>
-        private readonly AppConfiguration _config;
+        private readonly DeviceProfile[] _profiles;
         /// <summary>
         /// Applications tray icon.
         /// </summary>
@@ -28,33 +31,33 @@ namespace DeviceProfiles.App
         /// <summary>
         /// Controller responsible for application functionality.
         /// </summary>
-        private readonly MainController _controller;
+        private readonly ApplicationControl _application;
         /// <summary>
         /// Default constructor for the application context.
         /// </summary>
-        public DeviceProfilesApplicationContext()
+        public DeviceProfilesApplicationContext(IConfiguration config)
         {
-            var config = new ConfigurationBuilder().AddJsonFile("appsettings.json", optional: false, reloadOnChange: false).Build(); // Read config.
-            _config = new AppConfiguration(config.GetRequiredSection("Configuration"));
-
-            LogManager.Configuration = _config.NLog; // Set NLog configuration.
+            var profileFile = config.GetSection("ProfilesFile")?.Value;
+            _profiles = profileFile != null
+                ? ProfileConfiguration.GetConfiguredDeviceProfiles(profileFile)
+                : Array.Empty<DeviceProfile>(); 
             
-            _trayIcon = CreateTrayIcon(_config.Profiles); // Initialize Tray Icon            
+            _trayIcon = CreateTrayIcon(_profiles); // Initialize Tray Icon            
 
-            _controller = new MainController(); // Create the actual controller class.
-            _controller.Start(_config); // Start controller functionality.
+            _application = new ApplicationControl(); // Create the actual controller class.
+            _application.Start(_profiles); // Start controller functionality.
         }
 
         /// <summary>
         /// Create the NotifyIcon for system tray.
         /// </summary>
         /// <returns></returns>
-        private NotifyIcon CreateTrayIcon(Profile[] profiles)
+        private NotifyIcon CreateTrayIcon(DeviceProfile[] profiles)
         {           
             var icon = new NotifyIcon
             {
                 Text = Strings.TrayIconTooltip,
-                Icon = new System.Drawing.Icon(typeof(DeviceProfilesApplicationContext), "Resources.Images.app.ico"),
+                Icon = new System.Drawing.Icon(typeof(Program), "Resources.Images.app.ico"),
                 Visible = true,
                 ContextMenuStrip = CreateTrayIconContextMenu(profiles)
             };
@@ -65,7 +68,7 @@ namespace DeviceProfiles.App
         /// Create the context menu for the tray icon.
         /// </summary>
         /// <returns></returns>
-        private ContextMenuStrip CreateTrayIconContextMenu(Profile[] profiles)
+        private ContextMenuStrip CreateTrayIconContextMenu(DeviceProfile[] profiles)
         {
             var contextMenu = new ContextMenuStrip();
             ToolStripMenuItem profileItem;
@@ -78,11 +81,12 @@ namespace DeviceProfiles.App
             {
                 profileItem = new ToolStripMenuItem(Strings.TrayIconSwitchProfiles); // Create SwitchProfiles container.
                 var switchProfileDropDownMenu = new ContextMenuStrip(); // Create the inner menu:
-                foreach (var profile in profiles.Select((value, index) => new { value, index }))
+                foreach (var profile in profiles.Select((value, index) => new { value, index })) // Populate with menu items.
                 {
-                    var profileText = GetProfileContextMenuText(profile.value, profile.index);
-                    // Populate with menu items.
-                    var menuItem = new ToolStripMenuItem(profileText, null, async (s, e) => await OnProfileClick(s, e), profile.value.Name); // Set ProfileName as name.
+                    async void OnClick(object? s, EventArgs e) => await OnProfileClick(s, e); // EventHandler signature for OnClick.
+
+                    var profileText = GetProfileContextMenuText(profile.value, profile.index); // Get text.
+                    var menuItem = new ToolStripMenuItem(profileText, null, OnClick, profile.value.Id.ToString()); // Set ProfileName as name.
                     switchProfileDropDownMenu.Items.Add(menuItem);
                     Log.Debug($"Added {profileText} to context menu profiles");
                 }
@@ -103,7 +107,7 @@ namespace DeviceProfiles.App
         /// <param name="profile"></param>
         /// <param name="index"></param>
         /// <returns></returns>
-        private static string GetProfileContextMenuText(Profile profile, int index)
+        private static string GetProfileContextMenuText(DeviceProfile profile, int index)
         {
             var hotkeyString = profile.HotKey != null ? $"({profile.HotKey}) | " : string.Empty;
             return $"{Strings.TrayIconProfile} #{index + 1}: {hotkeyString}{profile.Name}";
@@ -121,15 +125,15 @@ namespace DeviceProfiles.App
                 Log.Error(nameof(OnProfileClick) + "Triggered by wrong type. Ignoring");
                 return; // not possible.
             }
-            var clickedProfile = _config.Profiles.FirstOrDefault(p => p.Name == menuItem.Name); // Get the clicked profile.
+            var clickedProfile = _profiles.FirstOrDefault(p => p.Id == int.Parse(menuItem.Name)); // Get the clicked profile.
             if(clickedProfile == null)
             {
                 Log.Error("Clicked profile not found from configuration.");
                 return; // not possible.
             }
-            Log.Info($"User selected profile {clickedProfile.Name} from the tray icon. Switching profile.");
+            Log.Info($"User selected profile {clickedProfile.Id}-{clickedProfile.Name} from the tray icon. Switching profile.");
 
-            if(await _controller.SetDisplayProfile(clickedProfile.Name, CancellationToken.None))
+            if(await _application.SetDisplayProfile(clickedProfile.Id, CancellationToken.None))
             {
                 Log.Info("Profile changed successfully!");
             }
@@ -146,7 +150,7 @@ namespace DeviceProfiles.App
         /// <param name="e"></param>
         private void OnCopyDataToClipboard(object? sender, EventArgs e)
         {
-            var displayData = _controller.GetRetrievedDisplayDataString();
+            var displayData = _application.GetRetrievedDisplayDataString();
             Clipboard.SetText(displayData);
         }
 
@@ -160,6 +164,7 @@ namespace DeviceProfiles.App
             Log.Info("Application close requested from tray icon context menu.");
             Exit();
         }
+
         /// <summary>
         /// Method closes and releases all required handles and closes the application.
         /// </summary>
@@ -167,9 +172,9 @@ namespace DeviceProfiles.App
         {
             Log.Debug("Shutting down the application..");
             _trayIcon.Visible = false; // Hide tray icon, so it won't remain there until hovered on.
-            _controller.Dispose(); // // Dispose the main controller.
+            _application.Dispose(); // // Dispose the main controller.
             Log.Info("Application shutting down.");
-            Application.Exit();
+            System.Windows.Forms.Application.Exit();
         }
     }
 }

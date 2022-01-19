@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices;
-using DeviceProfiles.App.Configuration;
-using DeviceProfiles.App.Control.Types;
+using DeviceProfiles.Classes;
 using NLog;
 using WinApi.User32.Display;
 using WinApi.User32.Display.NativeTypes;
 
-namespace DeviceProfiles.App.Control
+namespace DeviceProfiles.DeviceControllers
 {
     /// <summary>
     /// Class containing the functionality for controlling the displays of the system.
@@ -199,7 +198,7 @@ namespace DeviceProfiles.App.Control
         /// </summary>
         /// <param name="displaySettings">DisplaySettings of the profile.</param>
         /// <returns>A task representing the operation.</returns>
-        internal void SetDisplayProfile(ProfileDisplaySetting[] displaySettings)
+        internal void SetDisplayProfile(DeviceProfileDisplaySettings[] displaySettings)
         {
             Log.Trace($"Entering {nameof(SetDisplayProfile)}");
 

@@ -1,6 +1,9 @@
 ﻿using System;
-using System.Windows.Forms;
-using DeviceProfiles.App;
+using DeviceProfiles.Application;
+using Microsoft.Extensions.Configuration;
+using NLog;
+using NLog.Config;
+using NLog.Targets;
 
 namespace DeviceProfiles
 {
@@ -10,12 +13,49 @@ namespace DeviceProfiles
     internal class Program
     {
         /// <summary>
+        /// appsettings.json Configuration.
+        /// </summary>
+        private static readonly IConfiguration Configuration;
+        /// <summary>
+        /// Application context variable.
+        /// </summary>
+        private static DeviceProfilesApplicationContext? _appContext;
+
+        /// <summary>
+        /// Static constructor for reading configuration.
+        /// </summary>
+        static Program()
+        {
+            Configuration = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", true, true)
+                .Build();
+        }
+
+        /// <summary>
         /// The program starting point.
         /// </summary>
         [STAThread]
         private static void Main()
         {
-            Application.Run(new DeviceProfilesApplicationContext()); // TODO: is this properly disposed when exiting?
+            // Set Logging.
+            var logConfig = new LoggingConfiguration();
+            var fileTarget = new FileTarget
+            {
+                Name = "file",
+                FileName = "log/DeviceProfiles.log",
+                ArchiveFileName = "log/archive/DeviceProfiles-{#}.log",
+                ArchiveNumbering = ArchiveNumberingMode.Date,
+                ArchiveEvery = FileArchivePeriod.Day,
+                ArchiveDateFormat = "yyyyMMdd",
+            };
+            var logLevelStr = Configuration.GetSection("LogLevel").Value ?? "Off";
+            logConfig.AddRule(LogLevel.FromString(logLevelStr), LogLevel.Fatal, fileTarget);
+            LogManager.Configuration = logConfig;
+
+            // Create application context:
+            _appContext = new DeviceProfilesApplicationContext(Configuration);
+            // Run the application.
+            System.Windows.Forms.Application.Run(_appContext); // TODO: is this properly disposed when exiting?
         }
     }
 }

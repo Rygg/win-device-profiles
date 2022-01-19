@@ -3,16 +3,17 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using DeviceProfiles.App.Configuration;
-using DeviceProfiles.App.Control.Types;
+using DeviceProfiles.Classes;
+using DeviceProfiles.DeviceControllers;
+using DeviceProfiles.Enums;
 using NLog;
 
-namespace DeviceProfiles.App.Control
+namespace DeviceProfiles.Application
 {
     /// <summary>
     /// MainController class responsible for the application functionality.
     /// </summary>
-    internal sealed class MainController : IDisposable
+    internal sealed class ApplicationControl : IDisposable
     {
         private static readonly Logger Log = LogManager.GetCurrentClassLogger();
         /// <summary>
@@ -26,7 +27,7 @@ namespace DeviceProfiles.App.Control
         /// <summary>
         /// Stores the configuration with which the controller was started with.
         /// </summary>
-        private Profile[] _displayProfiles;
+        private DeviceProfile[] _displayProfiles;
         /// <summary>
         /// CancellationTokenSource controlling the background loop.
         /// </summary>
@@ -38,16 +39,16 @@ namespace DeviceProfiles.App.Control
         /// <summary>
         /// Default constructor for the MainController.
         /// </summary>
-        internal MainController()
+        internal ApplicationControl()
         {
             _displays = new DisplayController();
             _hotkeys = new HotKeyController();
-            _displayProfiles = Array.Empty<Profile>();
+            _displayProfiles = Array.Empty<DeviceProfile>();
         }
         /// <summary>
         /// Destructor for Disposing.
         /// </summary>
-        ~MainController()
+        ~ApplicationControl()
         {
             Dispose();
         }
@@ -55,11 +56,11 @@ namespace DeviceProfiles.App.Control
         /// <summary>
         /// Method starts the controller functionality with the configuration given as a parameter.
         /// </summary>
-        /// <param name="config">Configuration for the controller.</param>
-        internal void Start(AppConfiguration config)
+        /// <param name="profiles">Configuration for the controller.</param>
+        internal void Start(DeviceProfile[] profiles)
         {
             Log.Debug("Starting MainController functionality.");
-            _displayProfiles = config.Profiles; // Save profiles.
+            _displayProfiles = profiles; // Save profiles.
             _ = BackgroundHotKeyLoop(); // Start the background loop.
         }
 
@@ -76,18 +77,18 @@ namespace DeviceProfiles.App.Control
             
             foreach(var profile in _displayProfiles.Where(p => p.HotKey?.Key != null)) // Loop through profiles with hotkeys.
             {
-                Log.Debug($"Registering global hotkey for profile: {profile.Name}");
-                _hotkeys.RegisterHotKey(profile.Name, profile.HotKey!); // Register configured hotkey.
+                Log.Debug($"Registering global hotkey for profile: {profile.Id}-{profile.Name}");
+                _hotkeys.RegisterHotKey(profile.Id, profile.HotKey!); // Register configured hotkey.
             }
             Log.Debug("HotKeys registered");
             while(!_backgroundLoopCts.Token.IsCancellationRequested)
             {
                 var registrationEvent = await _hotkeys.GetHotKeyPressAsync(_backgroundLoopCts.Token);
                 _backgroundLoopCts.Token.ThrowIfCancellationRequested(); // Throw from the loop if cancelled.
-                Log.Debug($"HotKeyPress detected: Profile: {registrationEvent.ProfileName}, Modifiers: {(KeyModifiers)registrationEvent.Modifiers}, Key: {(Keys)registrationEvent.Key}");
-                Log.Info($"User switched profile by hotkey. Selected profile: {registrationEvent.ProfileName}");
+                Log.Debug($"HotKeyPress detected: ProfileId: {registrationEvent.ProfileId}, Modifiers: {(EKeyModifiers)registrationEvent.Modifiers}, Key: {(Keys)registrationEvent.Key}");
+                Log.Info($"User switched profile by hotkey. Selected profileId: {registrationEvent.ProfileId}");
 
-                if(await SetDisplayProfile(registrationEvent.ProfileName, _backgroundLoopCts.Token)) // Set the requested profile.
+                if(await SetDisplayProfile(registrationEvent.ProfileId, _backgroundLoopCts.Token)) // Set the requested profile.
                 {
                     Log.Info("Profile changed successfully!");
                 }
@@ -101,10 +102,10 @@ namespace DeviceProfiles.App.Control
         /// <summary>
         /// Set the profile to the selected profile.
         /// </summary>
-        /// <param name="profileName">Profile identifier.</param>
+        /// <param name="profileId">Profile identifier.</param>
         /// <param name="ct">CancellationToken</param>
         /// <returns>Boolean based on the operation success.</returns>
-        public async Task<bool> SetDisplayProfile(string profileName, CancellationToken ct)
+        public async Task<bool> SetDisplayProfile(int profileId, CancellationToken ct)
         {
             Log.Trace($"Entering {nameof(SetDisplayProfile)}");
             const int lockTimeoutMs = 2000; // Timeout for the 
@@ -119,14 +120,14 @@ namespace DeviceProfiles.App.Control
                     Log.Trace("Semaphore entered.");
                     reserved = true;
                     // Get profile data.
-                    var profileData = _displayProfiles.FirstOrDefault(p => p.Name == profileName);
+                    var profileData = _displayProfiles.FirstOrDefault(p => p.Id == profileId);
                     if(profileData == null)
                     {
-                        Log.Error($"No profile data found for profile: {profileName}");
+                        Log.Error($"No profile data found for profile {profileId}");
                         return false;
                     }
                     // Otherwise, apply the display profile.
-                    Log.Info($"Applying Profile {profileName}");
+                    Log.Info($"Applying Profile {profileId}-{profileData.Name}");
                     _displays.SetDisplayProfile(profileData.DisplaySettings);
                     Log.Info($"Profile applied.");
                     return true; // Return true if no exceptions.

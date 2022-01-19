@@ -1,76 +1,55 @@
 ﻿using System;
 using System.Linq;
 using System.Windows.Forms;
-using DeviceProfiles.App.Control.Types;
+using DeviceProfiles.Enums;
 using Microsoft.Extensions.Configuration;
-using NLog.Extensions.Logging;
 
-namespace DeviceProfiles.App.Configuration
+namespace DeviceProfiles.Classes
 {
     /// <summary>
-    /// Class contains the configuration for the application.
+    /// Class containing DeviceProfile
     /// </summary>
-    internal class AppConfiguration
+    internal class DeviceProfile
     {
         /// <summary>
-        /// Profile configuration.
+        /// Identifier of the profile.
         /// </summary>
-        internal Profile[] Profiles { get; }
+        public int Id { get; }
         /// <summary>
-        /// NLog configuration.
-        /// </summary>
-        internal NLogLoggingConfiguration NLog { get; }
-        /// <summary>
-        /// Builds configuration from read Configuration section.
-        /// </summary>
-        /// <param name="configuration"></param>
-        internal AppConfiguration(IConfiguration configuration)
-        {
-            var profiles = configuration.GetSection("Profiles").GetChildren()?.ToArray();
-            Profiles = profiles?.Any() == true ? profiles.Select(c => new Profile(c)).ToArray() : Array.Empty<Profile>();
-            NLog = new NLogLoggingConfiguration(configuration.GetRequiredSection("NLog")); // Required.
-        }
-    }
-    /// <summary>
-    /// Profile container.
-    /// </summary>
-    internal class Profile
-    {
-        /// <summary>
-        /// Name of the profile. Required.
+        /// Name of the profile.
         /// </summary>
         public string Name { get; }
         /// <summary>
         /// HotKey for triggering the profile. Not required.
         /// </summary>
-        public ProfileHotKey? HotKey { get; }
+        public DeviceProfileHotKey? HotKey { get; }
         /// <summary>
         /// DisplaySettings for the profile. Required.
         /// </summary>
-        public ProfileDisplaySetting[] DisplaySettings { get; }
-
+        public DeviceProfileDisplaySettings[] DisplaySettings { get; }
         /// <summary>
-        /// Build profile from the section.
+        /// Construct the class from configuration.
         /// </summary>
         /// <param name="profile">Profile-section</param>
-        internal Profile(IConfigurationSection profile)
+        internal DeviceProfile(IConfiguration profile)
         {
+            Id = int.Parse(profile.GetRequiredSection("Id").Value); // Required.
             Name = profile.GetRequiredSection("Name").Value;
-            var hotKeys = new ProfileHotKey(profile.GetSection("HotKey")); // Get hotkey section. Not required.
+            var hotKeys = new DeviceProfileHotKey(profile.GetSection("HotKey")); // Get hotkey section. Not required.
             HotKey = hotKeys.Key != null ? hotKeys : null; // Set null if no hot key was found.
                                                            // Get display settings. Required.
-            DisplaySettings = profile.GetRequiredSection("DisplaySettings").GetChildren().Select(c => new ProfileDisplaySetting(c)).ToArray();
+            DisplaySettings = profile.GetRequiredSection("DisplaySettings").GetChildren().Select(c => new DeviceProfileDisplaySettings(c)).ToArray();
         }
     }
     /// <summary>
     /// HotKey configuration. Contains flags for Modifiers and the actual key.
     /// </summary>
-    internal class ProfileHotKey
+    internal class DeviceProfileHotKey
     {
         /// <summary>
         /// Modifier keys required for the hotkey to trigger.
         /// </summary>
-        public KeyModifiers Modifiers { get; }
+        public EKeyModifiers Modifiers { get; }
         /// <summary>
         /// HotKey.
         /// </summary>
@@ -79,7 +58,7 @@ namespace DeviceProfiles.App.Configuration
         /// Build from configuration section.
         /// </summary>
         /// <param name="hotkeySection">HotKey section</param>
-        public ProfileHotKey(IConfigurationSection hotkeySection)
+        public DeviceProfileHotKey(IConfiguration hotkeySection)
         {
             // Try to parse key.
             if (!Enum.TryParse(typeof(Keys), hotkeySection.GetSection("Key")?.Value, out var keyValue))
@@ -88,17 +67,17 @@ namespace DeviceProfiles.App.Configuration
                 return;
             }
             Key = (Keys)(keyValue ?? throw new InvalidOperationException("Key was parsed to null.")); // Key found, set it.
-                                  
+
             var modifiers = hotkeySection.GetSection("Modifiers"); // Get modifier flags.
             var ctrl = Convert.ToBoolean(modifiers.GetSection("Ctrl").Value);
             var alt = Convert.ToBoolean(modifiers.GetSection("Alt").Value);
             var shift = Convert.ToBoolean(modifiers.GetSection("Shift").Value);
             var win = Convert.ToBoolean(modifiers.GetSection("Win").Value);
-            Modifiers |= Modifiers = KeyModifiers.None
-                | (ctrl ? KeyModifiers.Ctrl : KeyModifiers.None)
-                | (alt ? KeyModifiers.Alt : KeyModifiers.None)
-                | (shift ? KeyModifiers.Shift : KeyModifiers.None)
-                | (win ? KeyModifiers.Win : KeyModifiers.None);
+            Modifiers |= Modifiers = EKeyModifiers.None
+                | (ctrl ? EKeyModifiers.Ctrl : EKeyModifiers.None)
+                | (alt ? EKeyModifiers.Alt : EKeyModifiers.None)
+                | (shift ? EKeyModifiers.Shift : EKeyModifiers.None)
+                | (win ? EKeyModifiers.Win : EKeyModifiers.None);
         }
         /// <summary>
         /// Returns a regular hotkey format.
@@ -107,17 +86,17 @@ namespace DeviceProfiles.App.Configuration
         public override string ToString()
         {
             var modifierStr = string.Empty;
-            if(Modifiers != KeyModifiers.None)
+            if (Modifiers != EKeyModifiers.None)
             {
                 modifierStr = Modifiers.ToString().Replace(", ", "+");
-            } 
-            return (string.IsNullOrEmpty(modifierStr) ? Key.ToString() : modifierStr+"+"+Key) ?? string.Empty;
+            }
+            return (string.IsNullOrEmpty(modifierStr) ? Key.ToString() : modifierStr + "+" + Key) ?? string.Empty;
         }
     }
     /// <summary>
     /// Display settings.
     /// </summary>
-    internal class ProfileDisplaySetting
+    internal class DeviceProfileDisplaySettings
     {
         /// <summary>
         /// Display identifier to be used to link the display to the WinApi structures.
@@ -140,7 +119,7 @@ namespace DeviceProfiles.App.Configuration
         /// Build class from configuration section.
         /// </summary>
         /// <param name="displaySetting">The configuration section.</param>
-        internal ProfileDisplaySetting(IConfigurationSection displaySetting)
+        internal DeviceProfileDisplaySettings(IConfiguration displaySetting)
         {
             // Get display identifier or throw.
             DisplayId = uint.Parse(displaySetting.GetRequiredSection("DisplayId").Value);
@@ -153,6 +132,4 @@ namespace DeviceProfiles.App.Configuration
             RefreshRate = refreshRateStr != null ? Convert.ToInt32(refreshRateStr) : null;
         }
     }
-
 }
-

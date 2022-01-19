@@ -1,7 +1,7 @@
 ﻿using System;
 using WinApi.User32.Display.NativeTypes;
 
-namespace DeviceProfiles.App.Control.Types
+namespace DeviceProfiles.Classes
 {
     /// <summary>
     /// Class for containing display data.

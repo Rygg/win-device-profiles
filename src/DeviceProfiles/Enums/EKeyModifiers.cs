@@ -1,12 +1,12 @@
 ﻿using System;
 
-namespace DeviceProfiles.App.Control.Types
+namespace DeviceProfiles.Enums
 {
 	/// <summary>
 	/// KeyModifiers for hot key events.
 	/// </summary>
 	[Flags]
-    public enum KeyModifiers : uint
+    public enum EKeyModifiers : uint
     {
 		None = 0,
 		/// <summary>

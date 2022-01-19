@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Windows.Forms;
+using DeviceProfiles.Enums;
 
-namespace DeviceProfiles.App.Control.Types
+namespace DeviceProfiles.Classes
 {
     /// <summary>
     /// Event Arguments for the key press events.
@@ -11,13 +12,11 @@ namespace DeviceProfiles.App.Control.Types
         /// <summary>
         /// Pressed Modifier keys.
         /// </summary>
-        public KeyModifiers Modifier { get; }
-
+        public EKeyModifiers Modifier { get; }
         /// <summary>
         /// Pressed key.
         /// </summary>
         public Keys Key { get; }
-
         /// <summary>
         /// Hotkey registration Id.
         /// </summary>
@@ -28,7 +27,7 @@ namespace DeviceProfiles.App.Control.Types
         /// <param name="modifier"></param>
         /// <param name="key"></param>
         /// <param name="registrationId"></param>
-        internal KeyPressedEventArgs(KeyModifiers modifier, Keys key, int registrationId)
+        internal KeyPressedEventArgs(EKeyModifiers modifier, Keys key, int registrationId)
         {
             Modifier = modifier;
             Key = key;
