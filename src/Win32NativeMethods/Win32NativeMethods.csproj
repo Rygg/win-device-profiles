@@ -5,6 +5,7 @@
     <ApplicationIcon />
     <OutputType>Library</OutputType>
     <StartupObject />
+    <DebugType>embedded</DebugType>
   </PropertyGroup>
 
   <ItemGroup>

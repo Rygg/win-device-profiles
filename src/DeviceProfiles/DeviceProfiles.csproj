@@ -7,6 +7,7 @@
     <ApplicationIcon>Resources\Images\app.ico</ApplicationIcon>
     <Nullable>enable</Nullable>
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
+    <DebugType>embedded</DebugType>
   </PropertyGroup>
 
   <ItemGroup>
