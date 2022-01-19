@@ -47,6 +47,7 @@ namespace DeviceProfiles
                 ArchiveNumbering = ArchiveNumberingMode.Date,
                 ArchiveEvery = FileArchivePeriod.Day,
                 ArchiveDateFormat = "yyyyMMdd",
+                Layout = "${longdate}|${uppercase:${level}}|${logger}|${message}${onexception:${newline}${exception:format=tostring}"
             };
             var logLevelStr = Configuration.GetSection("LogLevel").Value ?? "Off";
             logConfig.AddRule(LogLevel.FromString(logLevelStr), LogLevel.Fatal, fileTarget);

@@ -33,7 +33,9 @@ namespace DeviceProfiles.Configuration
                 if (deviceProfiles?.Any() == true)
                 {
                     var profiles = deviceProfiles.Select(c => new DeviceProfile(c)).ToArray();
-                    Log.Debug($"Parsed {profiles.Length} device profiles from profile configuration file.");
+                    Log.Debug($"Parsed {profiles.Length} device profiles from profile configuration file. Validating.");
+                    ValidateConfiguration(profiles);
+                    Log.Debug("Valid.");
                     return profiles;
                 }
                 Log.Debug("No DeviceProfiles found");
@@ -44,6 +46,20 @@ namespace DeviceProfiles.Configuration
             {
                 Log.Error(ex, $"Exception occurred while parsing DeviceProfiles from {fileName}");
                 return Array.Empty<DeviceProfile>();
+            }
+        }
+
+        /// <summary>
+        /// Validates the configuration. Throws an exception if configuration is invalid.
+        /// </summary>
+        /// <param name="profiles"></param>
+        /// <exception cref="InvalidOperationException"></exception>
+        private static void ValidateConfiguration(DeviceProfile[] profiles)
+        {
+            var uniqueIds = profiles.DistinctBy(p => p.Id).ToArray().Length == profiles.Length; // Check that there is a correct amount of Ids.
+            if (!uniqueIds)
+            {
+                throw new InvalidOperationException("ProfileIds were not unique.");
             }
         }
     }
