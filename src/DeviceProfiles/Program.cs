@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Windows.Forms;
-using DisplayController.App;
+using DeviceProfiles.App;
 
-namespace DisplayController
+namespace DeviceProfiles
 {
     /// <summary>
     /// DisplayController program.
@@ -15,7 +15,7 @@ namespace DisplayController
         [STAThread]
         private static void Main()
         {
-            Application.Run(new DisplayControllerApplicationContext()); // TODO: is this properly disposed when exiting?
+            Application.Run(new DeviceProfilesApplicationContext()); // TODO: is this properly disposed when exiting?
         }
     }
 }

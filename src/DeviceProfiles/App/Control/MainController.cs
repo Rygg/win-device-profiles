@@ -1,13 +1,13 @@
-﻿using DisplayController.App.Configuration;
-using DisplayController.App.Control.Types;
-using NLog;
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using DeviceProfiles.App.Configuration;
+using DeviceProfiles.App.Control.Types;
+using NLog;
 
-namespace DisplayController.App.Control
+namespace DeviceProfiles.App.Control
 {
     /// <summary>
     /// MainController class responsible for the application functionality.

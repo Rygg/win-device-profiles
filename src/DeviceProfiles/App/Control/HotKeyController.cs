@@ -1,16 +1,16 @@
-﻿using DisplayController.App.Configuration;
-using DisplayController.App.Control.Types;
-using NLog;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using DeviceProfiles.App.Configuration;
+using DeviceProfiles.App.Control.Types;
+using NLog;
 using WinApi.User32.Keyboard;
 using WinApi.User32.Keyboard.NativeTypes;
 
-namespace DisplayController.App.Control
+namespace DeviceProfiles.App.Control
 {
     /// <summary>
     /// Controller for handling the hot key functionality.

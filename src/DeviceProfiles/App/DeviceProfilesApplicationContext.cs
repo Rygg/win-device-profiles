@@ -1,21 +1,20 @@
-﻿using DisplayController.App.Configuration;
-using DisplayController.App.Control;
-using DisplayController.App.Resources.Text;
-using Microsoft.Extensions.Configuration;
-using NLog;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using DeviceProfiles.App.Configuration;
+using DeviceProfiles.App.Control;
+using DeviceProfiles.App.Resources.Text;
+using Microsoft.Extensions.Configuration;
+using NLog;
 
-namespace DisplayController.App
+namespace DeviceProfiles.App
 {
     /// <summary>
     /// Application context for the DisplayController application.
     /// </summary>
-    internal sealed class DisplayControllerApplicationContext : ApplicationContext
+    internal sealed class DeviceProfilesApplicationContext : ApplicationContext
     {
         private static readonly Logger Log = LogManager.GetCurrentClassLogger();
         /// <summary>
@@ -33,7 +32,7 @@ namespace DisplayController.App
         /// <summary>
         /// Default constructor for the application context.
         /// </summary>
-        public DisplayControllerApplicationContext()
+        public DeviceProfilesApplicationContext()
         {
             var config = new ConfigurationBuilder().AddJsonFile("appsettings.json", optional: false, reloadOnChange: false).Build(); // Read config.
             _config = new AppConfiguration(config.GetRequiredSection("Configuration"));
@@ -55,7 +54,7 @@ namespace DisplayController.App
             var icon = new NotifyIcon
             {
                 Text = Strings.TrayIconTooltip,
-                Icon = new System.Drawing.Icon(typeof(DisplayControllerApplicationContext), "Resources.Images.app.ico"),
+                Icon = new System.Drawing.Icon(typeof(DeviceProfilesApplicationContext), "Resources.Images.app.ico"),
                 Visible = true,
                 ContextMenuStrip = CreateTrayIconContextMenu(profiles)
             };

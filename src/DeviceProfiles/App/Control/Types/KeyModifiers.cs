@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DisplayController.App.Control.Types
+namespace DeviceProfiles.App.Control.Types
 {
 	/// <summary>
 	/// KeyModifiers for hot key events.

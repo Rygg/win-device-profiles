@@ -1,15 +1,15 @@
-﻿using DisplayController.App.Configuration;
-using DisplayController.App.Control.Types;
-using NLog;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices;
+using DeviceProfiles.App.Configuration;
+using DeviceProfiles.App.Control.Types;
+using NLog;
 using WinApi.User32.Display;
 using WinApi.User32.Display.NativeTypes;
 
-namespace DisplayController.App.Control
+namespace DeviceProfiles.App.Control
 {
     /// <summary>
     /// Class containing the functionality for controlling the displays of the system.

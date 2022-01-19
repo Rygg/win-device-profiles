@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace DisplayController.App.Control.Types
+namespace DeviceProfiles.App.Control.Types
 {
     /// <summary>
     /// Event Arguments for the key press events.

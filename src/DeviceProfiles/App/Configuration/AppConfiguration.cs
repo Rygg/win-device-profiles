@@ -1,11 +1,11 @@
-﻿using DisplayController.App.Control.Types;
-using Microsoft.Extensions.Configuration;
-using NLog.Extensions.Logging;
-using System;
+﻿using System;
 using System.Linq;
 using System.Windows.Forms;
+using DeviceProfiles.App.Control.Types;
+using Microsoft.Extensions.Configuration;
+using NLog.Extensions.Logging;
 
-namespace DisplayController.App.Configuration
+namespace DeviceProfiles.App.Configuration
 {
     /// <summary>
     /// Class contains the configuration for the application.

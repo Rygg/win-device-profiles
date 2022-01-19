@@ -1,6 +1,6 @@
 ﻿using WinApi.User32.Keyboard.NativeTypes;
 
-namespace DisplayController.App.Control.Types
+namespace DeviceProfiles.App.Control.Types
 {
     /// <summary>
     /// Class structure for holding the necessary information about hot key registrations.
