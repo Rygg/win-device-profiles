@@ -28,7 +28,7 @@ namespace DeviceProfiles.Configuration
                 var deviceProfileConfiguration = new ConfigurationBuilder()
                     .AddJsonFile(fileName, true)
                     .Build();
-
+                
                 var deviceProfiles = deviceProfileConfiguration.GetRequiredSection("Profiles").GetChildren()?.ToArray();
                 if (deviceProfiles?.Any() == true)
                 {
@@ -63,14 +63,23 @@ namespace DeviceProfiles.Configuration
                 throw new InvalidOperationException("ProfileIds were not unique.");
             }
             // Check for more than one primary monitor.
-            if (profiles.Any(profile => profile.DisplaySettings.SingleOrDefault(ds => ds.PrimaryDisplay == true) == null))
+            if (profiles.Any(profile => profile.DisplaySettings.Count(ds => ds.PrimaryDisplay == true) > 1))
             {
-                throw new InvalidOperationException("More than one primary monitor set in a profile."); // Not reached.
+                throw new InvalidOperationException("More than one primary monitor set in a profile.");
             }
             // Check if displayIds are not unique in within a single profile.
             if (profiles.Select(profile => profile.DisplaySettings.Select(ds => ds.DisplayId).ToArray()).Any(displayIds => displayIds.Length != displayIds.Distinct().Count()))
             {
                 throw new InvalidOperationException("DisplayIds were not unique within a profile.");
+            }
+            // Get not-null hotkeys with the same key identifiers.
+            var nonUniqueKeyModifiers = profiles.Where(profile => profile.HotKey != null).Select(profile => profile.HotKey!) // Get HotKeys.
+                .GroupBy(key => key.Key) // Group by Key as it's a required value.
+                .Where(k => k.Count() > 1) // Select groups with more than one value.
+                .SelectMany(g => g.Select(k => k.Modifiers)).ToArray(); // Select each keys modifiers to an array.
+            if (nonUniqueKeyModifiers.Length != nonUniqueKeyModifiers.Distinct().Count()) // Make sure that the modifiers differ.
+            {
+                throw new InvalidOperationException("HotKeys were not unique within the profile file.");
             }
         }
     }

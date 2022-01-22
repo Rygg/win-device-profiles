@@ -36,11 +36,10 @@ namespace DeviceProfiles.Classes
         internal DeviceProfile(IConfiguration profile)
         {
             Id = int.Parse(profile.GetRequiredSection("Id").Value); // Required.
-            Name = profile.GetRequiredSection("Name").Value;
-            var hotKeys = new DeviceProfileHotKey(profile.GetSection("HotKey")); // Get hotkey section. Not required.
-            HotKey = hotKeys.Key != null ? hotKeys : null; // Set null if no hot key was found.
-                                                           // Get display settings. Required.
-            DisplaySettings = profile.GetRequiredSection("DisplaySettings").GetChildren().Select(c => new DeviceProfileDisplaySettings(c)).ToArray();
+            Name = profile.GetSection("Name").Value;
+            HotKey = DeviceProfileHotKey.FromConfigurationSection(profile.GetSection("HotKey")); // Get hotkey section. Not required.
+            // Get display settings:
+            DisplaySettings = DeviceProfileDisplaySettings.ArrayFromDisplaySettingsConfigurationSection(profile.GetRequiredSection("DisplaySettings"));
         }
         /// <summary>
         /// Method returns a summary string for the profile.
@@ -86,34 +85,52 @@ namespace DeviceProfiles.Classes
         /// <summary>
         /// HotKey.
         /// </summary>
-        internal Keys? Key { get; }
+        internal Keys Key { get; }
+
         /// <summary>
         /// Build from configuration section.
         /// </summary>
         /// <param name="hotkeySection">HotKey section</param>
-        internal DeviceProfileHotKey(IConfiguration hotkeySection)
+        /// <exception cref="InvalidOperationException">Parsing failed.</exception>
+        internal static DeviceProfileHotKey? FromConfigurationSection(IConfigurationSection hotkeySection)
         {
+            if (!hotkeySection.Exists())
+            {
+                return null;
+            }
             // Try to parse key.
             if (!Enum.TryParse(typeof(Keys), hotkeySection.GetSection("Key")?.Value, out var keyValue))
             {
-                Key = null; // Set key to null and return.
-                return;
+                throw new InvalidOperationException("Key could not be parsed.");
             }
-            Key = (Keys)(keyValue ?? throw new InvalidOperationException("Key was parsed to null.")); // Key found, set it.
+            var key = (Keys)(keyValue ?? throw new InvalidOperationException("Key was parsed to null.")); // Key found, set it.
 
             var modifiers = hotkeySection.GetSection("Modifiers"); // Get modifier flags.
             var ctrl = Convert.ToBoolean(modifiers.GetSection("Ctrl").Value);
             var alt = Convert.ToBoolean(modifiers.GetSection("Alt").Value);
             var shift = Convert.ToBoolean(modifiers.GetSection("Shift").Value);
             var win = Convert.ToBoolean(modifiers.GetSection("Win").Value);
-            Modifiers |= Modifiers = EKeyModifiers.None
+            var mods = EKeyModifiers.None
                 | (ctrl ? EKeyModifiers.Ctrl : EKeyModifiers.None)
                 | (alt ? EKeyModifiers.Alt : EKeyModifiers.None)
                 | (shift ? EKeyModifiers.Shift : EKeyModifiers.None)
                 | (win ? EKeyModifiers.Win : EKeyModifiers.None);
+
+            return new DeviceProfileHotKey(key, mods);
         }
         /// <summary>
-        /// Returns a regular hotkey format.
+        /// Private constructor.
+        /// </summary>
+        /// <param name="key">Key</param>
+        /// <param name="mods">Modifiers</param>
+        private DeviceProfileHotKey(Keys key, EKeyModifiers mods)
+        {
+            Key = key;
+            Modifiers = mods;
+        }
+
+        /// <summary>
+        /// Returns a standard hotkey format.
         /// </summary>
         /// <returns></returns>
         public override string ToString()
@@ -147,22 +164,47 @@ namespace DeviceProfiles.Classes
         /// Should RefreshRate be switched for this display. Null for no change.
         /// </summary>
         internal int? RefreshRate { get; } = null;
+        
+        /// <summary>
+        /// Builds an array of display settings from the configuration parameter.
+        /// </summary>
+        /// <param name="displaySetting"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException">Parsing failed.</exception>
+        internal static DeviceProfileDisplaySettings[] ArrayFromDisplaySettingsConfigurationSection(IConfigurationSection displaySetting)
+        {
+            var children = displaySetting.GetChildren().ToArray();
+            if (!children.Any())
+            {
+                throw new InvalidOperationException("DisplaySettings not be parsed.");
+            }
+
+            return (
+                from child in children
+                    let displayId = uint.Parse(child.GetRequiredSection("DisplayId").Value)
+                    let primaryStr = child.GetSection("Primary")?.Value
+                    let primaryDisplay = (bool?)(primaryStr != null ? Convert.ToBoolean(primaryStr) : null)
+                    let hdrStr = child.GetSection("HDR")?.Value
+                    let enableHdr = (bool?)(hdrStr != null ? Convert.ToBoolean(hdrStr) : null)
+                    let refreshRateStr = child.GetSection("RefreshRate")?.Value
+                    let refreshRate = (int?)(refreshRateStr != null ? Convert.ToInt32(refreshRateStr) : null)
+                select new DeviceProfileDisplaySettings(displayId, primaryDisplay, enableHdr, refreshRate)
+                ).ToArray();
+        }
 
         /// <summary>
-        /// Build class from configuration section.
+        /// Private constructor.
         /// </summary>
-        /// <param name="displaySetting">The configuration section.</param>
-        internal DeviceProfileDisplaySettings(IConfiguration displaySetting)
+        /// <param name="displayId">DisplayId</param>
+        /// <param name="primary">PrimaryDisplay</param>
+        /// <param name="hdr">EnableHdr</param>
+        /// <param name="refreshRate">RefreshRate</param>
+        private DeviceProfileDisplaySettings(uint displayId, bool? primary, bool? hdr, int? refreshRate)
         {
-            // Get display identifier or throw.
-            DisplayId = uint.Parse(displaySetting.GetRequiredSection("DisplayId").Value);
-            // Others are optional.
-            var primaryStr = displaySetting.GetSection("Primary")?.Value;
-            PrimaryDisplay = primaryStr != null ? Convert.ToBoolean(primaryStr) : null;
-            var hdrStr = displaySetting.GetSection("HDR")?.Value;
-            EnableHdr = hdrStr != null ? Convert.ToBoolean(hdrStr) : null;
-            var refreshRateStr = displaySetting.GetSection("RefreshRate")?.Value;
-            RefreshRate = refreshRateStr != null ? Convert.ToInt32(refreshRateStr) : null;
+            DisplayId = displayId;
+            PrimaryDisplay = primary;
+            EnableHdr = hdr;
+            RefreshRate = refreshRate;
         }
     }
 }
