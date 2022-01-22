@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeviceProfiles", "src\Devic
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Win32NativeMethods", "src\Win32NativeMethods\Win32NativeMethods.csproj", "{8474B628-4175-4042-ACA0-311C45337899}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeviceProfilesTests", "tests\DeviceProfiles.Tests\DeviceProfiles.Tests.csproj", "{BDCF949A-D2AF-412D-B22E-2A606976002E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeviceProfiles.Tests", "tests\DeviceProfiles.Tests\DeviceProfiles.Tests.csproj", "{BDCF949A-D2AF-412D-B22E-2A606976002E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{7E033E1A-ED59-405E-A147-068C780488A5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,6 +32,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BDCF949A-D2AF-412D-B22E-2A606976002E} = {7E033E1A-ED59-405E-A147-068C780488A5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {ED605C05-FAED-472F-B564-1A86B8EB127A}
