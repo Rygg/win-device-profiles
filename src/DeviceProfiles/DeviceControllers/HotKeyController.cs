@@ -49,10 +49,6 @@ namespace DeviceProfiles.DeviceControllers
         internal void RegisterHotKey(int profileId, DeviceProfileHotKey hotKey)
         {
             var fsModifiers = (FsModifiers)hotKey.Modifiers;
-            if (hotKey.Key == null)
-            {
-                throw new ArgumentNullException(nameof(hotKey.Key), @"The key was null");
-            }
             var key = (uint)hotKey.Key;
 
             var alreadyRegistered = _registeredHotKeys.Any(r => r.Key == key && (int)r.Modifiers == (int)fsModifiers); // Check if key combination is already registered.
