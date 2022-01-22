@@ -1,0 +1,26 @@
+{
+  "Profiles": [
+    {
+      "Id": 1,
+      "Name": "TestProfile1",
+      "DisplaySettings": [
+        {
+          "DisplayId": 0,
+          "Primary": true,
+          "HDR": true,
+          "RefreshRate": 60
+        }
+      ]
+    },
+    {
+      "Id": 2, 
+      "Name": "TestProfile2",
+      "DisplaySettings": [
+        {
+          "DisplayId": 0,
+          "Primary": true
+        }
+      ]
+    }
+  ]
+}

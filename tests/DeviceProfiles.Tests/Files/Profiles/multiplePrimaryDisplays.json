@@ -1,0 +1,18 @@
+{
+  "Profiles": [
+    {
+      "Id": 1,
+      "Name": "TestProfile1",
+      "DisplaySettings": [
+        {
+          "DisplayId": 0,
+          "Primary": true
+        },
+        {
+          "DisplayId": 1,
+          "Primary": true
+        }
+      ]
+    }
+  ]
+}

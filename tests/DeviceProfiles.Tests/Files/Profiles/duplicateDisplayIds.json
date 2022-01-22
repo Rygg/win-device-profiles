@@ -1,0 +1,35 @@
+{
+  "Profiles": [
+    {
+      "Id":  1,
+      "Name": "TestProfile1",
+      "HotKey": {
+        "Modifiers": {
+          "Ctrl": true,
+          "Shift": false,
+          "Alt": true,
+          "Win": false
+        },
+        "Key": "NumPad1"
+      },
+      "DisplaySettings": [
+        {
+          "DisplayId": 0,
+          "Primary": true
+        },
+        {
+          "DisplayId": 0,
+          "Primary": false,
+          "HDR": false,
+          "RefreshRate": 60
+        },
+        {
+          "DisplayId": 1,
+          "Primary": false,
+          "HDR": false,
+          "RefreshRate": 60
+        }
+      ]
+    }
+  ]
+}

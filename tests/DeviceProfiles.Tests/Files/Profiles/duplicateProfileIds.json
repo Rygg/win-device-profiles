@@ -1,0 +1,42 @@
+{
+  "Profiles": [
+    {
+      "Id":  1, 
+      "Name": "TestProfile1",
+      "HotKey": {
+        "Modifiers": {
+          "Ctrl": true,
+          "Shift": false,
+          "Alt": true,
+          "Win": false
+        },
+        "Key": "NumPad1"
+      },
+      "DisplaySettings": [
+        {
+          "DisplayId": 0,
+          "HDR": false
+        }
+      ]
+    },
+    {
+      "Id": 1, 
+      "Name": "TestProfile2",
+      "HotKey": {
+        "Modifiers": {
+          "Ctrl": true,
+          "Shift": false,
+          "Alt": true,
+          "Win": false
+        },
+        "Key": "NumPad2"
+      },
+      "DisplaySettings": [
+        {
+          "DisplayId": 0,
+          "HDR": true
+        }
+      ]
+    }
+  ]
+}

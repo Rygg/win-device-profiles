@@ -1,0 +1,79 @@
+{
+  "Profiles": [
+    {
+      "Id":  1, 
+      "Name": "TestProfile1",
+      "HotKey": {
+        "Key": "NumPad1"
+      },
+      "DisplaySettings": [
+        {
+          "DisplayId": 0,
+          "Primary": true
+        },
+        {
+          "DisplayId": 1,
+          "Primary": false,
+          "HDR": true,
+          "RefreshRate": 60
+        }
+      ]
+    },
+    {
+      "Id": 2, 
+      "Name": "TestProfile2",
+      "HotKey": {
+        "Modifiers": {
+          "Ctrl": true,
+          "Alt": true
+        },
+        "Key": "NumPad2"
+      },
+      "DisplaySettings": [
+        {
+          "DisplayId": 2,
+          "Primary": true
+        },
+        {
+          "DisplayId": 5,
+          "HDR": false 
+        }
+      ]
+    },
+    {
+      "Id": 3, 
+      "Name": "TestProfile3",
+      "HotKey": {
+        "Modifiers": {
+          "Ctrl": true,
+          "Shift": false,
+          "Alt": true,
+          "Win": false
+        },
+        "Key": "NumPad3"
+      },
+      "DisplaySettings": [
+        {
+          "DisplayId": 0,
+          "HDR": false
+        },
+        {
+          "DisplayId": 1,
+          "HDR": false
+        },
+        {
+          "DisplayId": 2,
+          "HDR": false
+        },
+        {
+          "DisplayId": 3,
+          "HDR": false
+        },
+        {
+          "DisplayId": 4,
+          "HDR": false
+        }
+      ]
+    }
+  ]
+}

@@ -9,19 +9,18 @@
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
     <DebugType>embedded</DebugType>
   </PropertyGroup>
-
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Images\app.ico" />
-  </ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>$(AssemblyName).Tests</_Parameter1>
+    </AssemblyAttribute>
+</ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
     <PackageReference Include="NLog" Version="4.7.13" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\Win32NativeMethods\Win32NativeMethods.csproj" />
   </ItemGroup>
-
   <ItemGroup>
     <Compile Update="Resources\Text\Strings.Designer.cs">
       <DesignTime>True</DesignTime>
@@ -29,14 +28,15 @@
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
   </ItemGroup>
-
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Images\app.ico" />
+  </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="Resources\Text\Strings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-
   <ItemGroup>
     <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
