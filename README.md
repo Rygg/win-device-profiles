@@ -4,7 +4,7 @@ This project is designed to create support for switching between different devic
 
 The application runs in the system tray, and profiles can be enabled either by pressing configured hotkey combinations or by clicking the desired profile from the tray icon context menu. The ideal functionality is achieved by setting the application to automatically start up with Windows.
 
-The project is built using [.NET 6.0](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) and it uses the user32.dll of the Win32 API to control the user devices. This project also uses the [NLog](https://nlog-project.org/) library for logging.
+The project is built using [.NET 6.0](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) and it uses the user32.dll of the Win32 API to control the user devices. This project also uses the [NLog](https://nlog-project.org/) library for logging and the [NUnit](https://nunit.org/) library for tests.
 
 ## Tools ##
 Project is currently developed using [Microsoft Visual Studio 2022](https://visualstudio.microsoft.com/vs/).
