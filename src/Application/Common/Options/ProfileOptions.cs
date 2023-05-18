@@ -1,13 +1,21 @@
-﻿using Domain.Models;
+﻿using Domain.Enums;
+using Domain.Models;
 
 namespace Application.Common.Options;
 
+/// <summary>
+/// Configuration Model for ProfileOptions section.
+/// </summary>
 public sealed record ProfileOptions
 {
-    public const string RootSectionName = "Profiles";
-
+    /// <summary>
+    /// List of all configured profiles.
+    /// </summary>
     public IEnumerable<DeviceProfileOptions> Profiles { get; init; } = new List<DeviceProfileOptions>();
 
+    /// <summary>
+    /// Validate the configuration file.
+    /// </summary>
     public static bool Validate(ProfileOptions options)
     {
         if (options == null)
@@ -15,15 +23,13 @@ public sealed record ProfileOptions
             throw new ArgumentNullException(nameof(options));
         }
 
-        foreach (var profile in options.Profiles)
-        {
-            return DeviceProfileOptions.Validate(profile);
-        }
-
-        return true;
+        return options.Profiles.All(p => p.Validate());
     }
 }
 
+/// <summary>
+/// Model for DeviceProfiles in the options file.
+/// </summary>
 public sealed record DeviceProfileOptions
 {
     /// <summary>
@@ -36,17 +42,100 @@ public sealed record DeviceProfileOptions
     /// </summary>
     public string Name { get; init; } = string.Empty;
     /// <summary>
-    /// HotKey for triggering the profile. Not required.
+    /// HotKey configuration for the profile.
     /// </summary>
-    public HotKeyCombination? HotKey { get; init; }
+    public HotKeyOptions? HotKey { get; init; }
+
 
     /// <summary>
-    /// DisplaySettings for the profile. Required.
+    /// Validate the profile.
     /// </summary>
-    //internal DeviceProfileDisplaySettings[] DisplaySettings { get; }
-
-    public static bool Validate(DeviceProfileOptions options)
+    /// <returns></returns>
+    public bool Validate()
     {
-        return true; // TODO:
+        if (Id == default)
+        {
+            return false;
+        }
+
+        if (string.IsNullOrWhiteSpace(Name))
+        {
+            return false;
+        }
+
+        if (HotKey?.Validate() == false)
+        {
+            return false;
+        }
+        return true; // TODO: Display.
+    }
+
+    /// <summary>
+    /// Transform this configuration model to the Domain level <see cref="DeviceProfile"/>.
+    /// </summary>
+    public DeviceProfile ToDeviceProfile()
+    {
+        return new DeviceProfile
+        {
+            Id = Id,
+            Name = Name,
+            HotKey = HotKey?.ToHotKeyCombination(),
+        };
+    }
+
+}
+
+/// <summary>
+/// Model for the HotKey options in the options file.
+/// </summary>
+public sealed record HotKeyOptions
+{ 
+    public SupportedKeys Key { get; init; }
+    public ModifierOptions Modifiers { get; init; } = new();
+
+    /// <summary>
+    /// Validate.
+    /// </summary>
+    public bool Validate()
+    {
+        return Key != SupportedKeys.None;
+    }
+
+    /// <summary>
+    /// Convert this setting model to a domain level <see cref="HotKeyCombination"/>
+    /// </summary>
+    /// <returns></returns>
+    public HotKeyCombination ToHotKeyCombination()
+    {
+        return new HotKeyCombination
+        {
+            Key = Key,
+            Modifiers = Modifiers.ToSupportedKeyModifiers()
+        };
+
+    }
+}
+
+/// <summary>
+/// Modifier options model.
+/// </summary>
+public sealed record ModifierOptions
+{
+    public bool Ctrl { get; init; }
+    public bool Shift { get; init; }
+    public bool Alt { get; init; }
+    public bool Win { get; init; }
+
+    /// <summary>
+    /// Convert this options model into the domain level flagged enumeration value.
+    /// </summary>
+    /// <returns></returns>
+    public SupportedKeyModifiers ToSupportedKeyModifiers()
+    {
+        return SupportedKeyModifiers.None
+               | (Ctrl ? SupportedKeyModifiers.Ctrl : SupportedKeyModifiers.None)
+               | (Alt ? SupportedKeyModifiers.Alt : SupportedKeyModifiers.None)
+               | (Shift ? SupportedKeyModifiers.Shift : SupportedKeyModifiers.None)
+               | (Win ? SupportedKeyModifiers.Win : SupportedKeyModifiers.None);
     }
 }

@@ -1,7 +1,9 @@
-﻿using Infrastructure.Common.Interfaces;
+﻿using Infrastructure.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using WindowsTrayApplication.Components;
 using WindowsTrayApplication.Components.HotKeys;
+using WindowsTrayApplication.Components.TrayIcon;
 
 namespace WindowsTrayApplication.Extensions;
 
@@ -20,6 +22,8 @@ internal static class ServiceCollectionExtensions
         hostBuilder.ConfigureServices(services =>
         {
             services.AddSingleton<IWindowsHotKeyEventSender, KeyboardHotKeyHandle>(); // Add keyboard hot key handle as singleton.
+            services.AddSingleton<ApplicationTrayIconBuilder>();
+            services.AddSingleton<DeviceProfilesApplicationContext>();
             services.ConfigureLogging();
         });
         return hostBuilder;

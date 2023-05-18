@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.Common.Interfaces;
+﻿namespace Infrastructure.Interfaces;
 
 public interface IWindowsHotKeyEventSender : IHotKeyEventSender
 {

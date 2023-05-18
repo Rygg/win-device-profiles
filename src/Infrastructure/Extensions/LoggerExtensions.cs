@@ -1,10 +1,9 @@
-﻿
-using Domain.Enums;
+﻿using Domain.Enums;
 using Domain.Models;
-using Infrastructure.Common.Interfaces.Args;
+using Infrastructure.Interfaces.Models;
 using Microsoft.Extensions.Logging;
 
-namespace Infrastructure.Common.Extensions;
+namespace Infrastructure.Extensions;
 
 public static partial class LoggerExtensions
 {

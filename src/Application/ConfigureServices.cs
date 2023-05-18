@@ -1,5 +1,4 @@
 ﻿using Application.Common.Options;
-using Application.Features.Background;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -22,7 +21,10 @@ public static class ConfigureServices
         {
             services
                 .AddApplicationOptions(context)
-                .AddHostedService<BackgroundHotKeyService>();
+                .AddMediatR(cfg =>
+                {
+                    cfg.RegisterServicesFromAssembly(typeof(ConfigureServices).Assembly);
+                });
         });
         return builder;
     }
@@ -34,7 +36,7 @@ public static class ConfigureServices
     {
         services
             .AddOptions<ProfileOptions>()
-            .Bind(builder.Configuration.GetSection(ProfileOptions.RootSectionName))
+            .Bind(builder.Configuration.GetSection(nameof(ProfileOptions)))
             .Validate(ProfileOptions.Validate);
         
         return services;

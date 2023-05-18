@@ -1,10 +1,10 @@
 ﻿using Application.Common.Interfaces;
 using Domain.Models;
-using Infrastructure.Common.Extensions;
-using Infrastructure.Common.Interfaces;
-using Infrastructure.Common.Interfaces.Args;
 using Infrastructure.Environment.Windows.Common.User32;
 using Infrastructure.Environment.Windows.Common.User32.NativeTypes.Enums;
+using Infrastructure.Extensions;
+using Infrastructure.Interfaces;
+using Infrastructure.Interfaces.Models;
 using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Environment.Windows.Services.Keyboard;

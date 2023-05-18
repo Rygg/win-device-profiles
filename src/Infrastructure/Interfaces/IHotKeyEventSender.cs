@@ -1,6 +1,6 @@
-﻿using Infrastructure.Common.Interfaces.Args;
+﻿using Infrastructure.Interfaces.Models;
 
-namespace Infrastructure.Common.Interfaces;
+namespace Infrastructure.Interfaces;
 
 /// <summary>
 /// Interface for key events.

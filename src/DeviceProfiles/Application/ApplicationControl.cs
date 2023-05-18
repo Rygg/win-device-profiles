@@ -168,6 +168,7 @@ namespace DeviceProfiles.Application
             _profileSwitchLock.Dispose();
             _hotkeys.Dispose(); // Dispose the hotkeys handler.
             Log.Trace("Disposed.");
+            GC.SuppressFinalize(this);
         }
     }
 }

@@ -3,7 +3,6 @@
 /// <summary>
 /// Enumeration for Supported Keys by the application. These values are an identical match for Windows Forms Keys enumeration, so the conversion should be identical.
 /// </summary>
-[Flags]
 public enum SupportedKeys
 {
     //
@@ -539,7 +538,9 @@ public enum SupportedKeys
     //
     // Summary:
     //     The decimal key.
+#pragma warning disable CA1720
     Decimal = 110,
+#pragma warning restore CA1720
 
     //
     // Summary:

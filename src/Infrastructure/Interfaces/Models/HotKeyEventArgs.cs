@@ -1,6 +1,6 @@
 ﻿using Domain.Enums;
 
-namespace Infrastructure.Common.Interfaces.Args;
+namespace Infrastructure.Interfaces.Models;
 
 /// <summary>
 /// Event Arguments for the key press events.
