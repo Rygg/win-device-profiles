@@ -1,5 +1,6 @@
 ﻿using Application.Common.Interfaces;
 using Domain.Models;
+using Infrastructure.Common.Extensions;
 using Infrastructure.Common.Interfaces;
 using Infrastructure.Common.Interfaces.Args;
 using Infrastructure.Environment.Windows.Common.User32;
@@ -35,6 +36,10 @@ public sealed class KeyboardHotKeyService : IHotKeyTrigger, IDisposable
     /// <exception cref="InvalidOperationException">HotKey could not be registered.</exception>
     public async Task RegisterHotKeyAsync(HotKeyCombination hotKey, CancellationToken ct)
     {
+        if (hotKey == null)
+        {
+            throw new ArgumentNullException(nameof(hotKey));
+        }
         const int timeoutMs = 1000;
 
         var fsModifiers = (FsModifiers)hotKey.Modifiers;
@@ -47,20 +52,19 @@ public sealed class KeyboardHotKeyService : IHotKeyTrigger, IDisposable
                 var alreadyRegistered = RegisteredCombinations.Values.Any(r => (uint)r.Key == key && (int)r.Modifiers == (int)fsModifiers); // Check if key combination is already registered.
                 if (alreadyRegistered)
                 {
-                    _logger.LogWarning("Key combination {KeyCombination} is already registered. Returning.", hotKey);
+                    _logger.KeyCombinationAlreadyRegistered(hotKey);
                     return;
                 }
 
                 _currentKeyRegistrationId++; // Increment the operation counter. Registration starts from 1 -->
-                _logger.LogDebug($"Registering global hot key for the application. HotKeyId: {_currentKeyRegistrationId}. Modifiers: {hotKey.Modifiers}, Key: {hotKey.Key}");
-
+                _logger.RegisteringGlobalHotKey(_currentKeyRegistrationId, hotKey);
                 if (!HotKey.RegisterHotKey(_eventSender.Handle, _currentKeyRegistrationId, fsModifiers, key)) // Register the hot key.
                 {
                     throw new InvalidOperationException($"Key combination {hotKey} could not be registered due to Native Windows error.");
                 }
 
                 RegisteredCombinations.Add(_currentKeyRegistrationId, hotKey); // Add to registered hot keys.
-                _logger.LogInformation("Key combination {KeyCombination} registered.", hotKey);
+                _logger.KeyCombinationRegistered(hotKey);
                 return;
             }
             finally
@@ -84,10 +88,9 @@ public sealed class KeyboardHotKeyService : IHotKeyTrigger, IDisposable
         // local function as action for the event.
         void RequestAction(HotKeyEventArgs args)
         {
-
             if(!RegisteredCombinations.ContainsKey(args.RegistrationId))
             {
-                _logger.LogError("HotKeyRegistration not found for the received event: {Event}.", args);
+                _logger.ReceivedHotKeyEventNotRegistered(args);
                 tcs.TrySetException(new ArgumentOutOfRangeException(nameof(args.RegistrationId),"HotKeyRegistration not found for the received event."));
                 return;
             }
@@ -111,14 +114,14 @@ public sealed class KeyboardHotKeyService : IHotKeyTrigger, IDisposable
     /// </summary>
     public void Dispose()
     {
-        _logger.LogTrace("Disposing..");
+        _logger.StartingDispose();
         // Unregister all hotkeys registered. This can be done by looping from currentHotKeyRegistrationId to 1.
-        for (var i = _currentKeyRegistrationId; i > 0; i--)
+        foreach (var registration in RegisteredCombinations)
         {
-            _logger.LogDebug("Unregister hot key registration: RegistrationId: {KeyRegistrationId}", _currentKeyRegistrationId);
-            HotKey.UnregisterHotKey(_eventSender.Handle, i); // Unregister.
+            _logger.UnregisterGlobalHotKey(registration.Key, registration.Value);
+            HotKey.UnregisterHotKey(_eventSender.Handle, registration.Key);
         }
-        _logger.LogTrace("Disposed.");
+        _logger.DisposingCompleted();
         // TODO: Need to dispose handler window? 
     }
 }

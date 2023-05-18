@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>net7.0-windows</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <AnalysisLevel>latest-all</AnalysisLevel>
     <Nullable>warnings</Nullable>
+    <AnalysisLevel>latest-all</AnalysisLevel>
     <OutputType>WinExe</OutputType>
     <Forms>True</Forms>
     <UseWindowsForms>True</UseWindowsForms>
