@@ -16,6 +16,6 @@ public sealed class GetCurrentDevicesQueryHandler : IRequestHandler<GetCurrentDe
 
     public async Task<string> Handle(GetCurrentDevicesQuery request, CancellationToken cancellationToken)
     {
-        return await _displayDeviceController.GetCurrentDisplayInformationString().ConfigureAwait(false);
+        return await _displayDeviceController.GetCurrentDisplayInformationString(cancellationToken).ConfigureAwait(false);
     }
 }

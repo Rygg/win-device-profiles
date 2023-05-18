@@ -55,7 +55,7 @@ public sealed class SetProfileCommandHandler : IRequestHandler<ActivateProfileCo
                              throw new ArgumentException(nameof(request.ProfileId), $"Profile with identifier {request.ProfileId} not found from the configuration"); ; // Get the clicked profile.
         
 
-        if (await _displayDeviceController.ChangeDisplaySettings(clickedProfile).ConfigureAwait(false))
+        if (await _displayDeviceController.ChangeDisplaySettings(clickedProfile, cancellationToken).ConfigureAwait(false))
         {
             _logger.DisplayProfileChanged();
         }

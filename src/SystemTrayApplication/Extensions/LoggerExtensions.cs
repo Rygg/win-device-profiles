@@ -33,6 +33,24 @@ public static partial class LoggerExtensions
     public static partial void StartingShutdown(this ILogger logger);
 
     [LoggerMessage(
+            EventId = 612,
+            EventName = nameof(AddedProfileToContextMenu),
+            Level = LogLevel.Debug,
+            Message = "Added {ProfileText} to context menu profiles."
+        )
+    ]
+    public static partial void AddedProfileToContextMenu(this ILogger logger, string profileText);
+
+    [LoggerMessage(
+            EventId = 613,
+            EventName = nameof(CreatedContextMenu),
+            Level = LogLevel.Debug,
+            Message = "Created ContextMenu for the tray icon."
+        )
+    ]
+    public static partial void CreatedContextMenu(this ILogger logger);
+
+    [LoggerMessage(
             EventId = 621,
             EventName = nameof(ApplicationShuttingDown),
             Level = LogLevel.Information,
@@ -40,24 +58,15 @@ public static partial class LoggerExtensions
         )
     ]
     public static partial void ApplicationShuttingDown(this ILogger logger);
-    
-    [LoggerMessage(
-            EventId = 622,
-            EventName = nameof(AddedProfileToContextMenu),
-            Level = LogLevel.Information,
-            Message = "Added {ProfileText} to context menu profiles."
-        )
-    ]
-    public static partial void AddedProfileToContextMenu(this ILogger logger, string profileText);
 
     [LoggerMessage(
-            EventId = 623,
-            EventName = nameof(CreatedContextMenu),
-            Level = LogLevel.Debug,
-            Message = "Created ContextMenu for the tray icon."
+            EventId = 622,
+            EventName = nameof(CopiedInformationToClipboard),
+            Level = LogLevel.Information,
+            Message = "Copied device information to clipboard. {DeviceInformation}"
         )
     ]
-    public static partial void CreatedContextMenu(this ILogger logger);
+    public static partial void CopiedInformationToClipboard(this ILogger logger, string deviceInformation);
 
     [LoggerMessage(
             EventId = 651,

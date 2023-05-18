@@ -71,8 +71,9 @@ public sealed class DeviceProfilesApplicationContext : ApplicationContext
     /// </summary>
     private void OnCopyDataToClipboard(object? sender, EventArgs e)
     {
-        var displayData = _mediatR.Send(new GetCurrentDevicesQuery(), _applicationCts.Token).GetAwaiter().GetResult();
-        Clipboard.SetText(displayData);
+        var deviceData = _mediatR.Send(new GetCurrentDevicesQuery(), _applicationCts.Token).GetAwaiter().GetResult();
+        Clipboard.SetText(deviceData);
+        _logger.CopiedInformationToClipboard(deviceData);
     }
 
     /// <summary>

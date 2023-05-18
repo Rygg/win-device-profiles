@@ -13,13 +13,13 @@ public sealed class DisplayDeviceService : IDisplayDeviceController
         _logger = logger;
     }
 
-    public Task<bool> ChangeDisplaySettings(DeviceProfile profile)
+    public Task<bool> ChangeDisplaySettings(DeviceProfile profile, CancellationToken cancellationToken)
     {
         return Task.FromResult(false);
     }
 
-    public Task<string> GetCurrentDisplayInformationString()
+    public Task<string> GetCurrentDisplayInformationString(CancellationToken cancellationToken)
     {
-        return Task.FromResult(string.Empty);
+        return Task.FromResult("TODO");
     }
 }
