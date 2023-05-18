@@ -50,7 +50,7 @@ namespace Win32NativeMethods.User32.Display
         /// To retrieve information for all the graphics modes of a display device, make a series of calls to this function.
         /// </summary>
         /// <param name="deviceName">A pointer to a null-terminated string that specifies the display device about whose graphics mode the function will obtain information. This parameter is either NULL or a DISPLAY_DEVICE.DeviceName returned from EnumDisplayDevices.A NULL value specifies the current display device on the computer on which the calling thread is running.</param>
-        /// <param name="modeNum">Graphics mode indexes start at zero. To obtain information for all of a display device's graphics modes, make a series of calls to EnumDisplaySettings, as follows: Set iModeNum to zero for the first call, and increment iModeNum by one for each subsequent call. Continue calling the function until the return value is zero.
+        /// <param name="modeNum">Graphics mode indexes start at zero. To obtain information for all of a display device's graphics modes, make a series of calls to EnumDisplaySettings, as follows: Set iModeNum to zero for the first call, and increment iModeNum by one for each subsequent call. Continue calling the function until the return value is zero.</param>
         /// <param name="devMode">A pointer to a DEVMODE structure into which the function stores information about the specified graphics mode. Before calling EnumDisplaySettings, set the dmSize member to sizeof(DEVMODE), and set the dmDriverExtra member to indicate the size, in bytes, of the additional space available to receive public driver data.</param>
         /// <returns></returns>
         [DllImport("user32.dll")]

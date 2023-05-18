@@ -20,6 +20,9 @@ namespace Win32NativeMethods.User32.Display.NativeTypes
         /// Value.
         /// </summary>
         public long Value => ((long)HighPart << 32) | LowPart;
+        /// <summary>
+        /// Returns the value as a string.
+        /// </summary>
         public override string ToString() => Value.ToString();
     }
 }
