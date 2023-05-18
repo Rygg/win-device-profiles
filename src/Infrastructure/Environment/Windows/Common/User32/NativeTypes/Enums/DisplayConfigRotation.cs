@@ -3,6 +3,7 @@
 /// <summary>
 /// The DISPLAYCONFIG_ROTATION enumeration specifies the clockwise rotation of the display.
 /// </summary>
+#pragma warning disable CA1712
 internal enum DISPLAYCONFIG_ROTATION
 {
     /// <summary>
@@ -22,3 +23,4 @@ internal enum DISPLAYCONFIG_ROTATION
     /// </summary>
     DISPLAYCONFIG_ROTATION_ROTATE270 = 4,
 }
+#pragma warning restore CA1712

@@ -3,6 +3,7 @@
 /// <summary>
 /// The DISPLAYCONFIG_SCANLINE_ORDERING enumeration specifies the method that the display uses to create an image on a screen.
 /// </summary>
+#pragma warning disable CA1712
 internal enum DISPLAYCONFIG_SCANLINE_ORDERING
 {
     /// <summary>
@@ -26,3 +27,4 @@ internal enum DISPLAYCONFIG_SCANLINE_ORDERING
     /// </summary>
     DISPLAYCONFIG_SCANLINE_ORDERING_INTERLACED_LOWERFIELDFIRST = 3,
 }
+#pragma warning restore CA1712

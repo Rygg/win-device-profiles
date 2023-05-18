@@ -77,7 +77,8 @@ public sealed class DeviceProfilesApplicationContext : ApplicationContext
         _logger.LogDebug("Shutting down the application..");
         _trayIcon.Visible = false; // Hide tray icon, so it won't remain there until hovered on.
         _applicationCts.Cancel();
-        
+        _applicationCts.Dispose();
+        _trayIcon.Dispose();
         //_application.Dispose(); // TODO: Dispose the main controller.
         _logger.LogInformation("Application shutting down.");
         System.Windows.Forms.Application.Exit();

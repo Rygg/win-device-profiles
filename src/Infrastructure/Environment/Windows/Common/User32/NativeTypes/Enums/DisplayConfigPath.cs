@@ -3,6 +3,7 @@
 /// <summary>
 /// A bitwise OR of flag values that indicates the state of the path. The following values are supported:
 /// </summary>
+#pragma warning disable CA1712
 [Flags]
 internal enum DISPLAYCONFIG_PATH
 {
@@ -19,3 +20,4 @@ internal enum DISPLAYCONFIG_PATH
     /// </summary>
     DISPLAYCONFIG_PATH_SUPPORT_VIRTUAL_MODE = 0x00000008,
 }
+#pragma warning restore CA1712

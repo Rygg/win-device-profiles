@@ -3,6 +3,7 @@
 /// <summary>
 /// The type of information to retrieve. The value for the Flags parameter must use one of the following values. 
 /// </summary>
+#pragma warning disable CA1712
 internal enum QDC
 {
     /// <summary>
@@ -31,3 +32,4 @@ internal enum QDC
     /// </summary>
     QDC_VIRTUAL_REFRESH_RATE_AWARE = 0x00000040,
 }
+#pragma warning restore CA1712

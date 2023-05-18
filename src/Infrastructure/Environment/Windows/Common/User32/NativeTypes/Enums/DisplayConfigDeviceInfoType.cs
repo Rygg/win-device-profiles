@@ -3,6 +3,7 @@
 /// <summary>
 /// he DISPLAYCONFIG_DEVICE_INFO_TYPE enumeration specifies the type of display device info to configure or obtain through the DisplayConfigSetDeviceInfo or DisplayConfigGetDeviceInfo function.
 /// </summary>
+#pragma warning disable CA1712
 internal enum DISPLAYCONFIG_DEVICE_INFO_TYPE
 {
     /// <summary>
@@ -50,3 +51,4 @@ internal enum DISPLAYCONFIG_DEVICE_INFO_TYPE
     /// </summary>
     DISPLAYCONFIG_DEVICE_INFO_GET_SDR_WHITE_LEVEL = 11,
 }
+#pragma warning restore CA1712

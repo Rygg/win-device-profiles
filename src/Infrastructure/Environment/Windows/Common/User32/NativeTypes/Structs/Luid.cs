@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace Infrastructure.Environment.Windows.Common.User32.NativeTypes.Structs;
 
@@ -23,5 +24,5 @@ internal struct LUID
     /// <summary>
     /// Returns the value as a string.
     /// </summary>
-    public override string ToString() => Value.ToString();
+    public override string ToString() => Value.ToString(CultureInfo.InvariantCulture);
 }

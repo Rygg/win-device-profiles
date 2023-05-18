@@ -3,6 +3,7 @@
 /// <summary>
 /// The DISPLAYCONFIG_SCALING enumeration specifies the scaling transformation applied to content displayed on a video present network (VidPN) present path.
 /// </summary>
+#pragma warning disable CA1712
 internal enum DISPLAYCONFIG_SCALING
 {
     /// <summary>
@@ -30,3 +31,4 @@ internal enum DISPLAYCONFIG_SCALING
     /// </summary>
     DISPLAYCONFIG_SCALING_PREFERRED = 128,
 }
+#pragma warning restore CA1712

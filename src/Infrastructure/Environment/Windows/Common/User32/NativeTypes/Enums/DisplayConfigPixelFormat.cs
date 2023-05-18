@@ -3,6 +3,7 @@
 /// <summary>
 /// The DISPLAYCONFIG_PIXELFORMAT enumeration specifies pixel format in various bits per pixel (BPP) values.
 /// </summary>
+#pragma warning disable CA1712
 internal enum DISPLAYCONFIG_PIXELFORMAT
 {
     /// <summary>
@@ -26,3 +27,4 @@ internal enum DISPLAYCONFIG_PIXELFORMAT
     /// </summary>
     DISPLAYCONFIG_PIXELFORMAT_NONGDI = 5,
 }
+#pragma warning restore CA1712

@@ -2,6 +2,7 @@
 /// <summary>
 /// The DISPLAYCONFIG_MODE_INFO_TYPE enumeration specifies that the information that is contained within the DISPLAYCONFIG_MODE_INFO structure is either source or target mode.
 /// </summary>
+#pragma warning disable CA1712
 internal enum DISPLAYCONFIG_MODE_INFO_TYPE
 {
     /// <summary>
@@ -17,3 +18,4 @@ internal enum DISPLAYCONFIG_MODE_INFO_TYPE
     /// </summary>
     DISPLAYCONFIG_MODE_INFO_TYPE_DESKTOP_IMAGE = 3,
 }
+#pragma warning restore CA1712
