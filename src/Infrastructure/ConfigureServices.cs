@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Application.Common.Interfaces;
+using Infrastructure.Environment.Windows.Services.Keyboard;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Infrastructure;
 
@@ -12,6 +14,8 @@ public static class ConfigureServices
     /// </summary>
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
     {
+        services.AddSingleton<IHotKeyTrigger, KeyboardHotKeyService>(); // Singleton to track registrations and control disposing.
+        
         return services;
     }
 }

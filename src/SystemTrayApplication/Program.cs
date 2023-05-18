@@ -1,14 +1,14 @@
 ﻿using Application;
 using Infrastructure;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using WindowsTrayApplication.Extensions;
 
 using var host = Host.CreateDefaultBuilder(args)
     .ConfigureServices(services =>
     {
         services
-            .AddLogging()
-            // TODO: Add tray.
+            .ConfigureLogging()
+            .AddWindowsTrayApplicationServices()
             .AddInfrastructureServices()
             .AddApplicationServices();
     })
