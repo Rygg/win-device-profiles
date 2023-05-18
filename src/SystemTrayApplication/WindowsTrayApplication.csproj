@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net7.0-windows</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>warnings</Nullable>
+    <Nullable>enable</Nullable>
     <AnalysisLevel>latest-all</AnalysisLevel>
     <OutputType>WinExe</OutputType>
     <Forms>True</Forms>
@@ -20,6 +20,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

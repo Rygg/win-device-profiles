@@ -4,7 +4,7 @@
 /// Supported KeyModifiers for hot key events. These match windows FsKeyModifiers enumeration.
 /// </summary>
 [Flags]
-public enum SupportedKeyModifiers : uint
+public enum SupportedKeyModifiers
 {
     None = 0,
     /// <summary>

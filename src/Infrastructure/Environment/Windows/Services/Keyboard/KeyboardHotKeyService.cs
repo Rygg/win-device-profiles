@@ -86,7 +86,7 @@ public sealed class KeyboardHotKeyService : IHotKeyTrigger, IDisposable
         var tcs = new TaskCompletionSource<HotKeyCombination>(); // Create tcs.
 
         // local function as action for the event.
-        void RequestAction(HotKeyEventArgs args)
+        void RequestAction(object? sender, HotKeyEventArgs args)
         {
             if(!RegisteredCombinations.ContainsKey(args.RegistrationId))
             {

@@ -1,6 +1,8 @@
 ﻿using Application.Common.Interfaces;
+using Infrastructure.Environment.Windows.Services.Display;
 using Infrastructure.Environment.Windows.Services.Keyboard;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace Infrastructure;
 
@@ -12,10 +14,13 @@ public static class ConfigureServices
     /// <summary>
     /// Add required Infrastructure Services to the program dependency injection container.
     /// </summary>
-    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
+    public static IHostBuilder AddInfrastructureServices(this IHostBuilder builder)
     {
-        services.AddSingleton<IHotKeyTrigger, KeyboardHotKeyService>(); // Singleton to track registrations and control disposing.
-        
-        return services;
+        builder.ConfigureServices(services =>
+        {
+            services.AddSingleton<IHotKeyTrigger, KeyboardHotKeyService>(); // Singleton to track registrations and control disposing.
+            services.AddSingleton<IDisplayController, DisplayService>(); // TODO: should be figured out later.
+        });
+        return builder;
     }
 }

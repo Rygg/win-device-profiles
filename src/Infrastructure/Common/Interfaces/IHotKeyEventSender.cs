@@ -10,5 +10,5 @@ public interface IHotKeyEventSender
     /// <summary>
     /// Any key was pressed.
     /// </summary>
-    event Action<HotKeyEventArgs> OnRegisteredHotKeyPressed;
+    event EventHandler<HotKeyEventArgs>? OnRegisteredHotKeyPressed;
 }

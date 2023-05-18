@@ -4,14 +4,9 @@ using Microsoft.Extensions.Hosting;
 using WindowsTrayApplication.Extensions;
 
 using var host = Host.CreateDefaultBuilder(args)
-    .ConfigureServices(services =>
-    {
-        services
-            .ConfigureLogging()
-            .AddWindowsTrayApplicationServices()
-            .AddInfrastructureServices()
-            .AddApplicationServices();
-    })
+    .AddApplicationServices()
+    .AddInfrastructureServices()
+    .AddTrayApplicationServices()
     .Build();
 
-await host.RunAsync();
+await host.RunAsync().ConfigureAwait(true);
