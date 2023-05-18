@@ -81,6 +81,7 @@ public sealed class DeviceProfilesApplicationContext : ApplicationContext
         _trayIcon.Dispose();
         //_application.Dispose(); // TODO: Dispose the main controller.
         _logger.LogInformation("Application shutting down.");
+        Dispose();
         System.Windows.Forms.Application.Exit();
     }
 }
