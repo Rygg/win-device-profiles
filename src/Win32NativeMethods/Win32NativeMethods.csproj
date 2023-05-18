@@ -6,6 +6,5 @@
     <Nullable>warnings</Nullable>
     <NativeAot>true</NativeAot>
     <GenerateDocumentationFile>False</GenerateDocumentationFile>
-    <AnalysisLevel>latest</AnalysisLevel>
   </PropertyGroup>
 </Project>
