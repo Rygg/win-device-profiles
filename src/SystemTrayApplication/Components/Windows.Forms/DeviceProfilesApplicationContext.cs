@@ -1,11 +1,15 @@
-﻿using Application.Features.HotKeys.Commands;
+﻿using System.Globalization;
+using Application.Features.Devices.Queries;
+using Application.Features.HotKeys.Commands;
 using Application.Features.HotKeys.Queries;
+using Application.Features.Profiles.Commands;
 using Application.Features.Profiles.Queries;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using WindowsTrayApplication.Components.TrayIcon;
+using TrayApplication.Components.Windows.Forms.TrayIcon;
+using TrayApplication.Extensions;
 
-namespace WindowsTrayApplication.Components;
+namespace TrayApplication.Components.Windows.Forms;
 
 public sealed class DeviceProfilesApplicationContext : ApplicationContext
 {
@@ -18,7 +22,7 @@ public sealed class DeviceProfilesApplicationContext : ApplicationContext
     public DeviceProfilesApplicationContext(
         ISender mediatR,
         ILogger<DeviceProfilesApplicationContext> logger,
-        ApplicationTrayIconBuilder trayIconBuilder
+        TrayIconBuilder trayIconBuilder
         )
     {
         _mediatR = mediatR;
@@ -26,7 +30,7 @@ public sealed class DeviceProfilesApplicationContext : ApplicationContext
         _applicationCts = new CancellationTokenSource();
 
         var profiles = _mediatR.Send(new GetProfilesQuery(), _applicationCts.Token).GetAwaiter().GetResult();
-        _trayIcon = trayIconBuilder.BuildApplicationTrayIcon(OnExit, OnCopyDataToClipboard, OnProfileClick, profiles);
+        _trayIcon = trayIconBuilder.BuildTrayIcon(OnExit, OnCopyDataToClipboard, OnProfileClick, profiles);
 
         _ = BackgroundLoop(_applicationCts.Token);
     }
@@ -37,11 +41,11 @@ public sealed class DeviceProfilesApplicationContext : ApplicationContext
     /// <param name="cancellationToken">CancellationToken to stop the loop.</param>
     private async Task BackgroundLoop(CancellationToken cancellationToken)
     {
-        await _mediatR.Send(new RegisterHotKeysCommand(), cancellationToken);
+        await _mediatR.Send(new RegisterHotKeysCommand(), cancellationToken).ConfigureAwait(false);
         while (!cancellationToken.IsCancellationRequested)
         {
-            var profile = await _mediatR.Send(new GetHotKeyPressProfileChangeQuery(), cancellationToken);
-            throw new NotImplementedException();
+            var profile = await _mediatR.Send(new GetHotKeyPressProfileChangeQuery(), cancellationToken).ConfigureAwait(false);
+            await _mediatR.Send(new ActivateProfileCommand { ProfileId = profile.Id }, cancellationToken).ConfigureAwait(false);
         }
     }
 
@@ -50,18 +54,24 @@ public sealed class DeviceProfilesApplicationContext : ApplicationContext
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private static void OnProfileClick(object? sender, EventArgs e)
+    private void OnProfileClick(object? sender, EventArgs e)
     {
+        if (sender is not ToolStripMenuItem menuItem)
+        {
+            _logger.EventHandlerTriggeredByWrongType(nameof(OnProfileClick));
+            return; // not possible to process currently.
+        }
 
+        var profileId = int.Parse(menuItem.Name, CultureInfo.InvariantCulture);
+        _mediatR.Send(new ActivateProfileCommand { ProfileId = profileId }, _applicationCts.Token).GetAwaiter().GetResult();
     }
 
     /// <summary>
-    /// Sets retrieved display data to the clipboard so users can create profiles more easily.
+    /// Sets the current device data to the clipboard so users can create profiles more easily.
     /// </summary>
-    private static void OnCopyDataToClipboard(object? sender, EventArgs e)
+    private void OnCopyDataToClipboard(object? sender, EventArgs e)
     {
-        var displayData = "";
-        //var displayData = _application.GetRetrievedDisplayDataString();
+        var displayData = _mediatR.Send(new GetCurrentDevicesQuery(), _applicationCts.Token).GetAwaiter().GetResult();
         Clipboard.SetText(displayData);
     }
 
@@ -74,13 +84,13 @@ public sealed class DeviceProfilesApplicationContext : ApplicationContext
     /// </summary>
     private void Exit()
     {
-        _logger.LogDebug("Shutting down the application..");
+        _logger.StartingShutdown();
         _trayIcon.Visible = false; // Hide tray icon, so it won't remain there until hovered on.
         _applicationCts.Cancel();
         _applicationCts.Dispose();
         _trayIcon.Dispose();
-        //_application.Dispose(); // TODO: Dispose the main controller.
-        _logger.LogInformation("Application shutting down.");
+        //_application.Dispose(); // TODO: Dispose the main controller. Should be disposed along with the Host in Program.cs?
+        _logger.ApplicationShuttingDown();
         Dispose();
         System.Windows.Forms.Application.Exit();
     }

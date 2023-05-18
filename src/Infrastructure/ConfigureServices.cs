@@ -19,7 +19,7 @@ public static class ConfigureServices
         builder.ConfigureServices(services =>
         {
             services.AddSingleton<IHotKeyTrigger, KeyboardHotKeyService>(); // Singleton to track registrations and control disposing.
-            services.AddSingleton<IDisplayController, DisplayService>(); // TODO: should be figured out later.
+            services.AddSingleton<IDisplayDeviceController, DisplayDeviceService>(); // TODO: should be figured out later.
         });
         return builder;
     }

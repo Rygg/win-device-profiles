@@ -1,5 +1,5 @@
 ﻿namespace Domain.Models;
-public sealed record DeviceProfile
+public record DeviceProfile
 {
     /// <summary>
     /// Identifier of the profile.

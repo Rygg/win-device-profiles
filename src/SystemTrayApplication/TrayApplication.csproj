@@ -13,7 +13,7 @@
     <PackageIcon>app.ico</PackageIcon>
     <NeutralLanguage>en</NeutralLanguage>
     <AssemblyName>DeviceProfiles</AssemblyName>
-    <ApplicationIcon>Components\TrayIcon\Resources\Images\app.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\Images\app.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -33,20 +33,20 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Components\TrayIcon\Resources\Text\Strings.Designer.cs">
+    <Compile Update="Resources\Text\Strings.Designer.cs">
       <DependentUpon>Strings.resx</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Update="Components\TrayIcon\Resources\Text\Strings.resx">
+    <EmbeddedResource Update="Resources\Text\Strings.resx">
       <SubType>Designer</SubType>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Components\TrayIcon\Resources\Images\app.ico" />
+    <EmbeddedResource Include="Resources\Images\app.ico" />
   </ItemGroup>
 </Project>

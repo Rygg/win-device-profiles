@@ -1,4 +1,6 @@
-﻿using Application.Common.Options;
+﻿using Application.Common.Behaviors;
+using Application.Common.Options;
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -21,9 +23,12 @@ public static class ConfigureServices
         {
             services
                 .AddApplicationOptions(context)
+                .AddValidatorsFromAssembly(typeof(ConfigureServices).Assembly)
                 .AddMediatR(cfg =>
                 {
                     cfg.RegisterServicesFromAssembly(typeof(ConfigureServices).Assembly);
+                    cfg.AddOpenBehavior(typeof(UnhandledExceptionBehavior<,>));
+                    cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
                 });
         });
         return builder;

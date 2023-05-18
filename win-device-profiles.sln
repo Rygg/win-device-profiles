@@ -21,13 +21,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0C255A3C-39FA-48ED-969A-272A81DD5D69}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "src\Infrastructure\Infrastructure.csproj", "{9C560A38-18B9-4F9B-872A-5560E32AEC78}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "src\Infrastructure\Infrastructure.csproj", "{9C560A38-18B9-4F9B-872A-5560E32AEC78}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsTrayApplication", "src\SystemTrayApplication\WindowsTrayApplication.csproj", "{F56BBD7C-49AB-4EEC-9092-C375CCD2BEAA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TrayApplication", "src\SystemTrayApplication\TrayApplication.csproj", "{F56BBD7C-49AB-4EEC-9092-C375CCD2BEAA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "legacy", "legacy", "{83D42F89-D61A-40C9-BBD2-6FF26FDB4F11}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "src\Domain\Domain.csproj", "{D46289AA-8B4A-4566-A53F-1725642CE32D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "src\Domain\Domain.csproj", "{D46289AA-8B4A-4566-A53F-1725642CE32D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

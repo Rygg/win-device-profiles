@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace WindowsTrayApplication.Components.TrayIcon.Resources.Text {
+namespace TrayApplication.Resources.Text {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace WindowsTrayApplication.Components.TrayIcon.Resources.Text {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("WindowsTrayApplication.Components.TrayIcon.Resources.Text.Strings", typeof(Strings).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("TrayApplication.Resources.Text.Strings", typeof(Strings).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

@@ -2,10 +2,10 @@
 using Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using WindowsTrayApplication.Components;
-using WindowsTrayApplication.Extensions;
+using TrayApplication.Components.Windows.Forms;
+using TrayApplication.Extensions;
 
-namespace WindowsTrayApplication;
+namespace TrayApplication;
 
 internal static class Program
 {
