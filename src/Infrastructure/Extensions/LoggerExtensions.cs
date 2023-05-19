@@ -118,6 +118,15 @@ public static partial class LoggerExtensions
     ]
     public static partial void RetrievedDisplayInformation(this ILogger logger, uint displayId, string retrievedDisplayData);
 
+    [LoggerMessage(
+            EventId = 418,
+            EventName = nameof(UpdatedRegistrySettings),
+            Level = LogLevel.Debug,
+            Message = "Updated registry settings for monitor {DisplayId}"
+        )
+    ]
+    public static partial void UpdatedRegistrySettings(this ILogger logger, uint displayId);
+
     // INFO:
 
     [LoggerMessage(
@@ -138,6 +147,69 @@ public static partial class LoggerExtensions
     ]
     public static partial void DisplaysRefreshed(this ILogger logger);
 
+    [LoggerMessage(
+            EventId = 423,
+            EventName = nameof(SettingDisplayAsPrimary),
+            Level = LogLevel.Information,
+            Message = "Setting Display {DisplayId} as the new primary display."
+        )
+    ]
+    public static partial void SettingDisplayAsPrimary(this ILogger logger, uint displayId);
+
+    [LoggerMessage(
+            EventId = 424,
+            EventName = nameof(DisplayWasAlreadyPrimary),
+            Level = LogLevel.Information,
+            Message = "Display {DisplayId} was already the primary display. Skipping operation."
+        )
+    ]
+    public static partial void DisplayWasAlreadyPrimary(this ILogger logger, uint displayId);
+
+    [LoggerMessage(
+            EventId = 425,
+            EventName = nameof(SettingDisplayRefreshRate),
+            Level = LogLevel.Information,
+            Message = "Setting Display {DisplayId} RefreshRate to {NewRefreshRate}Hz."
+        )
+    ]
+    public static partial void SettingDisplayRefreshRate(this ILogger logger, uint displayId, int? newRefreshRate);
+
+    [LoggerMessage(
+            EventId = 426,
+            EventName = nameof(DisplayRefreshRateWasAlreadySet),
+            Level = LogLevel.Information,
+            Message = "Display refresh rate is already set to the desired value. Returning."
+        )
+    ]
+    public static partial void DisplayRefreshRateWasAlreadySet(this ILogger logger);
+
+    [LoggerMessage(
+            EventId = 427,
+            EventName = nameof(UpdatingAdvancedColorState),
+            Level = LogLevel.Information,
+            Message = "Updating the Advanced Color State for Display {DisplayId}. New State: {newState}"
+        )
+    ]
+    public static partial void UpdatingAdvancedColorState(this ILogger logger, uint displayId, bool newState);
+
+    [LoggerMessage(
+            EventId = 428,
+            EventName = nameof(AdvancedColorStateAlreadySet),
+            Level = LogLevel.Information,
+            Message = "Advanced color mode was already set to the desired state for monitor {DisplayId}. Returning."
+        )
+    ]
+    public static partial void AdvancedColorStateAlreadySet(this ILogger logger, uint displayId);
+
+    [LoggerMessage(
+            EventId = 429,
+            EventName = nameof(AdvancedColorStateUpdated),
+            Level = LogLevel.Information,
+            Message = "Advanced color state was updated for Display {DisplayId}."
+        )
+    ]
+    public static partial void AdvancedColorStateUpdated(this ILogger logger, uint displayId);
+
     // WARNING:
 
     [LoggerMessage(
@@ -157,6 +229,24 @@ public static partial class LoggerExtensions
         )
     ]
     public static partial void RetrievedDeviceSourceNotFound(this ILogger logger);
+        
+    [LoggerMessage(
+            EventId = 443,
+            EventName = nameof(PrimaryDisplayAlreadySet),
+            Level = LogLevel.Warning,
+            Message = "Primary Display was already set for this profile. Ignoring primary change for display {DisplayId}."
+        )
+    ]
+    public static partial void PrimaryDisplayAlreadySet(this ILogger logger, uint displayId);
+
+    [LoggerMessage(
+            EventId = 444,
+            EventName = nameof(DisplayNotFound),
+            Level = LogLevel.Warning,
+            Message = "Display with Id {DisplayId} not found. Returning."
+        )
+    ]
+    public static partial void DisplayNotFound(this ILogger logger, uint displayId);
 
     // ERROR:
 
@@ -168,4 +258,22 @@ public static partial class LoggerExtensions
         )
     ]
     public static partial void ReceivedHotKeyEventNotRegistered(this ILogger logger, HotKeyEventArgs eventArgs);
+
+    [LoggerMessage(
+            EventId = 452,
+            EventName = nameof(RefreshRateNotSupported),
+            Level = LogLevel.Error,
+            Message = "The desired refresh rate is not supported for this monitor. DisplayId: {DisplayId}, RefreshRate: {RefreshRate}"
+        )
+    ]
+    public static partial void RefreshRateNotSupported(this ILogger logger, uint displayId, int? refreshRate);
+
+    [LoggerMessage(
+            EventId = 453,
+            EventName = nameof(CannotSetAdvancedColorMode),
+            Level = LogLevel.Error,
+            Message = "Cannot set Advanced Color Mode for Display {DisplayId}. Required information is missing or the monitor doesn't support Advanced Color Mode."
+        )
+    ]
+    public static partial void CannotSetAdvancedColorMode(this ILogger logger, uint displayId);
 }

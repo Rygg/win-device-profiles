@@ -23,9 +23,30 @@ public sealed class DisplayDeviceService : IDisplayDeviceController
         _logger = logger;
     }
 
+    /// <summary>
+    /// Changes the current system display settings to the given DeviceProfile.
+    /// </summary>
+    /// <param name="profile">DeviceProfile to be set as active.</param>
+    /// <param name="cancellationToken">CancellationToken to cancel the operation.</param>
+    /// <returns>True if the operation was successful. Otherwise false.</returns>
     public Task<bool> ChangeDisplaySettings(DeviceProfile profile, CancellationToken cancellationToken)
     {
-        return Task.FromResult(false);
+        if (profile == null)
+        {
+            throw new ArgumentNullException(nameof(profile));
+        }
+
+        var displays = RetrieveSystemDisplayInformation(cancellationToken);
+        var displaysForStandardSettings = profile.DisplaySettings.Where(ds => ds.PrimaryDisplay != null || ds.RefreshRate != null && ds.RefreshRate != 0);
+        var displaysForAdvancedColorState = profile.DisplaySettings.Where(ds => ds.EnableHdr != null);
+
+        SetStandardDisplaySettings(displaysForStandardSettings, displays, cancellationToken);
+        if (cancellationToken.IsCancellationRequested)
+        {
+            return Task.FromResult(false);
+        }
+        SetAdvancedColorDisplaySettings(displaysForAdvancedColorState, displays);
+        return Task.FromResult(true);
     }
 
     /// <summary>
@@ -219,5 +240,209 @@ public sealed class DisplayDeviceService : IDisplayDeviceController
         }
 
         return colorInfo;
+    }
+
+    /// <summary>
+    /// Method updating Display Settings using the Standard Win API.
+    /// </summary>
+    /// <param name="displaySettings">Array of display settings to update.</param>
+    /// <param name="currentDisplays">Current displays in the system.</param>
+    /// <param name="cancellationToken">CancellationToken to cancel the operation.</param>
+    private void SetStandardDisplaySettings(IEnumerable<DisplaySettings> displaySettings, IDictionary<uint, WindowsDisplayData> currentDisplays, CancellationToken cancellationToken)
+    {
+        var anyRegistryChanges = false;
+        var primaryDisplaySet = false;
+        foreach (var display in displaySettings) // Set all the required configuration values to the registry.
+        {
+            if (display.PrimaryDisplay == true)
+            {
+                if (!primaryDisplaySet)
+                {
+                    _logger.SettingDisplayAsPrimary(display.DisplayId);
+                    if (SetPrimaryDisplayToRegistry(display.DisplayId, currentDisplays))
+                    {
+                        anyRegistryChanges = true;
+                    }
+                    primaryDisplaySet = true;
+                }
+                else
+                {
+                    _logger.PrimaryDisplayAlreadySet(display.DisplayId);
+                }
+            }
+            if (display.RefreshRate != null && display.RefreshRate != 0)
+            {
+                _logger.SettingDisplayRefreshRate(display.DisplayId, display.RefreshRate);
+                if (SetDisplayRefreshRateToRegistry(display.DisplayId, display.RefreshRate.Value, currentDisplays))
+                {
+                    anyRegistryChanges = true;
+                }
+            }
+        }
+        if (anyRegistryChanges && !cancellationToken.IsCancellationRequested) // No need to apply unless changes were made. Check for cancellation also.
+        {
+            Display.ChangeDisplaySettingsEx(null, IntPtr.Zero, (IntPtr)null, ChangeDisplaySettingsFlags.CDS_NONE, (IntPtr)null); // Apply settings:
+        }
+    }
+
+    /// <summary>
+    /// Method sets the parameter as the new primary display to the registry, does not apply changes.
+    /// </summary>
+    /// <param name="displayId">Id of the new primary display.</param>
+    /// <param name="currentDisplays">Currently retrieved displays</param>
+    /// <returns>Returns true if any changes were made to the registry.</returns>
+    private bool SetPrimaryDisplayToRegistry(uint displayId, IDictionary<uint, WindowsDisplayData> currentDisplays)
+    {
+        if (!currentDisplays.ContainsKey(displayId))
+        {
+            _logger.DisplayNotFound(displayId);
+            return false;
+        }
+
+        var newPrimary = currentDisplays[displayId];
+        if (newPrimary.DisplayDevice.StateFlags.HasFlag(DisplayDeviceStateFlags.PrimaryDevice))
+        {
+            _logger.DisplayWasAlreadyPrimary(displayId);
+            return false;
+        }
+
+        var offsetX = newPrimary.DeviceMode.dmPosition.x; // Get old position.
+        var offsetY = newPrimary.DeviceMode.dmPosition.y;
+        newPrimary.DeviceMode.dmPosition.x = 0; // Set new as 0,0 (Primary is always 0,0)
+        newPrimary.DeviceMode.dmPosition.y = 0;
+
+        // Change values to registry. Don't take effect yet.
+        Display.ChangeDisplaySettingsEx(newPrimary.DisplayDevice.DeviceName, ref newPrimary.DeviceMode, (IntPtr)null, (ChangeDisplaySettingsFlags.CDS_SET_PRIMARY | ChangeDisplaySettingsFlags.CDS_UPDATEREGISTRY | ChangeDisplaySettingsFlags.CDS_NORESET), IntPtr.Zero);
+        _logger.UpdatedRegistrySettings(displayId);
+        // Update the offsets of the rest of the displays:
+        var otherDisplays = currentDisplays.Where(d => d.Key != displayId);
+
+        foreach (var (id, display) in otherDisplays)
+        {
+            display.DeviceMode.dmPosition.x -= offsetX; // Subtract old primary display offset to get correct new screen position.
+            display.DeviceMode.dmPosition.y -= offsetY;
+            // Change values to registry, don't apply changes yet.
+            Display.ChangeDisplaySettingsEx(display.DisplayDevice.DeviceName, ref display.DeviceMode, (IntPtr)null, (ChangeDisplaySettingsFlags.CDS_UPDATEREGISTRY | ChangeDisplaySettingsFlags.CDS_NORESET), IntPtr.Zero);
+            _logger.UpdatedRegistrySettings(id);
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Method sets the displays refresh rate to the new value, if it is supported.
+    /// </summary>
+    /// <param name="displayId">Id of the new primary display.</param>
+    /// <param name="newRefreshRate">New refresh rate for the display.</param>
+    /// <param name="currentDisplays">Current displays in the system.</param>
+    /// <returns>Returns a boolean indicating whether changes were made to the registry</returns>
+    private bool SetDisplayRefreshRateToRegistry(uint displayId, int newRefreshRate, IDictionary<uint, WindowsDisplayData> currentDisplays)
+    {
+        if (!currentDisplays.ContainsKey(displayId))
+        {
+            _logger.DisplayNotFound(displayId);
+            return false;
+        }
+        var display = currentDisplays[displayId];
+        var oldRefreshRate = display.DeviceMode.dmDisplayFrequency;
+        if (oldRefreshRate == newRefreshRate)
+        {
+            _logger.DisplayRefreshRateWasAlreadySet();
+            return false;
+        }
+
+        // Test can the refresh frequency be set for this display:
+        display.DeviceMode.dmDisplayFrequency = newRefreshRate;
+        
+        var testResult = Display.ChangeDisplaySettingsEx(display.DisplayDevice.DeviceName, ref display.DeviceMode, (IntPtr)null, ChangeDisplaySettingsFlags.CDS_TEST, IntPtr.Zero);
+        if (testResult != DISP_CHANGE.Successful)
+        {
+            _logger.RefreshRateNotSupported(displayId, newRefreshRate);
+            display.DeviceMode.dmDisplayFrequency = oldRefreshRate;
+            return false;
+        }
+        // Valid refresh rate. Update to registry.
+        var result = Display.ChangeDisplaySettingsEx(display.DisplayDevice.DeviceName, ref display.DeviceMode, (IntPtr)null, (ChangeDisplaySettingsFlags.CDS_UPDATEREGISTRY | ChangeDisplaySettingsFlags.CDS_NORESET), IntPtr.Zero);
+        if (result != DISP_CHANGE.Successful)
+        {
+            throw new Win32Exception((int)result, $"Updating monitor {displayId} refresh rate failed.");
+        }
+        _logger.UpdatedRegistrySettings(displayId);
+        return true;
+    }
+
+
+    /// <summary>
+    /// Method updating Advanced Display Settings using the advanced Win API.
+    /// </summary>
+    /// <param name="displaySettings">Array of display settings to update.</param>
+    /// <param name="currentDisplays">Current displays in the system</param>
+    private void SetAdvancedColorDisplaySettings(IEnumerable<DisplaySettings> displaySettings, IDictionary<uint, WindowsDisplayData> currentDisplays)
+    {
+        foreach (var display in displaySettings) // Update advanced color state values for required displays.
+        {
+            _logger.UpdatingAdvancedColorState(display.DisplayId, display.EnableHdr!.Value); // Suppress nullable, should have been validated before.
+            if (SetDisplayAdvancedColorState(display.DisplayId, display.EnableHdr!.Value, currentDisplays)) // Suppress nullable, should have been validated before.
+            {
+                _logger.AdvancedColorStateUpdated(display.DisplayId);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Method sets the advanced color state of the given monitor to the desired value.
+    /// </summary>
+    /// <param name="displayId">DisplayId to be operated.</param>
+    /// <param name="newState">New state of the advanced color mode.</param>
+    /// <param name="currentDisplays">Current system displays</param>
+    /// <returns>A boolean value indicating the success of the operation. Returns true if the display is set to or already is in the the desired state.</returns>
+    /// <exception cref="Win32Exception">Exception is thrown if the WinAPI call fails.</exception>
+    private bool SetDisplayAdvancedColorState(uint displayId, bool newState, IDictionary<uint, WindowsDisplayData> currentDisplays)
+    {
+        if (!currentDisplays.ContainsKey(displayId))
+        {
+            _logger.DisplayNotFound(displayId);
+            return false;
+        }
+        var displayData = currentDisplays[displayId];
+        if (displayData.AdvancedColorInformation == null || !displayData.AdvancedColorInformation.Value.value.HasFlag(DISPLAYCONFIG_ADVANCED_COLOR_INFO_VALUE_FLAGS.AdvancedColorSupported))
+        {
+            _logger.CannotSetAdvancedColorMode(displayId);
+            return false;
+        }
+        var advancedColorStateEnabled = displayData.AdvancedColorInformation.Value.value.HasFlag(DISPLAYCONFIG_ADVANCED_COLOR_INFO_VALUE_FLAGS.AdvancedColorEnabled);
+        if (advancedColorStateEnabled == newState)
+        {
+            _logger.AdvancedColorStateAlreadySet(displayId);
+            return true;
+        }
+
+        SetDisplayConfigAdvancedColorState(newState, displayData); // Set the state as everything is valid.
+        return true;
+    }
+
+    /// <summary>
+    /// Set DisplayConfig Advanced Color Info using the Native methods.
+    /// </summary>
+    /// <param name="newState">New state for Advanced Color Mode</param>
+    /// <param name="displayData">DisplayData to set the state for.</param>
+    /// <exception cref="Win32Exception">Error occurred in the native query</exception>
+    private static void SetDisplayConfigAdvancedColorState(bool newState, WindowsDisplayData displayData)
+    {
+        var newColorState = new DISPLAYCONFIG_SET_ADVANCED_COLOR_STATE
+        {
+            // Suppress nullable warning, it should have been validated before.
+            header = displayData.AdvancedColorInformation!.Value.header with
+            {
+                type = DISPLAYCONFIG_DEVICE_INFO_TYPE.DISPLAYCONFIG_DEVICE_INFO_SET_ADVANCED_COLOR_STATE,
+                size = Marshal.SizeOf<DISPLAYCONFIG_SET_ADVANCED_COLOR_STATE>()
+            },
+            value = newState ? DisplayConfigSetAdvancedColorStateValue.Enable : DisplayConfigSetAdvancedColorStateValue.Disable,
+        };
+        var err = Display.DisplayConfigSetDeviceInfo(ref newColorState);
+        if (err != ResultErrorCode.ERROR_SUCCESS)
+        {
+            throw new Win32Exception((int)err, $"Error occurred while updating AdvancedColorMode for display {displayData.DisplayDevice.DeviceID}.");
+        }
     }
 }
