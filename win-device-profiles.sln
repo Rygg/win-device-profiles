@@ -3,64 +3,45 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1B7250E0-0F98-4EE8-9A1D-AACDC36641DA}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeviceProfiles", "src\DeviceProfiles\DeviceProfiles.csproj", "{25090841-5C54-4BB7-AA34-52AC384FD9AC}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Win32NativeMethods", "src\Win32NativeMethods\Win32NativeMethods.csproj", "{8474B628-4175-4042-ACA0-311C45337899}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application", "src\Application\Application.csproj", "{157F3E14-69A6-4BAD-B0DF-26CA1D767120}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeviceProfiles.Tests", "tests\DeviceProfiles.Tests\DeviceProfiles.Tests.csproj", "{BDCF949A-D2AF-412D-B22E-2A606976002E}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4EF7A625-1E7B-4299-8569-94309C9EDBEB}"
 	ProjectSection(SolutionItems) = preProject
 		CHANGELOG.md = CHANGELOG.md
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0C255A3C-39FA-48ED-969A-272A81DD5D69}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1B7250E0-0F98-4EE8-9A1D-AACDC36641DA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "src\Domain\Domain.csproj", "{D46289AA-8B4A-4566-A53F-1725642CE32D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application", "src\Application\Application.csproj", "{157F3E14-69A6-4BAD-B0DF-26CA1D767120}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "src\Infrastructure\Infrastructure.csproj", "{9C560A38-18B9-4F9B-872A-5560E32AEC78}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TrayApplication", "src\TrayApplication\TrayApplication.csproj", "{F56BBD7C-49AB-4EEC-9092-C375CCD2BEAA}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "legacy", "legacy", "{83D42F89-D61A-40C9-BBD2-6FF26FDB4F11}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "src\Domain\Domain.csproj", "{D46289AA-8B4A-4566-A53F-1725642CE32D}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0C255A3C-39FA-48ED-969A-272A81DD5D69}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain.UnitTests", "tests\Domain.UnitTests\Domain.UnitTests.csproj", "{BF4759BC-410D-4DA1-AF85-67DB50557610}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure.UnitTests", "tests\Infrastructure.UnitTests\Infrastructure.UnitTests.csproj", "{4131B1B8-E5A3-4423-B8DA-92C1A89880DC}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application.UnitTests", "tests\Application.UnitTests\Application.UnitTests.csproj", "{5357A02F-73F4-4AB8-A749-DCDD9AB17885}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrayApplication.UnitTests", "tests\TrayApplication.UnitTests\TrayApplication.UnitTests.csproj", "{02036727-8593-4FB5-B82F-B9153050CFC4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application.IntegrationTests", "tests\Application.IntegrationTests\Application.IntegrationTests.csproj", "{E0AB9D5C-E8A6-4631-9B3C-1AB3DD7A96BF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure.UnitTests", "tests\Infrastructure.UnitTests\Infrastructure.UnitTests.csproj", "{4131B1B8-E5A3-4423-B8DA-92C1A89880DC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrayApplication.UnitTests", "tests\TrayApplication.UnitTests\TrayApplication.UnitTests.csproj", "{02036727-8593-4FB5-B82F-B9153050CFC4}"
+EndProject
+
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{25090841-5C54-4BB7-AA34-52AC384FD9AC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{25090841-5C54-4BB7-AA34-52AC384FD9AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{25090841-5C54-4BB7-AA34-52AC384FD9AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{25090841-5C54-4BB7-AA34-52AC384FD9AC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8474B628-4175-4042-ACA0-311C45337899}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8474B628-4175-4042-ACA0-311C45337899}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8474B628-4175-4042-ACA0-311C45337899}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8474B628-4175-4042-ACA0-311C45337899}.Release|Any CPU.Build.0 = Release|Any CPU
 		{157F3E14-69A6-4BAD-B0DF-26CA1D767120}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{157F3E14-69A6-4BAD-B0DF-26CA1D767120}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{157F3E14-69A6-4BAD-B0DF-26CA1D767120}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{157F3E14-69A6-4BAD-B0DF-26CA1D767120}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BDCF949A-D2AF-412D-B22E-2A606976002E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BDCF949A-D2AF-412D-B22E-2A606976002E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BDCF949A-D2AF-412D-B22E-2A606976002E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BDCF949A-D2AF-412D-B22E-2A606976002E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9C560A38-18B9-4F9B-872A-5560E32AEC78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9C560A38-18B9-4F9B-872A-5560E32AEC78}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9C560A38-18B9-4F9B-872A-5560E32AEC78}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -98,10 +79,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{25090841-5C54-4BB7-AA34-52AC384FD9AC} = {83D42F89-D61A-40C9-BBD2-6FF26FDB4F11}
-		{8474B628-4175-4042-ACA0-311C45337899} = {83D42F89-D61A-40C9-BBD2-6FF26FDB4F11}
 		{157F3E14-69A6-4BAD-B0DF-26CA1D767120} = {1B7250E0-0F98-4EE8-9A1D-AACDC36641DA}
-		{BDCF949A-D2AF-412D-B22E-2A606976002E} = {83D42F89-D61A-40C9-BBD2-6FF26FDB4F11}
 		{9C560A38-18B9-4F9B-872A-5560E32AEC78} = {1B7250E0-0F98-4EE8-9A1D-AACDC36641DA}
 		{F56BBD7C-49AB-4EEC-9092-C375CCD2BEAA} = {1B7250E0-0F98-4EE8-9A1D-AACDC36641DA}
 		{D46289AA-8B4A-4566-A53F-1725642CE32D} = {1B7250E0-0F98-4EE8-9A1D-AACDC36641DA}
