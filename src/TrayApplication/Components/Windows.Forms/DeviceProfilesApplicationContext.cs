@@ -25,6 +25,10 @@ public sealed class DeviceProfilesApplicationContext : ApplicationContext
         TrayIconBuilder trayIconBuilder
         )
     {
+        if (trayIconBuilder == null)
+        {
+            throw new ArgumentNullException(nameof(trayIconBuilder));
+        }
         _mediatR = mediatR;
         _logger = logger;
         _applicationCts = new CancellationTokenSource();
