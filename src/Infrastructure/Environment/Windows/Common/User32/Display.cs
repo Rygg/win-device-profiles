@@ -44,7 +44,7 @@ internal static class Display
     /// The resulting device interface name can be used with SetupAPI functions and serves as a link between GDI monitor devices and SetupAPI monitor devices.</param>
     /// <returns></returns>
     [DllImport("user32.dll")]
-    public static extern bool EnumDisplayDevices(string? lpDevice, uint iDevNum, ref DISPLAY_DEVICE lpDisplayDevice, uint dwFlags);
+    internal static extern bool EnumDisplayDevices(string? lpDevice, uint iDevNum, ref DISPLAY_DEVICE lpDisplayDevice, uint dwFlags);
     /// <summary>
     /// The <see href="https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-enumdisplaysettingsa">EnumDisplaySettings</see> function retrieves information about one of the graphics modes for a display device. 
     /// To retrieve information for all the graphics modes of a display device, make a series of calls to this function.
@@ -54,7 +54,7 @@ internal static class Display
     /// <param name="devMode">A pointer to a DEVMODE structure into which the function stores information about the specified graphics mode. Before calling EnumDisplaySettings, set the dmSize member to sizeof(DEVMODE), and set the dmDriverExtra member to indicate the size, in bytes, of the additional space available to receive public driver data.</param>
     /// <returns></returns>
     [DllImport("user32.dll")]
-    public static extern bool EnumDisplaySettings(string deviceName, int modeNum, ref DEVMODE devMode);
+    internal static extern bool EnumDisplaySettings(string deviceName, int modeNum, ref DEVMODE devMode);
 
     // CCD Api: https://docs.microsoft.com/en-us/windows-hardware/drivers/display/connecting-and-configuring-displays
 
@@ -66,7 +66,7 @@ internal static class Display
     /// <param name="numModeInfoArrayElements">Pointer to a variable that receives the number of elements in the mode information table. The pNumModeInfoArrayElements parameter value is then used by a subsequent call to the QueryDisplayConfig function. This parameter cannot be NULL.</param>
     /// <returns>The function returns one of the following return codes.</returns>
     [DllImport("user32.dll")]
-    public static extern ResultErrorCode GetDisplayConfigBufferSizes(QDC flags, out int numPathArrayElements, out int numModeInfoArrayElements);
+    internal static extern ResultErrorCode GetDisplayConfigBufferSizes(QDC flags, out int numPathArrayElements, out int numModeInfoArrayElements);
     /// <summary>
     /// The <see href="https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-querydisplayconfig">QueryDisplayConfig</see> function retrieves information about all possible display paths for all display devices, or views, in the current setting. <br/>
     /// Overload to support DISPLAYCONFIG_TOPOLOGY_ID parameter.
@@ -81,7 +81,7 @@ internal static class Display
     /// If the Flags parameter value is set to QDC_DATABASE_CURRENT, the pCurrentTopologyId parameter must not be NULL.If the Flags parameter value is not set to QDC_DATABASE_CURRENT, the pCurrentTopologyId parameter value must be NULL.</param>
     /// <returns></returns>
     [DllImport("user32.dll")]
-    public static extern ResultErrorCode QueryDisplayConfig(QDC flags, ref int numPathArrayElements, [In, Out] DISPLAYCONFIG_PATH_INFO[] pathArray, ref int numModeInfoArrayElements, [In, Out] DISPLAYCONFIG_MODE_INFO[] modeInfoArray, out DISPLAYCONFIG_TOPOLOGY_ID currentTopologyId);
+    internal static extern ResultErrorCode QueryDisplayConfig(QDC flags, ref int numPathArrayElements, [In, Out] DISPLAYCONFIG_PATH_INFO[] pathArray, ref int numModeInfoArrayElements, [In, Out] DISPLAYCONFIG_MODE_INFO[] modeInfoArray, out DISPLAYCONFIG_TOPOLOGY_ID currentTopologyId);
     /// <summary>
     /// The <see href="https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-querydisplayconfig">QueryDisplayConfig</see> function retrieves information about all possible display paths for all display devices, or views, in the current setting.
     /// </summary>
@@ -95,34 +95,34 @@ internal static class Display
     /// If the Flags parameter value is set to QDC_DATABASE_CURRENT, the pCurrentTopologyId parameter must not be NULL.If the Flags parameter value is not set to QDC_DATABASE_CURRENT, the pCurrentTopologyId parameter value must be NULL.</param>
     /// <returns></returns>
     [DllImport("user32.dll")]
-    public static extern ResultErrorCode QueryDisplayConfig(QDC flags, ref int numPathArrayElements, [In, Out] DISPLAYCONFIG_PATH_INFO[] pathArray, ref int numModeInfoArrayElements, [In, Out] DISPLAYCONFIG_MODE_INFO[] modeInfoArray, IntPtr currentTopologyId);
+    internal static extern ResultErrorCode QueryDisplayConfig(QDC flags, ref int numPathArrayElements, [In, Out] DISPLAYCONFIG_PATH_INFO[] pathArray, ref int numModeInfoArrayElements, [In, Out] DISPLAYCONFIG_MODE_INFO[] modeInfoArray, IntPtr currentTopologyId);
     /// <summary>
     /// The <see href="https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-displayconfiggetdeviceinfo">DisplayConfigGetDeviceInfo</see> function retrieves display configuration information about the device.
     /// </summary>
     /// <param name="requestPacket">A pointer to a DISPLAYCONFIG_DEVICE_INFO_HEADER structure. This structure contains information about the request, which includes the packet type in the type member. The type and size of additional data that DisplayConfigGetDeviceInfo returns after the header structure depend on the packet type.</param>
     /// <returns></returns>
     [DllImport("user32.dll")]
-    public static extern ResultErrorCode DisplayConfigGetDeviceInfo(ref DISPLAYCONFIG_GET_ADVANCED_COLOR_INFO requestPacket);
+    internal static extern ResultErrorCode DisplayConfigGetDeviceInfo(ref DISPLAYCONFIG_GET_ADVANCED_COLOR_INFO requestPacket);
     /// <summary>
     /// The <see href="https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-displayconfiggetdeviceinfo">DisplayConfigGetDeviceInfo</see> function retrieves display configuration information about the device.
     /// </summary>
     /// <param name="requestPacket">A pointer to a DISPLAYCONFIG_DEVICE_INFO_HEADER structure. This structure contains information about the request, which includes the packet type in the type member. The type and size of additional data that DisplayConfigGetDeviceInfo returns after the header structure depend on the packet type.</param>
     /// <returns></returns>
     [DllImport("user32.dll")]
-    public static extern ResultErrorCode DisplayConfigGetDeviceInfo(ref DISPLAYCONFIG_SOURCE_DEVICE_NAME requestPacket);
+    internal static extern ResultErrorCode DisplayConfigGetDeviceInfo(ref DISPLAYCONFIG_SOURCE_DEVICE_NAME requestPacket);
     /// <summary>
     /// The <see href="https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-displayconfiggetdeviceinfo">DisplayConfigGetDeviceInfo</see> function retrieves display configuration information about the device.
     /// </summary>
     /// <param name="requestPacket">A pointer to a DISPLAYCONFIG_DEVICE_INFO_HEADER structure. This structure contains information about the request, which includes the packet type in the type member. The type and size of additional data that DisplayConfigGetDeviceInfo returns after the header structure depend on the packet type.</param>
     /// <returns></returns>
     [DllImport("user32.dll")]
-    public static extern ResultErrorCode DisplayConfigGetDeviceInfo(ref DISPLAYCONFIG_TARGET_DEVICE_NAME requestPacket);
+    internal static extern ResultErrorCode DisplayConfigGetDeviceInfo(ref DISPLAYCONFIG_TARGET_DEVICE_NAME requestPacket);
     /// <summary>
     /// The <see href="https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-displayconfigsetdeviceinfo">DisplayConfigSetDeviceInfo</see> function sets the properties of a target.
     /// </summary>
     /// <param name="setPacket">A pointer to a DISPLAYCONFIG_DEVICE_INFO_HEADER structure that contains information to set for the device. The type and size of additional data that DisplayConfigSetDeviceInfo uses for the configuration comes after the header structure. This additional data depends on the packet type, as specified by the type member of DISPLAYCONFIG_DEVICE_INFO_HEADER. For example, if the caller wants to change the boot persistence, that caller allocates and fills a DISPLAYCONFIG_SET_TARGET_PERSISTENCE structure and passes a pointer to this structure in setPacket. Note that the first member of the DISPLAYCONFIG_SET_TARGET_PERSISTENCE structure is the DISPLAYCONFIG_DEVICE_INFO_HEADER.</param>
     /// <returns></returns>
     [DllImport("user32.dll")]
-    public static extern ResultErrorCode DisplayConfigSetDeviceInfo([In] ref DISPLAYCONFIG_SET_ADVANCED_COLOR_STATE setPacket);
+    internal static extern ResultErrorCode DisplayConfigSetDeviceInfo([In] ref DISPLAYCONFIG_SET_ADVANCED_COLOR_STATE setPacket);
 
 }
