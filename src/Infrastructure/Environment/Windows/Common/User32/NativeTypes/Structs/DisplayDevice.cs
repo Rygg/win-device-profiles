@@ -39,4 +39,12 @@ internal struct DISPLAY_DEVICE
     /// </summary>
     [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
     internal string DeviceKey;
+
+    /// <summary>
+    /// Override for converting this to a string.
+    /// </summary>
+    public override string ToString()
+    {
+        return $"{nameof(DISPLAY_DEVICE)}| DeviceName: {DeviceName}, DeviceId: {DeviceID}, DeviceString: {DeviceString}, DeviceKey: {DeviceKey}, StateFlags: {StateFlags}";
+    }
 }

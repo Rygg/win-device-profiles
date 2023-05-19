@@ -44,7 +44,7 @@ internal static class Display
     /// The resulting device interface name can be used with SetupAPI functions and serves as a link between GDI monitor devices and SetupAPI monitor devices.</param>
     /// <returns></returns>
     [DllImport("user32.dll")]
-    public static extern bool EnumDisplayDevices(string lpDevice, uint iDevNum, ref DISPLAY_DEVICE lpDisplayDevice, uint dwFlags);
+    public static extern bool EnumDisplayDevices(string? lpDevice, uint iDevNum, ref DISPLAY_DEVICE lpDisplayDevice, uint dwFlags);
     /// <summary>
     /// The <see href="https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-enumdisplaysettingsa">EnumDisplaySettings</see> function retrieves information about one of the graphics modes for a display device. 
     /// To retrieve information for all the graphics modes of a display device, make a series of calls to this function.

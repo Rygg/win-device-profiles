@@ -1,5 +1,5 @@
 ﻿using Application.Common.Interfaces;
-using Infrastructure.Environment.Windows.Services.Display;
+using Infrastructure.Environment.Windows.Services.Displays;
 using Infrastructure.Environment.Windows.Services.Keyboard;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -18,8 +18,8 @@ public static class ConfigureServices
     {
         builder.ConfigureServices(services =>
         {
-            services.AddSingleton<IHotKeyTrigger, KeyboardHotKeyService>(); // Singleton to track registrations and control disposing.
-            services.AddSingleton<IDisplayDeviceController, DisplayDeviceService>(); // TODO: should be figured out later.
+            services.AddSingleton<IHotKeyTrigger, KeyboardHotKeyService>(); // Singleton to track registrations and control disposing (unregister functionality).
+            services.AddSingleton<IDisplayDeviceController, DisplayDeviceService>(); // TODO: lifetime scope should be figured out later.
         });
         return builder;
     }

@@ -1,5 +1,5 @@
 ﻿namespace Domain.Models;
-public record DeviceProfile
+public sealed record DeviceProfile
 {
     /// <summary>
     /// Identifier of the profile.
@@ -10,6 +10,7 @@ public record DeviceProfile
     /// Name of the profile.
     /// </summary>
     public string Name { get; init; } = string.Empty;
+
     /// <summary>
     /// HotKey for triggering the profile. Not required.
     /// </summary>
@@ -18,19 +19,5 @@ public record DeviceProfile
     /// <summary>
     /// DisplaySettings for the profile. Required.
     /// </summary>
-    //internal DeviceProfileDisplaySettings[] DisplaySettings { get; }
-
-    public bool Validate()
-    {
-        if (Id == default)
-        {
-            return false;
-        }
-
-        if (string.IsNullOrWhiteSpace(Name))
-        {
-            return false;
-        }
-        return true; // TODO:
-    }
+    public ICollection<DisplaySettings> DisplaySettings { get; init; } = Array.Empty<DisplaySettings>();
 }
