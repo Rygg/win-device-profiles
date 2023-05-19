@@ -23,7 +23,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0C255A3C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "src\Infrastructure\Infrastructure.csproj", "{9C560A38-18B9-4F9B-872A-5560E32AEC78}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TrayApplication", "src\SystemTrayApplication\TrayApplication.csproj", "{F56BBD7C-49AB-4EEC-9092-C375CCD2BEAA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TrayApplication", "src\TrayApplication\TrayApplication.csproj", "{F56BBD7C-49AB-4EEC-9092-C375CCD2BEAA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "legacy", "legacy", "{83D42F89-D61A-40C9-BBD2-6FF26FDB4F11}"
 EndProject
