@@ -68,7 +68,7 @@ public sealed class HotKeyOptionsTests
     public void ToHotKeyCombination_InvalidObject_ThrowsException()
     {
         var options = new HotKeyOptions();
-        var act = () => options.ToHotKeyCombination();
+        var act = options.ToHotKeyCombination;
         act.Should().Throw<InvalidOperationException>("object should not be valid.");
     }
 

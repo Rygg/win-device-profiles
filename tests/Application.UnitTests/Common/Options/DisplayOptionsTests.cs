@@ -150,7 +150,7 @@ public sealed class DisplayOptionsTests
     public void ToDisplaySettings_InvalidConfiguration_ThrowsException()
     {
         var displayOptions = new DisplayOptions();
-        var act = () => displayOptions.ToDisplaySettings();
+        var act = displayOptions.ToDisplaySettings;
         act.Should().Throw<InvalidOperationException>("the converted object is not valid.");
     }
 

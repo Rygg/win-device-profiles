@@ -86,7 +86,7 @@ public sealed record DeviceProfileOptions
     /// </summary>
     public DeviceProfile ToDeviceProfile()
     {
-        if (IsValid())
+        if (!IsValid())
         {
             throw new InvalidOperationException("Configuration is not valid.");
         }
