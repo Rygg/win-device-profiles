@@ -29,12 +29,19 @@ public sealed record ProfileOptions
         }
 
         // Check Duplicate Profile Identifiers:
-        if (options.Profiles.GroupBy(p => p.Id).Any(g => g.Count() > 1))
+        if (options.Profiles
+            .GroupBy(p => p.Id)
+            .Any(g => g.Count() > 1)
+            )
         {
             return false;
         }
         // Check duplicate hot key bindings.
-        if (options.Profiles.Where(p => p.HotKey != null).GroupBy(p => p.HotKey).Any(g => g.Count() > 1))
+        if (options.Profiles
+            .Where(p => p.HotKey != null)
+            .GroupBy(p => p.HotKey)
+            .Any(g => g.Count() > 1)
+            )
         {
             return false;
         }
@@ -42,7 +49,9 @@ public sealed record ProfileOptions
         foreach (var profile in options.Profiles)
         {
             // Check duplicate display ids.
-            if (profile.DisplaySettings.GroupBy(ds => ds.DisplayId).Any(g => g.Count() > 1))
+            if (profile.DisplaySettings
+                .GroupBy(ds => ds.DisplayId)
+                .Any(g => g.Count() > 1))
             {
                 return false;
             }
