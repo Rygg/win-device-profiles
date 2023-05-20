@@ -30,7 +30,7 @@ public sealed class DeviceProfileOptionsTests
                 new()
                 {
                     DisplayId = 0,
-                    EnableHdr = true,
+                    Hdr = true,
                     Primary = true,
                     RefreshRate = 60
                 }
@@ -56,7 +56,7 @@ public sealed class DeviceProfileOptionsTests
                 new()
                 {
                     DisplayId = 0,
-                    EnableHdr = true,
+                    Hdr = true,
                     Primary = true,
                     RefreshRate = 60
                 }
@@ -78,7 +78,7 @@ public sealed class DeviceProfileOptionsTests
                 new()
                 {
                     DisplayId = 0,
-                    EnableHdr = true,
+                    Hdr = true,
                     Primary = true,
                     RefreshRate = 60
                 }
@@ -128,14 +128,14 @@ public sealed class DeviceProfileOptionsTests
                 new()
                 {
                     DisplayId = 0,
-                    EnableHdr = true,
+                    Hdr = true,
                     Primary = true,
                     RefreshRate = 60
                 },
                 new()
                 {
                     DisplayId = 1,
-                    EnableHdr = true,
+                    Hdr = true,
                     Primary = false,
                     RefreshRate = 120
                 }
@@ -178,7 +178,7 @@ public sealed class DeviceProfileOptionsTests
                 new()
                 {
                     DisplayId = 0,
-                    EnableHdr = true,
+                    Hdr = true,
                     Primary = true,
                     RefreshRate = 60
                 }

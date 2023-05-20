@@ -227,7 +227,7 @@ public sealed record DisplayOptions
     /// <summary>
     /// Should HDR be enabled for this display. Null for no change.
     /// </summary>
-    public bool? EnableHdr { get; init; }
+    public bool? Hdr { get; init; }
 
     /// <summary>
     /// Should RefreshRate be switched for this display. Null for no change.
@@ -243,7 +243,7 @@ public sealed record DisplayOptions
         {
             return false;
         }
-        return Primary != null || EnableHdr != null || RefreshRate != null;
+        return Primary != null || Hdr != null || RefreshRate != null;
     }
     /// <summary>
     /// Convert to domain model.
@@ -260,7 +260,7 @@ public sealed record DisplayOptions
         {
             DisplayId = DisplayId!.Value, // This is not null because configuration is validated.
             PrimaryDisplay = Primary,
-            EnableHdr = EnableHdr,
+            EnableHdr = Hdr,
             RefreshRate = RefreshRate,
         };
     }

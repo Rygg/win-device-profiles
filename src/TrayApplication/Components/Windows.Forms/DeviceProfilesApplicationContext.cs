@@ -48,7 +48,7 @@ public sealed class DeviceProfilesApplicationContext : ApplicationContext
         await _mediatR.Send(new RegisterHotKeysCommand(), cancellationToken).ConfigureAwait(false);
         while (!cancellationToken.IsCancellationRequested)
         {
-            var profile = await _mediatR.Send(new GetHotKeyPressProfileChangeQuery(), cancellationToken).ConfigureAwait(false);
+            var profile = await _mediatR.Send(new GetRegisteredHotKeyPressQuery(), cancellationToken).ConfigureAwait(false);
             await _mediatR.Send(new ActivateProfileCommand { ProfileId = profile.Id }, cancellationToken).ConfigureAwait(false);
         }
     }
@@ -75,7 +75,7 @@ public sealed class DeviceProfilesApplicationContext : ApplicationContext
     /// </summary>
     private void OnCopyDataToClipboard(object? sender, EventArgs e)
     {
-        var deviceData = _mediatR.Send(new GetCurrentDevicesQuery(), _applicationCts.Token).GetAwaiter().GetResult();
+        var deviceData = _mediatR.Send(new GetCurrentDeviceInformationQuery(), _applicationCts.Token).GetAwaiter().GetResult();
         Clipboard.SetText(deviceData);
         _logger.CopiedInformationToClipboard(deviceData);
     }

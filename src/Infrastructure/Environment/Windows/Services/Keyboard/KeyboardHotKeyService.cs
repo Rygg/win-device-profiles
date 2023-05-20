@@ -1,4 +1,5 @@
-﻿using Application.Common.Interfaces;
+﻿using System.ComponentModel;
+using Application.Common.Interfaces;
 using Domain.Models;
 using Infrastructure.Environment.Windows.Common.User32;
 using Infrastructure.Environment.Windows.Common.User32.NativeTypes.Enums;
@@ -33,6 +34,7 @@ public sealed class KeyboardHotKeyService : IHotKeyTrigger, IDisposable
     /// </summary>
     /// <param name="hotKey">Key combination to register to the listener.</param>
     /// <param name="ct">CancellationToken for the operation.</param>
+    /// <exception cref="Win32Exception">Native API caused an exception.</exception>
     /// <exception cref="InvalidOperationException">HotKey could not be registered.</exception>
     public async Task RegisterHotKeyAsync(HotKeyCombination hotKey, CancellationToken ct)
     {
@@ -60,7 +62,7 @@ public sealed class KeyboardHotKeyService : IHotKeyTrigger, IDisposable
                 _logger.RegisteringGlobalHotKey(_currentKeyRegistrationId, hotKey);
                 if (!HotKey.RegisterHotKey(_eventSender.Handle, _currentKeyRegistrationId, fsModifiers, key)) // Register the hot key.
                 {
-                    throw new InvalidOperationException($"Key combination {hotKey} could not be registered due to Native Windows error.");
+                    throw new Win32Exception($"Key combination {hotKey} could not be registered due to Native Windows error.");
                 }
 
                 RegisteredCombinations.Add(_currentKeyRegistrationId, hotKey); // Add to registered hot keys.

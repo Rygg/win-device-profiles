@@ -1,6 +1,5 @@
 using Application.Common.Interfaces;
 using MediatR;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -33,8 +32,8 @@ public class BaseTestFixture
     [SetUp]
     public void SetUp()
     {
-        hotKeyTriggerMock.Invocations.Clear();
-        displayControllerMock.Invocations.Clear();
+        hotKeyTriggerMock.Reset();
+        displayControllerMock.Reset();
     }
 
     [OneTimeTearDown]

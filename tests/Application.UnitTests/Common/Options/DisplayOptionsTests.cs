@@ -40,7 +40,7 @@ public sealed class DisplayOptionsTests
     {
         var displayOptions = new DisplayOptions
         {
-            EnableHdr = false,
+            Hdr = false,
         };
         var result = displayOptions.IsValid();
         result.Should().BeFalse("object should not be valid.");
@@ -75,7 +75,7 @@ public sealed class DisplayOptionsTests
         var displayOptions = new DisplayOptions
         {
             DisplayId = 1,
-            EnableHdr = true,
+            Hdr = true,
         };
         var result = displayOptions.IsValid();
         result.Should().BeTrue("object should not valid.");
@@ -113,7 +113,7 @@ public sealed class DisplayOptionsTests
         {
             DisplayId = 1,
             Primary = false,
-            EnableHdr = true
+            Hdr = true
         };
         var result = displayOptions.IsValid();
         result.Should().BeTrue("object should not valid.");
@@ -125,7 +125,7 @@ public sealed class DisplayOptionsTests
         var displayOptions = new DisplayOptions
         {
             DisplayId = 1,
-            EnableHdr = true,
+            Hdr = true,
             RefreshRate = 60,
         };
         var result = displayOptions.IsValid();
@@ -139,7 +139,7 @@ public sealed class DisplayOptionsTests
         {
             DisplayId = 1,
             Primary = true,
-            EnableHdr = true,
+            Hdr = true,
             RefreshRate = 60,
         };
         var result = displayOptions.IsValid();
@@ -173,7 +173,7 @@ public sealed class DisplayOptionsTests
         {
             DisplayId = 1,
             Primary = true,
-            EnableHdr = false,
+            Hdr = false,
             RefreshRate = 60,
         };
         var result2 = displayOptions2.ToDisplaySettings();

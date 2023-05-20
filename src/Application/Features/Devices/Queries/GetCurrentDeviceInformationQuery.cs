@@ -3,9 +3,9 @@ using MediatR;
 
 namespace Application.Features.Devices.Queries;
 
-public sealed record GetCurrentDevicesQuery : IRequest<string>;
+public sealed record GetCurrentDeviceInformationQuery : IRequest<string>;
 
-public sealed class GetCurrentDevicesQueryHandler : IRequestHandler<GetCurrentDevicesQuery,string>
+public sealed class GetCurrentDevicesQueryHandler : IRequestHandler<GetCurrentDeviceInformationQuery,string>
 {
     private readonly IDisplayDeviceController _displayDeviceController;
 
@@ -14,7 +14,7 @@ public sealed class GetCurrentDevicesQueryHandler : IRequestHandler<GetCurrentDe
         _displayDeviceController = displayDeviceController;
     }
 
-    public async Task<string> Handle(GetCurrentDevicesQuery request, CancellationToken cancellationToken)
+    public async Task<string> Handle(GetCurrentDeviceInformationQuery request, CancellationToken cancellationToken)
     {
         return await _displayDeviceController.GetCurrentDisplayInformationString(cancellationToken).ConfigureAwait(false);
     }

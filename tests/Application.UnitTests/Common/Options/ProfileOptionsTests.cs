@@ -48,7 +48,7 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
                         new()
                         {
                             Primary = true,
-                            EnableHdr = true,
+                            Hdr = true,
                             RefreshRate = 60,
                         }
                     }
@@ -196,7 +196,7 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
                         {
                             DisplayId = 0,
                             Primary = true,
-                            EnableHdr = true,
+                            Hdr = true,
                             RefreshRate = 60,
                         }
                     }
@@ -380,14 +380,14 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
                         {
                             DisplayId = 0,
                             Primary = false,
-                            EnableHdr = true,
+                            Hdr = true,
                             RefreshRate = 60,
                         },
                         new()
                         {
                             DisplayId = 1,
                             Primary = false,
-                            EnableHdr = false,
+                            Hdr = false,
                             RefreshRate = 60,
                         }
                     }
@@ -483,7 +483,7 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
                         new()
                         {
                             DisplayId = 1,
-                            EnableHdr = false,
+                            Hdr = false,
                             RefreshRate = 120,
                         },
                     }
@@ -502,7 +502,7 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
                         new()
                         {
                             DisplayId = 1,
-                            EnableHdr = false,
+                            Hdr = false,
                             Primary = false,
                             RefreshRate = 120,
                         },
@@ -588,7 +588,7 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
                         new()
                         {
                             DisplayId = 1,
-                            EnableHdr = false,
+                            Hdr = false,
                             Primary = false,
                             RefreshRate = 120,
                         },

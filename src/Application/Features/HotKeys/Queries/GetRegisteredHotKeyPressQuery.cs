@@ -6,14 +6,14 @@ using Microsoft.Extensions.Options;
 
 namespace Application.Features.HotKeys.Queries;
 
-public sealed record GetHotKeyPressProfileChangeQuery : IRequest<DeviceProfile>;
+public sealed record GetRegisteredHotKeyPressQuery : IRequest<DeviceProfile>;
 
-public sealed class GetHotKeyPressProfileChangeHandler : IRequestHandler<GetHotKeyPressProfileChangeQuery, DeviceProfile>
+public sealed class GetRegisteredHotKeyPressQueryHandler : IRequestHandler<GetRegisteredHotKeyPressQuery, DeviceProfile>
 {
     private readonly DeviceProfile[] _deviceProfiles;
     private readonly IHotKeyTrigger _hotKeyTrigger;
 
-    public GetHotKeyPressProfileChangeHandler(
+    public GetRegisteredHotKeyPressQueryHandler(
         IOptions<ProfileOptions> profileOptions,
         IHotKeyTrigger hotKeyTrigger
         )
@@ -29,7 +29,7 @@ public sealed class GetHotKeyPressProfileChangeHandler : IRequestHandler<GetHotK
             .ToArray();
     }
 
-    public async Task<DeviceProfile> Handle(GetHotKeyPressProfileChangeQuery request, CancellationToken cancellationToken)
+    public async Task<DeviceProfile> Handle(GetRegisteredHotKeyPressQuery request, CancellationToken cancellationToken)
     {
         var key = await _hotKeyTrigger.GetHotKeyPressAsync(cancellationToken).ConfigureAwait(false);
         var profile = GetDeviceProfileFromKeyTrigger(key);
