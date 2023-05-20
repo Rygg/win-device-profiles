@@ -22,7 +22,8 @@ public sealed record ProfileOptions
         {
             throw new ArgumentNullException(nameof(options));
         }
-        if(options.Profiles.All(p => p.IsValid()))
+
+        if(!options.Profiles.All(p => p.IsValid()))
         {
             return false;
         }
@@ -32,6 +33,26 @@ public sealed record ProfileOptions
         {
             return false;
         }
+        // Check duplicate hot key bindings.
+        if (options.Profiles.Where(p => p.HotKey != null).GroupBy(p => p.HotKey).Any(g => g.Count() > 1))
+        {
+            return false;
+        }
+        
+        foreach (var profile in options.Profiles)
+        {
+            // Check duplicate display ids.
+            if (profile.DisplaySettings.GroupBy(ds => ds.DisplayId).Any(g => g.Count() > 1))
+            {
+                return false;
+            }
+            // Check duplicated primary displays.
+            if (profile.DisplaySettings.Count(p => p.Primary == true) > 1)
+            {
+                return false;
+            }
+        }
+        
 
         return true;
     }

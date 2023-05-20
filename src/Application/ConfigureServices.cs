@@ -45,8 +45,9 @@ public static class ConfigureServices
         services
             .AddOptions<ProfileOptions>()
             .Bind(builder.Configuration.GetSection(nameof(ProfileOptions)))
-            .Validate(ProfileOptions.Validate);
-        
+            .Validate(ProfileOptions.Validate)
+            .ValidateOnStart();
+
         return services;
     }
 }

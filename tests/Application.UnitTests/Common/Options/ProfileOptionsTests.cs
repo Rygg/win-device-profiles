@@ -22,7 +22,7 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
     }
 
     [Test]
-    public void Validate_DuplicateDisplayIds_ReturnsFalse()
+    public void Validate_DuplicateProfileIds_ReturnsFalse()
     {
         var profile = new ProfileOptions
         {
@@ -31,15 +31,15 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
                 new()
                 {
                     Id = 1,
-                    Name = "TestProfile",
+                    Name = "TestProfile1",
                     HotKey = new HotKeyOptions
                     {
                         Key = SupportedKeys.NumPad1,
                         Modifiers = new ModifierOptions
                         {
                             Ctrl = true,
-                            Shift = false,
-                            Alt = true,
+                            Shift = true,
+                            Alt = false,
                             Win = false
                         }
                     },
@@ -49,28 +49,37 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
                         {
                             DisplayId = 0,
                             Primary = true,
-                        },
-                        new()
+                        }
+                    }
+                },
+                new()
+                {
+                    Id = 1,
+                    Name = "TestProfile2",
+                    HotKey = new HotKeyOptions
+                    {
+                        Key = SupportedKeys.NumPad1,
+                        Modifiers = new ModifierOptions
                         {
-                            DisplayId = 0,
-                            Primary = false,
-                            EnableHdr = true,
-                            RefreshRate = 60,
-                        },
+                            Ctrl = true,
+                            Shift = true,
+                            Alt = false,
+                            Win = false
+                        }
+                    },
+                    DisplaySettings = new List<DisplayOptions>
+                    {
                         new()
                         {
                             DisplayId = 1,
                             Primary = false,
-                            EnableHdr = false,
-                            RefreshRate = 60,
                         }
                     }
-
-                }
+                },
             }
         };
         var validationResult = ProfileOptions.Validate(profile);
-        validationResult.Should().BeFalse("Duplicate DisplayIds should not be allowed within a profile.");
+        validationResult.Should().BeFalse("Duplicate profile identifiers should not be allowed between profiles.");
     }
 
     [Test]
@@ -135,7 +144,7 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
     }
 
     [Test]
-    public void Validate_DuplicateProfileIds_ReturnsFalse()
+    public void Validate_DuplicateDisplayIds_ReturnsFalse()
     {
         var profile = new ProfileOptions
         {
@@ -144,15 +153,15 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
                 new()
                 {
                     Id = 1,
-                    Name = "TestProfile1",
+                    Name = "TestProfile",
                     HotKey = new HotKeyOptions
                     {
                         Key = SupportedKeys.NumPad1,
                         Modifiers = new ModifierOptions
                         {
                             Ctrl = true,
-                            Shift = true,
-                            Alt = false,
+                            Shift = false,
+                            Alt = true,
                             Win = false
                         }
                     },
@@ -162,37 +171,28 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
                         {
                             DisplayId = 0,
                             Primary = true,
-                        }
-                    }
-                },
-                new()
-                {
-                    Id = 1,
-                    Name = "TestProfile2",
-                    HotKey = new HotKeyOptions
-                    {
-                        Key = SupportedKeys.NumPad1,
-                        Modifiers = new ModifierOptions
+                        },
+                        new()
                         {
-                            Ctrl = true,
-                            Shift = true,
-                            Alt = false,
-                            Win = false
-                        }
-                    },
-                    DisplaySettings = new List<DisplayOptions>
-                    {
+                            DisplayId = 0,
+                            Primary = false,
+                            EnableHdr = true,
+                            RefreshRate = 60,
+                        },
                         new()
                         {
                             DisplayId = 1,
                             Primary = false,
+                            EnableHdr = false,
+                            RefreshRate = 60,
                         }
                     }
-                },
+
+                }
             }
         };
         var validationResult = ProfileOptions.Validate(profile);
-        validationResult.Should().BeFalse("Duplicate profile identifiers should not be allowed between profiles.");
+        validationResult.Should().BeFalse("Duplicate DisplayIds should not be allowed within a profile.");
     }
 
     [Test]
@@ -276,7 +276,7 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
             }
         };
         var validationResult = ProfileOptions.Validate(profile);
-        validationResult.Should().BeFalse("Missing HotKeys should be allowed for profiles.");
+        validationResult.Should().BeTrue("Missing HotKeys should be allowed for profiles.");
     }
 
     [Test]
@@ -413,13 +413,6 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
                     HotKey = new HotKeyOptions
                     {
                         Key = SupportedKeys.NumPad1,
-                        Modifiers = new ModifierOptions
-                        {
-                            Ctrl = true,
-                            Shift = true,
-                            Alt = false,
-                            Win = false
-                        }
                     },
                     DisplaySettings = new List<DisplayOptions>
                     {
@@ -427,33 +420,14 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
                         {
                             DisplayId = 0,
                             Primary = true,
-                        }
-                    }
-                },
-                new()
-                {
-                    Id = 2,
-                    Name = "TestProfile2",
-                    HotKey = new HotKeyOptions
-                    {
-                        Key = SupportedKeys.NumPad1,
-                        Modifiers = new ModifierOptions
-                        {
-                            Ctrl = true,
-                            Shift = true,
-                            Alt = false,
-                            Win = false
-                        }
-                    },
-                    DisplaySettings = new List<DisplayOptions>
-                    {
+                        },
                         new()
                         {
                             DisplayId = 1,
                             Primary = true,
                         }
                     }
-                },
+                }
             }
         };
         var validationResult = ProfileOptions.Validate(profile);
