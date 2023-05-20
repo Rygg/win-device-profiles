@@ -114,6 +114,11 @@ public sealed record HotKeyOptions
     /// <returns></returns>
     public HotKeyCombination ToHotKeyCombination()
     {
+        if (!IsValid())
+        {
+            throw new InvalidOperationException("Configuration is not valid.");
+        }
+
         return new HotKeyCombination
         {
             Key = Key,
@@ -167,7 +172,7 @@ public sealed record DisplayOptions
     /// <summary>
     /// Display identifier to be used to link the display to the Environment structures.
     /// </summary>
-    public uint DisplayId { get; init; }
+    public uint? DisplayId { get; init; }
 
     /// <summary>
     /// Should this display be set as primary. Null for no change.
@@ -189,6 +194,10 @@ public sealed record DisplayOptions
     /// </summary>
     public bool IsValid()
     {
+        if (DisplayId == null)
+        {
+            return false;
+        }
         return Primary != null || EnableHdr != null || RefreshRate != null;
     }
     /// <summary>
@@ -197,9 +206,14 @@ public sealed record DisplayOptions
     /// <returns></returns>
     public DisplaySettings ToDisplaySettings()
     {
+        if (!IsValid())
+        {
+            throw new InvalidOperationException("Configuration is not valid.");
+        }
+
         return new DisplaySettings
         {
-            DisplayId = DisplayId,
+            DisplayId = DisplayId!.Value, // This is not null because configuration is validated.
             PrimaryDisplay = Primary,
             EnableHdr = EnableHdr,
             RefreshRate = RefreshRate,

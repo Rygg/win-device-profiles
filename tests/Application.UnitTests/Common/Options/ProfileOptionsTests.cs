@@ -4,7 +4,7 @@ using Domain.Enums;
 namespace Application.UnitTests.Common.Options;
 
 [TestFixture]
-public sealed class ProfileOptionsTests
+public sealed class ProfileOptionsTests // Testing general validation rules for Profile validation.
 {
     [Test]
     public void Validate_Null_ThrowsArgumentNullException()
