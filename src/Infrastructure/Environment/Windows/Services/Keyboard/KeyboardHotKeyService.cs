@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using Application.Common.Interfaces;
 using Domain.Models;
-using Infrastructure.Environment.Windows.Common.User32;
+using Infrastructure.Environment.Windows.Common.User32.Interfaces;
 using Infrastructure.Environment.Windows.Common.User32.NativeTypes.Enums;
 using Infrastructure.Extensions;
 using Infrastructure.Interfaces;
@@ -13,20 +13,25 @@ namespace Infrastructure.Environment.Windows.Services.Keyboard;
 /// <summary>
 /// Infrastructure for subscribing and receiving hot key values. This has to be registered as a Singleton.
 /// </summary>
-public sealed class KeyboardHotKeyService : IHotKeyTrigger, IDisposable
+internal sealed class KeyboardHotKeyService : IHotKeyTrigger, IDisposable
 {
     private readonly ILogger<KeyboardHotKeyService> _logger;
     private readonly IWindowsHotKeyEventSender _eventSender;
+    private readonly IHotKeyService _hotKeyService;
 
     private static readonly Dictionary<int, HotKeyCombination> RegisteredCombinations = new();
     private static int _currentKeyRegistrationId;
 
     private static readonly SemaphoreSlim RegistrationLock = new(1);
 
-    public KeyboardHotKeyService(ILogger<KeyboardHotKeyService> logger, IWindowsHotKeyEventSender eventSender)
+    public KeyboardHotKeyService(
+        ILogger<KeyboardHotKeyService> logger, 
+        IWindowsHotKeyEventSender eventSender, 
+        IHotKeyService hotKeyService)
     {
         _logger = logger;
         _eventSender = eventSender;
+        _hotKeyService = hotKeyService;
     }
 
     /// <summary>
@@ -60,7 +65,7 @@ public sealed class KeyboardHotKeyService : IHotKeyTrigger, IDisposable
 
                 _currentKeyRegistrationId++; // Increment the operation counter. Registration starts from 1 -->
                 _logger.RegisteringGlobalHotKey(_currentKeyRegistrationId, hotKey);
-                if (!HotKey.RegisterHotKey(_eventSender.Handle, _currentKeyRegistrationId, fsModifiers, key)) // Register the hot key.
+                if (!_hotKeyService.RegisterHotKeyToHandle(_eventSender.Handle, _currentKeyRegistrationId, fsModifiers, key)) // Register the hot key.
                 {
                     throw new Win32Exception($"Key combination {hotKey} could not be registered due to Native Windows error.");
                 }
@@ -117,13 +122,13 @@ public sealed class KeyboardHotKeyService : IHotKeyTrigger, IDisposable
     public void Dispose()
     {
         _logger.StartingDispose();
-        // Unregister all hotkeys registered. This can be done by looping from currentHotKeyRegistrationId to 1.
         foreach (var registration in RegisteredCombinations)
         {
             _logger.UnregisterGlobalHotKey(registration.Key, registration.Value);
-            HotKey.UnregisterHotKey(_eventSender.Handle, registration.Key);
+            _hotKeyService.UnregisterHotKeyFromHandle(_eventSender.Handle, registration.Key);
         }
         _logger.DisposingCompleted();
+
         // TODO: Need to dispose handler window? 
     }
 }

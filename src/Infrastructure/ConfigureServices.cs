@@ -4,6 +4,8 @@ using Infrastructure.Environment.Windows.Services.Keyboard;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Runtime.CompilerServices;
+using Infrastructure.Environment.Windows.Common.User32;
+using Infrastructure.Environment.Windows.Common.User32.Interfaces;
 
 [assembly: InternalsVisibleTo("Infrastructure.UnitTests")]
 namespace Infrastructure;
@@ -20,8 +22,11 @@ public static class ConfigureServices
     {
         builder.ConfigureServices(services =>
         {
+            services.AddTransient<IHotKeyService, HotKeyService>(); // WIN32 Native API Wrapper.
+
+            // Actual services for application functionality:
             services.AddSingleton<IHotKeyTrigger, KeyboardHotKeyService>(); // Singleton to track registrations and control disposing (unregister functionality).
-            services.AddSingleton<IDisplayDeviceController, DisplayDeviceService>(); // TODO: lifetime scope should be figured out later.
+            services.AddTransient<IDisplayDeviceController, DisplayDeviceService>();
         });
         return builder;
     }

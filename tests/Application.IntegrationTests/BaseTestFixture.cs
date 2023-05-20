@@ -29,6 +29,12 @@ public class BaseTestFixture
         _scopeFactory = _host.Services.GetRequiredService<IServiceScopeFactory>();
     }
 
+    [OneTimeTearDown]
+    public void OneTimeTearDown()
+    {
+        _host.Dispose();
+    }
+
     [SetUp]
     public void SetUp()
     {
@@ -36,11 +42,7 @@ public class BaseTestFixture
         displayControllerMock.Reset();
     }
 
-    [OneTimeTearDown]
-    public void OneTimeTearDown()
-    {
-        _host.Dispose();
-    }
+
 
     protected async Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request)
     {
