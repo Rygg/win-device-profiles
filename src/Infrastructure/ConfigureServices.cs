@@ -8,6 +8,7 @@ using Infrastructure.Environment.Windows.Common.User32;
 using Infrastructure.Environment.Windows.Common.User32.Interfaces;
 
 [assembly: InternalsVisibleTo("Infrastructure.UnitTests")]
+[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
 namespace Infrastructure;
 
 /// <summary>
@@ -23,6 +24,7 @@ public static class ConfigureServices
         builder.ConfigureServices(services =>
         {
             services.AddTransient<IHotKeyService, HotKeyService>(); // WIN32 Native API Wrapper.
+            services.AddTransient<IDisplayService, DisplayService>(); // WIN32 Native API Wrapper.
 
             // Actual services for application functionality:
             services.AddSingleton<IHotKeyTrigger, KeyboardHotKeyService>(); // Singleton to track registrations and control disposing (unregister functionality).

@@ -1,10 +1,8 @@
 ﻿using System.ComponentModel;
-using System.Runtime.InteropServices;
 using Application.Common.Interfaces;
 using Domain.Models;
-using Infrastructure.Environment.Windows.Common.User32;
+using Infrastructure.Environment.Windows.Common.User32.Interfaces;
 using Infrastructure.Environment.Windows.Common.User32.NativeTypes.Enums;
-using Infrastructure.Environment.Windows.Common.User32.NativeTypes.Structs;
 using Infrastructure.Environment.Windows.Services.Displays.Models;
 using Infrastructure.Extensions;
 using Microsoft.Extensions.Logging;
@@ -14,13 +12,15 @@ namespace Infrastructure.Environment.Windows.Services.Displays;
 /// <summary>
 /// Service for controlling all things related to Windows environment Display controlling.
 /// </summary>
-public sealed class DisplayDeviceService : IDisplayDeviceController
+internal sealed class DisplayDeviceService : IDisplayDeviceController
 {
     private readonly ILogger<DisplayDeviceService> _logger;
+    private readonly IDisplayService _displayService;
 
-    public DisplayDeviceService(ILogger<DisplayDeviceService> logger)
+    public DisplayDeviceService(ILogger<DisplayDeviceService> logger, IDisplayService displayService)
     {
         _logger = logger;
+        _displayService = displayService;
     }
 
     /// <summary>
@@ -78,32 +78,27 @@ public sealed class DisplayDeviceService : IDisplayDeviceController
         uint displayId = 0;
         while (!cancellationToken.IsCancellationRequested)
         {
-            var device = new DISPLAY_DEVICE();
-            device.cb = Marshal.SizeOf(device);
-            if (!Display.EnumDisplayDevices(null, displayId, ref device, 0)) // Loop uints until EnumDisplayDevices returns false. (No display device at this id).
+            var device = _displayService.GetDisplayDevice(displayId);
+            if (device == null) // Loop uints until no display device is found. (No display device at this id).
             {
                 break; // Break out.
             }
 
-            _logger.DisplayRetrieved(displayId, device.ToString());
+            _logger.DisplayRetrieved(displayId, device.Value.ToString());
 
-            if (!device.StateFlags.HasFlag(DisplayDeviceStateFlags.AttachedToDesktop))
+            if (!device.Value.StateFlags.HasFlag(DisplayDeviceStateFlags.AttachedToDesktop))
             {
                 displayId++;
                 _logger.DeviceNotAttachedToDesktop();
                 continue;
             }
             _logger.RetrievingDeviceModes(displayId);
-            var deviceMode = new DEVMODE();
-            if (!Display.EnumDisplaySettings(device.DeviceName, -1, ref deviceMode))
-            {
-                throw new Win32Exception($"DeviceMode not located for displayId {displayId}."); // Every device should have a device mode.
-            }
-
+            var deviceMode = _displayService.GetDisplayDeviceMode(device.Value);
+            
             _logger.DeviceModeRetrieved(displayId, deviceMode.ToString());
             displays.Add(displayId, new WindowsDisplayData
             {
-                DisplayDevice = device,
+                DisplayDevice = device.Value,
                 DeviceMode = deviceMode
             });
 
@@ -134,22 +129,7 @@ public sealed class DisplayDeviceService : IDisplayDeviceController
         {
             return;
         }
-        // Get buffer sizes for the active displays.
-        var err = Display.GetDisplayConfigBufferSizes(QDC.QDC_ONLY_ACTIVE_PATHS, out var pathCount, out var modeCount);
-        if (err != ResultErrorCode.ERROR_SUCCESS)
-        {
-            throw new Win32Exception((int)err);
-        }
-        var paths = new DISPLAYCONFIG_PATH_INFO[pathCount]; // Create arrays to hold the info.
-        var modes = new DISPLAYCONFIG_MODE_INFO[modeCount];
-
-        // Get display configs from CCD API:
-        err = Display.QueryDisplayConfig(QDC.QDC_ONLY_ACTIVE_PATHS, ref pathCount, paths, ref modeCount, modes, IntPtr.Zero);
-        if (err != ResultErrorCode.ERROR_SUCCESS)
-        {
-            throw new Win32Exception((int)err);
-        }
-
+        var paths = _displayService.GetDisplayConfigPathInformation();
         // Loop through the active display paths:
         foreach (var path in paths)
         {
@@ -160,7 +140,7 @@ public sealed class DisplayDeviceService : IDisplayDeviceController
                 continue;
             }
             // Get the source information. This is to further check mapping so that each device data is mapped correctly.
-            var sourceInfo = GetDisplayConfigSourceDeviceName(path);
+            var sourceInfo = _displayService.GetDisplayConfigurationSourceDeviceInformation(path);
 
             // Check if the device names match.
             if (displays[path.sourceInfo.id].DisplayDevice.DeviceName != sourceInfo.viewGdiDeviceName)
@@ -168,79 +148,15 @@ public sealed class DisplayDeviceService : IDisplayDeviceController
                 throw new InvalidOperationException($"DeviceNames did not match for DisplayId: {path.sourceInfo.id}");
             }
             // Get the target device name.
-            var targetInfo = GetDisplayConfigTargetDeviceName(path);
+            var targetInfo = _displayService.GetDisplayConfigurationTargetDeviceInformation(path);
             displays[path.sourceInfo.id].DisplayTargetInfo = targetInfo; // Save the device name to memory.
 
             // Get advanced color info (HDR).
-            var colorInfo = GetDisplayConfigAdvancedColorInfo(path);
+            var colorInfo = _displayService.GetDisplayConfigurationAdvancedColorInformation(path);
             displays[path.sourceInfo.id].AdvancedColorInformation = colorInfo; // Save to memory.
         }
     }
 
-    /// <summary>
-    /// Get DisplayConfig Source Device Name from the Native Methods.
-    /// </summary>
-    /// <param name="path">Path information to query.</param>
-    /// <returns>a native struct.</returns>
-    /// <exception cref="Win32Exception">Error occurred in native query.</exception>
-    private static DISPLAYCONFIG_SOURCE_DEVICE_NAME GetDisplayConfigSourceDeviceName(DISPLAYCONFIG_PATH_INFO path)
-    {
-        var sourceInfo = new DISPLAYCONFIG_SOURCE_DEVICE_NAME();
-        sourceInfo.header.type = DISPLAYCONFIG_DEVICE_INFO_TYPE.DISPLAYCONFIG_DEVICE_INFO_GET_SOURCE_NAME;
-        sourceInfo.header.size = Marshal.SizeOf<DISPLAYCONFIG_SOURCE_DEVICE_NAME>();
-        sourceInfo.header.adapterId = path.sourceInfo.adapterId;
-        sourceInfo.header.id = path.sourceInfo.id;
-        var err = Display.DisplayConfigGetDeviceInfo(ref sourceInfo); // Call for info.
-        if (err != ResultErrorCode.ERROR_SUCCESS)
-        {
-            throw new Win32Exception((int)err, $"Error occurred in {nameof(GetDisplayConfigSourceDeviceName)}");
-        }
-
-        return sourceInfo;
-    }
-
-    /// <summary>
-    /// Get DisplayConfig Target Device Name from the Native Methods.
-    /// </summary>
-    /// <param name="path">Path information to query.</param>
-    /// <returns>a native struct.</returns>
-    /// <exception cref="Win32Exception">Error occurred in the native query.</exception>
-    private static DISPLAYCONFIG_TARGET_DEVICE_NAME GetDisplayConfigTargetDeviceName(DISPLAYCONFIG_PATH_INFO path)
-    {
-        var targetInfo = new DISPLAYCONFIG_TARGET_DEVICE_NAME();
-        targetInfo.header.type = DISPLAYCONFIG_DEVICE_INFO_TYPE.DISPLAYCONFIG_DEVICE_INFO_GET_TARGET_NAME;
-        targetInfo.header.size = Marshal.SizeOf<DISPLAYCONFIG_TARGET_DEVICE_NAME>();
-        targetInfo.header.adapterId = path.targetInfo.adapterId;
-        targetInfo.header.id = path.targetInfo.id;
-        var err = Display.DisplayConfigGetDeviceInfo(ref targetInfo); // Request target device information:
-        if (err != ResultErrorCode.ERROR_SUCCESS)
-        {
-            throw new Win32Exception((int)err, $"Error occurred in {nameof(GetDisplayConfigTargetDeviceName)}");
-        }
-
-        return targetInfo;
-    }
-    /// <summary>
-    /// Get DisplayConfig Advanced Color Info from the Native methods.
-    /// </summary>
-    /// <param name="path">Path information to query.</param>
-    /// <returns>a native struct</returns>
-    /// <exception cref="Win32Exception">Error occurred in the native query</exception>
-    private static DISPLAYCONFIG_GET_ADVANCED_COLOR_INFO GetDisplayConfigAdvancedColorInfo(DISPLAYCONFIG_PATH_INFO path)
-    {
-        var colorInfo = new DISPLAYCONFIG_GET_ADVANCED_COLOR_INFO();
-        colorInfo.header.type = DISPLAYCONFIG_DEVICE_INFO_TYPE.DISPLAYCONFIG_DEVICE_INFO_GET_ADVANCED_COLOR_INFO;
-        colorInfo.header.size = Marshal.SizeOf<DISPLAYCONFIG_GET_ADVANCED_COLOR_INFO>();
-        colorInfo.header.adapterId = path.targetInfo.adapterId;
-        colorInfo.header.id = path.targetInfo.id;
-        var err = Display.DisplayConfigGetDeviceInfo(ref colorInfo);
-        if (err != ResultErrorCode.ERROR_SUCCESS)
-        {
-            throw new Win32Exception((int)err, $"Error occurred in {nameof(GetDisplayConfigAdvancedColorInfo)}");
-        }
-
-        return colorInfo;
-    }
 
     /// <summary>
     /// Method updating Display Settings using the Standard Win API.
@@ -281,7 +197,7 @@ public sealed class DisplayDeviceService : IDisplayDeviceController
         }
         if (anyRegistryChanges && !cancellationToken.IsCancellationRequested) // No need to apply unless changes were made. Check for cancellation also.
         {
-            Display.ChangeDisplaySettingsEx(null, IntPtr.Zero, (IntPtr)null, ChangeDisplaySettingsFlags.CDS_NONE, (IntPtr)null); // Apply settings:
+            _displayService.ApplyStandardDeviceChanges();
         }
     }
 
@@ -306,13 +222,10 @@ public sealed class DisplayDeviceService : IDisplayDeviceController
             return false;
         }
 
-        var offsetX = newPrimary.DeviceMode.dmPosition.x; // Get old position.
+        // Store the old position to fix offsets of other monitors.
+        var offsetX = newPrimary.DeviceMode.dmPosition.x; 
         var offsetY = newPrimary.DeviceMode.dmPosition.y;
-        newPrimary.DeviceMode.dmPosition.x = 0; // Set new as 0,0 (Primary is always 0,0)
-        newPrimary.DeviceMode.dmPosition.y = 0;
-
-        // Change values to registry. Don't take effect yet.
-        Display.ChangeDisplaySettingsEx(newPrimary.DisplayDevice.DeviceName, ref newPrimary.DeviceMode, (IntPtr)null, (ChangeDisplaySettingsFlags.CDS_SET_PRIMARY | ChangeDisplaySettingsFlags.CDS_UPDATEREGISTRY | ChangeDisplaySettingsFlags.CDS_NORESET), IntPtr.Zero);
+        _displayService.SetStandardDeviceAsPrimaryDisplay(newPrimary.DisplayDevice, ref newPrimary.DeviceMode);
         _logger.UpdatedRegistrySettings(displayId);
         // Update the offsets of the rest of the displays:
         var otherDisplays = currentDisplays.Where(d => d.Key != displayId);
@@ -321,11 +234,9 @@ public sealed class DisplayDeviceService : IDisplayDeviceController
         {
             display.DeviceMode.dmPosition.x -= offsetX; // Subtract old primary display offset to get correct new screen position.
             display.DeviceMode.dmPosition.y -= offsetY;
-            // Change values to registry, don't apply changes yet.
-            Display.ChangeDisplaySettingsEx(display.DisplayDevice.DeviceName, ref display.DeviceMode, (IntPtr)null, (ChangeDisplaySettingsFlags.CDS_UPDATEREGISTRY | ChangeDisplaySettingsFlags.CDS_NORESET), IntPtr.Zero);
+            _displayService.SetStandardDeviceDeviceMode(display.DisplayDevice, ref display.DeviceMode);
             _logger.UpdatedRegistrySettings(id);
         }
-
         return true;
     }
 
@@ -344,33 +255,15 @@ public sealed class DisplayDeviceService : IDisplayDeviceController
             return false;
         }
         var display = currentDisplays[displayId];
-        var oldRefreshRate = display.DeviceMode.dmDisplayFrequency;
-        if (oldRefreshRate == newRefreshRate)
-        {
-            _logger.DisplayRefreshRateWasAlreadySet();
-            return false;
-        }
-
-        // Test can the refresh frequency be set for this display:
-        display.DeviceMode.dmDisplayFrequency = newRefreshRate;
-        
-        var testResult = Display.ChangeDisplaySettingsEx(display.DisplayDevice.DeviceName, ref display.DeviceMode, (IntPtr)null, ChangeDisplaySettingsFlags.CDS_TEST, IntPtr.Zero);
-        if (testResult != DISP_CHANGE.Successful)
+        var result = _displayService.SetStandardDeviceRefreshRate(display.DisplayDevice, ref display.DeviceMode, newRefreshRate);
+        if (result == false)
         {
             _logger.RefreshRateNotSupported(displayId, newRefreshRate);
-            display.DeviceMode.dmDisplayFrequency = oldRefreshRate;
             return false;
-        }
-        // Valid refresh rate. Update to registry.
-        var result = Display.ChangeDisplaySettingsEx(display.DisplayDevice.DeviceName, ref display.DeviceMode, (IntPtr)null, (ChangeDisplaySettingsFlags.CDS_UPDATEREGISTRY | ChangeDisplaySettingsFlags.CDS_NORESET), IntPtr.Zero);
-        if (result != DISP_CHANGE.Successful)
-        {
-            throw new Win32Exception((int)result, $"Updating monitor {displayId} refresh rate failed.");
         }
         _logger.UpdatedRegistrySettings(displayId);
         return true;
     }
-
 
     /// <summary>
     /// Method updating Advanced Display Settings using the advanced Win API.
@@ -416,33 +309,7 @@ public sealed class DisplayDeviceService : IDisplayDeviceController
             _logger.AdvancedColorStateAlreadySet(displayId);
             return true;
         }
-
-        SetDisplayConfigAdvancedColorState(newState, displayData); // Set the state as everything is valid.
+        _displayService.SetDisplayConfigurationAdvancedColorInformation(displayData.AdvancedColorInformation.Value.header, newState);
         return true;
-    }
-
-    /// <summary>
-    /// Set DisplayConfig Advanced Color Info using the Native methods.
-    /// </summary>
-    /// <param name="newState">New state for Advanced Color Mode</param>
-    /// <param name="displayData">DisplayData to set the state for.</param>
-    /// <exception cref="Win32Exception">Error occurred in the native query</exception>
-    private static void SetDisplayConfigAdvancedColorState(bool newState, WindowsDisplayData displayData)
-    {
-        var newColorState = new DISPLAYCONFIG_SET_ADVANCED_COLOR_STATE
-        {
-            // Suppress nullable warning, it should have been validated before.
-            header = displayData.AdvancedColorInformation!.Value.header with
-            {
-                type = DISPLAYCONFIG_DEVICE_INFO_TYPE.DISPLAYCONFIG_DEVICE_INFO_SET_ADVANCED_COLOR_STATE,
-                size = Marshal.SizeOf<DISPLAYCONFIG_SET_ADVANCED_COLOR_STATE>()
-            },
-            value = newState ? DisplayConfigSetAdvancedColorStateValue.Enable : DisplayConfigSetAdvancedColorStateValue.Disable,
-        };
-        var err = Display.DisplayConfigSetDeviceInfo(ref newColorState);
-        if (err != ResultErrorCode.ERROR_SUCCESS)
-        {
-            throw new Win32Exception((int)err, $"Error occurred while updating AdvancedColorMode for display {displayData.DisplayDevice.DeviceID}.");
-        }
     }
 }

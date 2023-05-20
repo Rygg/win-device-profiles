@@ -1,16 +1,15 @@
+using Infrastructure.Environment.Windows.Services.Displays;
+using Microsoft.Extensions.DependencyInjection;
+
 namespace Infrastructure.UnitTests.Environment.Windows.Services.Displays;
 
-[TestFixture]
-public sealed class DisplayDeviceServiceTests
+public sealed class DisplayDeviceServiceTests : BaseTestFixture
 {
-    [SetUp]
-    public void Setup()
-    {
-    }
-
     [Test]
-    public void Test1()
+    public void Foo()
     {
+        var sut = host.Services.GetRequiredService<DisplayDeviceService>();
+        var str = sut.GetCurrentDisplayInformationString(CancellationToken.None);
         Assert.Pass();
     }
 }
