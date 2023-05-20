@@ -10,15 +10,219 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
     public void Validate_Null_ThrowsArgumentNullException()
     {
         var action = () => ProfileOptions.Validate(null!);
-        action.Should().Throw<ArgumentNullException>("Null value should not be allowed.");
+        action.Should().Throw<ArgumentNullException>("null value should not be allowed.");
     }
 
     [Test]
-    public void Validate_DefaultOptions_ReturnsFalse()
+    public void Validate_DefaultOptions_ReturnsTrue()
     {
         var profile = new ProfileOptions();
         var validationResult = ProfileOptions.Validate(profile);
-        validationResult.Should().BeFalse("Default Options should not pass validation.");
+        validationResult.Should().BeTrue("default options should pass the validation.");
+    }
+
+    [Test]
+    public void Validate_MissingDisplayIdentifier_ReturnsFalse()
+    {
+        var profile = new ProfileOptions
+        {
+            Profiles = new List<DeviceProfileOptions>
+            {
+                new()
+                {
+                    Id = 1,
+                    Name = "TestProfile1",
+                    HotKey = new HotKeyOptions
+                    {
+                        Key = SupportedKeys.NumPad1,
+                        Modifiers = new ModifierOptions
+                        {
+                            Ctrl = true,
+                            Shift = true,
+                            Alt = false,
+                            Win = false
+                        }
+                    },
+                    DisplaySettings = new List<DisplayOptions>
+                    {
+                        new()
+                        {
+                            Primary = true,
+                            EnableHdr = true,
+                            RefreshRate = 60,
+                        }
+                    }
+                },
+            }
+        };
+        var validationResult = ProfileOptions.Validate(profile);
+        validationResult.Should().BeFalse("Missing DisplayIdentifier should not be allowed for profiles.");
+    }
+
+    [Test]
+    public void Validate_MissingProfileId_ReturnsFalse()
+    {
+        var profile = new ProfileOptions
+        {
+            Profiles = new List<DeviceProfileOptions>
+            {
+                new()
+                {
+                    Id = 1,
+                    Name = "TestProfile1",
+                    HotKey = new HotKeyOptions
+                    {
+                        Key = SupportedKeys.NumPad1,
+                        Modifiers = new ModifierOptions
+                        {
+                            Ctrl = true,
+                            Shift = true,
+                            Alt = false,
+                            Win = false
+                        }
+                    },
+                    DisplaySettings = new List<DisplayOptions>
+                    {
+                        new()
+                        {
+                            DisplayId = 0,
+                            Primary = true,
+                        }
+                    }
+                },
+                new()
+                {
+                    Name = "TestProfile2",
+                    HotKey = new HotKeyOptions
+                    {
+                        Key = SupportedKeys.NumPad1,
+                        Modifiers = new ModifierOptions
+                        {
+                            Ctrl = true,
+                            Shift = true,
+                            Alt = false,
+                            Win = false
+                        }
+                    },
+                    DisplaySettings = new List<DisplayOptions>
+                    {
+                        new()
+                        {
+                            DisplayId = 1,
+                            Primary = false,
+                        }
+                    }
+                },
+            }
+        };
+        var validationResult = ProfileOptions.Validate(profile);
+        validationResult.Should().BeFalse("Missing profile identifiers should not be allowed.");
+    }
+
+    [Test]
+    public void Validate_MissingProfileName_ReturnsFalse()
+    {
+        var profile = new ProfileOptions
+        {
+            Profiles = new List<DeviceProfileOptions>
+            {
+                new()
+                {
+                    Id = 1,
+                    HotKey = new HotKeyOptions
+                    {
+                        Key = SupportedKeys.NumPad1,
+                        Modifiers = new ModifierOptions
+                        {
+                            Ctrl = true,
+                            Shift = true,
+                            Alt = false,
+                            Win = false
+                        }
+                    },
+                    DisplaySettings = new List<DisplayOptions>
+                    {
+                        new()
+                        {
+                            DisplayId = 0,
+                            Primary = true,
+                        }
+                    }
+                },
+                new()
+                {
+                    Id = 2,
+                    Name = "TestProfile2",
+                    HotKey = new HotKeyOptions
+                    {
+                        Key = SupportedKeys.NumPad1,
+                        Modifiers = new ModifierOptions
+                        {
+                            Ctrl = true,
+                            Shift = true,
+                            Alt = false,
+                            Win = false
+                        }
+                    },
+                    DisplaySettings = new List<DisplayOptions>
+                    {
+                        new()
+                        {
+                            DisplayId = 1,
+                            Primary = false,
+                        }
+                    }
+                },
+            }
+        };
+        var validationResult = ProfileOptions.Validate(profile);
+        validationResult.Should().BeFalse("Missing profile names should not be allowed.");
+    }
+
+    [Test]
+    public void Validate_MissingHotKeys_ReturnsTrue()
+    {
+        var profile = new ProfileOptions
+        {
+            Profiles = new List<DeviceProfileOptions>
+            {
+                new()
+                {
+                    Id = 1,
+                    Name = "TestProfile1",
+                    DisplaySettings = new List<DisplayOptions>
+                    {
+                        new()
+                        {
+                            DisplayId = 0,
+                            Primary = true,
+                            EnableHdr = true,
+                            RefreshRate = 60,
+                        }
+                    }
+                },
+            }
+        };
+        var validationResult = ProfileOptions.Validate(profile);
+        validationResult.Should().BeTrue("Missing HotKeys should be allowed for profiles.");
+    }
+
+    [Test]
+    public void Validate_MissingDisplaySettings_ReturnsTrue()
+    {
+        var profile = new ProfileOptions
+        {
+            Profiles = new List<DeviceProfileOptions>
+            {
+                new()
+                {
+                    Id = 1,
+                    Name = "TestProfile1",
+                },
+            }
+        };
+        var validationResult = ProfileOptions.Validate(profile);
+        validationResult.Should().BeTrue("Missing DisplaySettings should be allowed for profiles.");
     }
 
     [Test]
@@ -196,210 +400,6 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
     }
 
     [Test]
-    public void Validate_MissingDisplaySettings_ReturnsFalse()
-    {
-        var profile = new ProfileOptions
-        {
-            Profiles = new List<DeviceProfileOptions>
-            {
-                new()
-                {
-                    Id = 1,
-                    Name = "TestProfile1",
-                },
-            }
-        };
-        var validationResult = ProfileOptions.Validate(profile);
-        validationResult.Should().BeFalse("Missing DisplaySettings should not be allowed for profiles.");
-    }
-
-    [Test]
-    public void Validate_MissingDisplayIdentifier_ReturnsFalse()
-    {
-        var profile = new ProfileOptions
-        {
-            Profiles = new List<DeviceProfileOptions>
-            {
-                new()
-                {
-                    Id = 1,
-                    Name = "TestProfile1",
-                    HotKey = new HotKeyOptions
-                    {
-                        Key = SupportedKeys.NumPad1,
-                        Modifiers = new ModifierOptions
-                        {
-                            Ctrl = true,
-                            Shift = true,
-                            Alt = false,
-                            Win = false
-                        }
-                    },
-                    DisplaySettings = new List<DisplayOptions>
-                    {
-                        new()
-                        {
-                            Primary = true,
-                            EnableHdr = true,
-                            RefreshRate = 60,
-                        }
-                    }
-                },
-            }
-        };
-        var validationResult = ProfileOptions.Validate(profile);
-        validationResult.Should().BeFalse("Missing DisplayIdentifier should not be allowed for profiles.");
-    }
-
-    [Test]
-    public void Validate_MissingHotKeys_ReturnsTrue()
-    {
-        var profile = new ProfileOptions
-        {
-            Profiles = new List<DeviceProfileOptions>
-            {
-                new()
-                {
-                    Id = 1,
-                    Name = "TestProfile1",
-                    DisplaySettings = new List<DisplayOptions>
-                    {
-                        new()
-                        {
-                            DisplayId = 0,
-                            Primary = true,
-                            EnableHdr = true,
-                            RefreshRate = 60,
-                        }
-                    }
-                },
-            }
-        };
-        var validationResult = ProfileOptions.Validate(profile);
-        validationResult.Should().BeTrue("Missing HotKeys should be allowed for profiles.");
-    }
-
-    [Test]
-    public void Validate_MissingProfileId_ReturnsFalse()
-    {
-        var profile = new ProfileOptions
-        {
-            Profiles = new List<DeviceProfileOptions>
-            {
-                new()
-                {
-                    Id = 1,
-                    Name = "TestProfile1",
-                    HotKey = new HotKeyOptions
-                    {
-                        Key = SupportedKeys.NumPad1,
-                        Modifiers = new ModifierOptions
-                        {
-                            Ctrl = true,
-                            Shift = true,
-                            Alt = false,
-                            Win = false
-                        }
-                    },
-                    DisplaySettings = new List<DisplayOptions>
-                    {
-                        new()
-                        {
-                            DisplayId = 0,
-                            Primary = true,
-                        }
-                    }
-                },
-                new()
-                {
-                    Name = "TestProfile2",
-                    HotKey = new HotKeyOptions
-                    {
-                        Key = SupportedKeys.NumPad1,
-                        Modifiers = new ModifierOptions
-                        {
-                            Ctrl = true,
-                            Shift = true,
-                            Alt = false,
-                            Win = false
-                        }
-                    },
-                    DisplaySettings = new List<DisplayOptions>
-                    {
-                        new()
-                        {
-                            DisplayId = 1,
-                            Primary = false,
-                        }
-                    }
-                },
-            }
-        };
-        var validationResult = ProfileOptions.Validate(profile);
-        validationResult.Should().BeFalse("Missing profile identifiers should not be allowed.");
-    }
-
-    [Test]
-    public void Validate_MissingProfileName_ReturnsFalse()
-    {
-        var profile = new ProfileOptions
-        {
-            Profiles = new List<DeviceProfileOptions>
-            {
-                new()
-                {
-                    Id = 1,
-                    HotKey = new HotKeyOptions
-                    {
-                        Key = SupportedKeys.NumPad1,
-                        Modifiers = new ModifierOptions
-                        {
-                            Ctrl = true,
-                            Shift = true,
-                            Alt = false,
-                            Win = false
-                        }
-                    },
-                    DisplaySettings = new List<DisplayOptions>
-                    {
-                        new()
-                        {
-                            DisplayId = 0,
-                            Primary = true,
-                        }
-                    }
-                },
-                new()
-                {
-                    Id = 2,
-                    Name = "TestProfile2",
-                    HotKey = new HotKeyOptions
-                    {
-                        Key = SupportedKeys.NumPad1,
-                        Modifiers = new ModifierOptions
-                        {
-                            Ctrl = true,
-                            Shift = true,
-                            Alt = false,
-                            Win = false
-                        }
-                    },
-                    DisplaySettings = new List<DisplayOptions>
-                    {
-                        new()
-                        {
-                            DisplayId = 1,
-                            Primary = false,
-                        }
-                    }
-                },
-            }
-        };
-        var validationResult = ProfileOptions.Validate(profile);
-        validationResult.Should().BeFalse("Missing profile names should not be allowed.");
-    }
-
-    [Test]
     public void Validate_DuplicatePrimaryDisplays_ReturnsFalse()
     {
         var profile = new ProfileOptions
@@ -450,6 +450,8 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
                         new()
                         {
                             DisplayId = 0,
+                            Primary = true,
+                            RefreshRate = 60
                         }
                     }
                 },
@@ -463,6 +465,7 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
                         {
                             DisplayId = 0,
                             Primary = true,
+                            RefreshRate = 120
                         }
                     }
                 },
