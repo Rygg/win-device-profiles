@@ -25,11 +25,4 @@ public sealed record DisplaySettings
     /// </summary>
     public int? RefreshRate { get; init; }
 
-    /// <summary>
-    /// Validate this.
-    /// </summary>
-    public bool Validate()
-    {
-        return PrimaryDisplay != null || EnableHdr != null || RefreshRate != null;
-    }
 }

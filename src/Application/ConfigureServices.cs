@@ -3,7 +3,10 @@ using Application.Common.Options;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("Application.UnitTests")]
+[assembly: InternalsVisibleTo("Application.IntegrationTests")]
 namespace Application;
 /// <summary>
 /// Extension methods for injecting required application components.

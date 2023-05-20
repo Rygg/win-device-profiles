@@ -3,7 +3,9 @@ using Infrastructure.Environment.Windows.Services.Displays;
 using Infrastructure.Environment.Windows.Services.Keyboard;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("Infrastructure.UnitTests")]
 namespace Infrastructure;
 
 /// <summary>
