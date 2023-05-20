@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Domain.Enums;
+using Microsoft.Extensions.Logging;
 
 namespace TrayApplication.Extensions;
 
@@ -22,6 +23,15 @@ public static partial class LoggerExtensions
         )
     ]
     public static partial void DisposingCompleted(this ILogger logger);
+
+    [LoggerMessage(
+            EventId = 603,
+            EventName = nameof(HotKeyEventReceived),
+            Level = LogLevel.Trace,
+            Message = "HotKey event received: Modifiers: {Modifiers}, Key: {Key}, RegistrationId: {RegistrationId}"
+        )
+    ]
+    public static partial void HotKeyEventReceived(this ILogger logger, SupportedKeyModifiers modifiers, SupportedKeys key, int registrationId);
 
     [LoggerMessage(
             EventId = 611,

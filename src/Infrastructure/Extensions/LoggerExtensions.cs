@@ -25,18 +25,9 @@ public static partial class LoggerExtensions
         )
     ]
     public static partial void DisposingCompleted(this ILogger logger);
-
+    
     [LoggerMessage(
             EventId = 403,
-            EventName = nameof(HotKeyEventReceived),
-            Level = LogLevel.Trace,
-            Message = "HotKey event received: Modifiers: {Modifiers}, Key: {Key}, RegistrationId: {RegistrationId}"
-        )
-    ]
-    public static partial void HotKeyEventReceived(this ILogger logger, SupportedKeyModifiers modifiers, SupportedKeys key, int registrationId);
-
-    [LoggerMessage(
-            EventId = 404,
             EventName = nameof(DisplayRetrieved),
             Level = LogLevel.Trace,
             Message = "Located DisplayDevice: Id: {DisplayId} - {DisplayDevice}"
@@ -45,7 +36,7 @@ public static partial class LoggerExtensions
     public static partial void DisplayRetrieved(this ILogger logger, uint displayId, string displayDevice);
 
     [LoggerMessage(
-            EventId = 405,
+            EventId = 404,
             EventName = nameof(DeviceModeRetrieved),
             Level = LogLevel.Trace,
             Message = "Retrieved DeviceModes: Id: {DisplayId} - {DeviceMode}"

@@ -1,8 +1,8 @@
 ﻿using Domain.Enums;
-using Infrastructure.Extensions;
 using Infrastructure.Interfaces;
 using Infrastructure.Interfaces.Models;
 using Microsoft.Extensions.Logging;
+using TrayApplication.Extensions;
 
 namespace TrayApplication.Components.Windows.Forms.HotKeys;
 
