@@ -22,8 +22,18 @@ public sealed record ProfileOptions
         {
             throw new ArgumentNullException(nameof(options));
         }
+        if(options.Profiles.All(p => p.IsValid()))
+        {
+            return false;
+        }
 
-        return options.Profiles.All(p => p.Validate());
+        // Check Duplicate Profile Identifiers:
+        if (options.Profiles.GroupBy(p => p.Id).Any(g => g.Count() > 1))
+        {
+            return false;
+        }
+
+        return true;
     }
 }
 
@@ -35,12 +45,12 @@ public sealed record DeviceProfileOptions
     /// <summary>
     /// Identifier of the profile.
     /// </summary>
-    public int Id { get; init; }
+    public int? Id { get; init; }
 
     /// <summary>
     /// Name of the profile.
     /// </summary>
-    public string Name { get; init; } = string.Empty;
+    public string? Name { get; init; }
     /// <summary>
     /// HotKey configuration for the profile.
     /// </summary>
@@ -55,7 +65,7 @@ public sealed record DeviceProfileOptions
     /// Validate the profile.
     /// </summary>
     /// <returns></returns>
-    public bool Validate()
+    public bool IsValid()
     {
         if (Id == default)
         {
@@ -76,10 +86,15 @@ public sealed record DeviceProfileOptions
     /// </summary>
     public DeviceProfile ToDeviceProfile()
     {
+        if (IsValid())
+        {
+            throw new InvalidOperationException("Configuration is not valid.");
+        }
+
         return new DeviceProfile
         {
-            Id = Id,
-            Name = Name,
+            Id = Id!.Value,
+            Name = Name!,
             HotKey = HotKey?.ToHotKeyCombination(),
             DisplaySettings = DisplaySettings.Select(ds => ds.ToDisplaySettings()).ToArray(),
         };
