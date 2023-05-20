@@ -176,15 +176,6 @@ public static partial class LoggerExtensions
 
     [LoggerMessage(
             EventId = 426,
-            EventName = nameof(DisplayRefreshRateWasAlreadySet),
-            Level = LogLevel.Information,
-            Message = "Display refresh rate is already set to the desired value. Returning."
-        )
-    ]
-    public static partial void DisplayRefreshRateWasAlreadySet(this ILogger logger);
-
-    [LoggerMessage(
-            EventId = 427,
             EventName = nameof(UpdatingAdvancedColorState),
             Level = LogLevel.Information,
             Message = "Updating the Advanced Color State for Display {DisplayId}. New State: {newState}"
@@ -193,7 +184,7 @@ public static partial class LoggerExtensions
     public static partial void UpdatingAdvancedColorState(this ILogger logger, uint displayId, bool newState);
 
     [LoggerMessage(
-            EventId = 428,
+            EventId = 427,
             EventName = nameof(AdvancedColorStateAlreadySet),
             Level = LogLevel.Information,
             Message = "Advanced color mode was already set to the desired state for monitor {DisplayId}. Returning."
@@ -202,7 +193,7 @@ public static partial class LoggerExtensions
     public static partial void AdvancedColorStateAlreadySet(this ILogger logger, uint displayId);
 
     [LoggerMessage(
-            EventId = 429,
+            EventId = 428,
             EventName = nameof(AdvancedColorStateUpdated),
             Level = LogLevel.Information,
             Message = "Advanced color state was updated for Display {DisplayId}."
