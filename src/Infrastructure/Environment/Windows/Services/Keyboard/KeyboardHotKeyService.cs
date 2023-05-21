@@ -20,10 +20,10 @@ internal sealed class KeyboardHotKeyService : IHotKeyTrigger, IDisposable
     private readonly IWindowsHotKeyEventSender _eventSender;
     private readonly IHotKeyService _hotKeyService;
 
-    private static readonly Dictionary<int, HotKeyCombination> RegisteredCombinations = new();
-    private static int _currentKeyRegistrationId;
+    private readonly Dictionary<int, HotKeyCombination> _registeredCombinations = new();
+    private int _currentKeyRegistrationId;
 
-    private static readonly SemaphoreSlim RegistrationLock = new(1);
+    private readonly SemaphoreSlim _registrationLock = new(1);
 
     public KeyboardHotKeyService(
         ILogger<KeyboardHotKeyService> logger, 
@@ -58,11 +58,11 @@ internal sealed class KeyboardHotKeyService : IHotKeyTrigger, IDisposable
         var fsModifiers = (FsModifiers)hotKey.Modifiers;
         var key = (uint)hotKey.Key;
 
-        if (await RegistrationLock.WaitAsync(timeoutMs, ct))
+        if (await _registrationLock.WaitAsync(timeoutMs, ct))
         {
             try
             {
-                var alreadyRegistered = RegisteredCombinations.Values.Any(r => (uint)r.Key == key && (int)r.Modifiers == (int)fsModifiers); // Check if key combination is already registered.
+                var alreadyRegistered = _registeredCombinations.Values.Any(r => (uint)r.Key == key && (int)r.Modifiers == (int)fsModifiers); // Check if key combination is already registered.
                 if (alreadyRegistered)
                 {
                     _logger.KeyCombinationAlreadyRegistered(hotKey);
@@ -76,13 +76,13 @@ internal sealed class KeyboardHotKeyService : IHotKeyTrigger, IDisposable
                     throw new Win32Exception($"Key combination {hotKey} could not be registered due to Native Windows error.");
                 }
 
-                RegisteredCombinations.Add(_currentKeyRegistrationId, hotKey); // Add to registered hot keys.
+                _registeredCombinations.Add(_currentKeyRegistrationId, hotKey); // Add to registered hot keys.
                 _logger.KeyCombinationRegistered(hotKey);
                 return;
             }
             finally
             {
-                RegistrationLock.Release();
+                _registrationLock.Release();
             }
         }
 
@@ -101,13 +101,13 @@ internal sealed class KeyboardHotKeyService : IHotKeyTrigger, IDisposable
         // local function as action for the event.
         void RequestAction(object? sender, HotKeyEventArgs args)
         {
-            if(!RegisteredCombinations.ContainsKey(args.RegistrationId))
+            if(!_registeredCombinations.ContainsKey(args.RegistrationId))
             {
                 _logger.ReceivedHotKeyEventNotRegistered(args);
                 tcs.TrySetException(new ArgumentOutOfRangeException(nameof(args.RegistrationId),"HotKeyRegistration not found for the received event."));
                 return;
             }
-            tcs.TrySetResult(RegisteredCombinations[args.RegistrationId]);
+            tcs.TrySetResult(_registeredCombinations[args.RegistrationId]);
         }
 
         _eventSender.OnRegisteredHotKeyPressed += RequestAction; // Subscribe to event.
@@ -128,11 +128,12 @@ internal sealed class KeyboardHotKeyService : IHotKeyTrigger, IDisposable
     public void Dispose()
     {
         _logger.StartingDispose();
-        foreach (var registration in RegisteredCombinations)
+        foreach (var registration in _registeredCombinations)
         {
             _logger.UnregisterGlobalHotKey(registration.Key, registration.Value);
             _hotKeyService.UnregisterHotKeyFromHandle(_eventSender.Handle, registration.Key);
         }
+        _registrationLock.Dispose();
         _logger.DisposingCompleted();
 
         // TODO: Need to dispose handler window? 
