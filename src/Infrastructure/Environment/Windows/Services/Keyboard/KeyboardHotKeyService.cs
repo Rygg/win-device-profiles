@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using Application.Common.Interfaces;
+using Domain.Enums;
 using Domain.Models;
 using Infrastructure.Environment.Windows.Common.User32.Interfaces;
 using Infrastructure.Environment.Windows.Common.User32.NativeTypes.Enums;
@@ -46,6 +47,11 @@ internal sealed class KeyboardHotKeyService : IHotKeyTrigger, IDisposable
         if (hotKey == null)
         {
             throw new ArgumentNullException(nameof(hotKey));
+        }
+
+        if (hotKey.Key == SupportedKeys.None)
+        {
+            throw new InvalidOperationException("Key not defined.");
         }
         const int timeoutMs = 1000;
 
