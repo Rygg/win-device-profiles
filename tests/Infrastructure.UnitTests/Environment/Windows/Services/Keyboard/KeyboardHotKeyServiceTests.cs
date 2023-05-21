@@ -5,6 +5,7 @@ using Infrastructure.Environment.Windows.Common.User32.Interfaces;
 using Infrastructure.Environment.Windows.Common.User32.NativeTypes.Enums;
 using Infrastructure.Environment.Windows.Services.Keyboard;
 using Infrastructure.Interfaces;
+using Infrastructure.Interfaces.Models;
 using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.UnitTests.Environment.Windows.Services.Keyboard;
@@ -134,5 +135,60 @@ public sealed class KeyboardHotKeyServiceTests
                     It.Is<uint>(key => key == (uint)SupportedKeys.D1)
                 ),
                 Times.Never);
+    }
+
+    [Test]
+    public async Task GetHotKeyPressAsync_UnregisteredKeyEvent_ThrowsException()
+    {
+        var sut = new KeyboardHotKeyService(_logger.Object, _eventSender.Object, _hotKeyService.Object);
+
+        var testAction = sut.GetHotKeyPressAsync(CancellationToken.None);
+        
+        _eventSender.Raise(m => m.OnRegisteredHotKeyPressed += null, new HotKeyEventArgs
+        {
+            Modifiers = SupportedKeyModifiers.None,
+            Key = SupportedKeys.A,
+            RegistrationId = 1
+        });
+
+        try
+        {
+           await testAction;
+        }
+        catch
+        {
+            // ignore
+        }
+        testAction.IsFaulted.Should().BeTrue();
+        testAction.Exception?.InnerException.Should().BeOfType<ArgumentOutOfRangeException>();
+
+    }
+
+    [Test]
+    public async Task GetHotKeyPressAsync_RegisteredKeyEvent_ReturnsCorrectKey()
+    {
+        _hotKeyService
+            .Setup(m => m.RegisterHotKeyToHandle(It.IsAny<nint>(), It.IsAny<int>(), It.IsAny<FsModifiers>(), It.IsAny<uint>()))
+            .Returns(true);
+        var hotkey = new HotKeyCombination
+        {
+            Key = SupportedKeys.D1,
+            Modifiers = SupportedKeyModifiers.Ctrl | SupportedKeyModifiers.Shift
+        };
+
+        var sut = new KeyboardHotKeyService(_logger.Object, _eventSender.Object, _hotKeyService.Object);
+        await sut.RegisterHotKeyAsync(hotkey, CancellationToken.None);
+
+        var testAction = sut.GetHotKeyPressAsync(CancellationToken.None);
+
+        _eventSender.Raise(m => m.OnRegisteredHotKeyPressed += null, new HotKeyEventArgs
+        {
+            Modifiers = SupportedKeyModifiers.Ctrl | SupportedKeyModifiers.Shift,
+            Key = SupportedKeys.D1,
+            RegistrationId = 1
+        });
+
+        var result = await testAction;
+        result.Should().BeEquivalentTo(hotkey);
     }
 }
