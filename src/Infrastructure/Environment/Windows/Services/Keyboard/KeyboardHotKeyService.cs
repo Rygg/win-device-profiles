@@ -58,7 +58,7 @@ internal sealed class KeyboardHotKeyService : IHotKeyTrigger, IDisposable
         var fsModifiers = (FsModifiers)hotKey.Modifiers;
         var key = (uint)hotKey.Key;
 
-        if (await _registrationLock.WaitAsync(timeoutMs, ct))
+        if (await _registrationLock.WaitAsync(timeoutMs, ct).ConfigureAwait(false))
         {
             try
             {
@@ -114,12 +114,18 @@ internal sealed class KeyboardHotKeyService : IHotKeyTrigger, IDisposable
 
         var ctRegistration = ct.Register(() => tcs.TrySetCanceled()); // Register the CT cancellation to cancel the Tcs.
 
-        return tcs.Task.ContinueWith(async t =>
-        {
-            await ctRegistration.DisposeAsync(); // Dispose the ct registration when completed.
-            _eventSender.OnRegisteredHotKeyPressed -= RequestAction; // Remove event listener.
-            return await t;
-        }, CancellationToken.None).Unwrap(); // Return unwrapped task.
+        return tcs.Task
+            .ContinueWith(
+                async t =>
+                {
+                    await ctRegistration.DisposeAsync().ConfigureAwait(false); // Dispose the ct registration when completed.
+                    _eventSender.OnRegisteredHotKeyPressed -= RequestAction; // Remove event listener.
+                    return await t.ConfigureAwait(false);
+                }, 
+                CancellationToken.None,
+                TaskContinuationOptions.None,
+                TaskScheduler.Current)
+            .Unwrap(); // Return unwrapped task.
     }
 
     /// <summary>

@@ -240,6 +240,7 @@ internal sealed class DisplayService : IDisplayService
 
     #region Native Methods
 
+    #pragma warning disable CA5392 // Disable warning. User32 is a common dll and is intended to be suppressed. https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca5392
     // ReSharper disable CommentTypo
     // ReSharper disable IdentifierTypo
     /// <summary>
@@ -252,8 +253,8 @@ internal sealed class DisplayService : IDisplayService
     /// <param name="dwflags">Indicates how the graphics mode should be changed. This parameter can be one of the following values.</param>
     /// <param name="lParam">If dwFlags is CDS_VIDEOPARAMETERS, lParam is a pointer to a VIDEOPARAMETERS structure. Otherwise lParam must be NULL.</param>
     /// <returns>Result enumeration</returns>
-    [DllImport("user32.dll")]
-    private static extern DISP_CHANGE ChangeDisplaySettingsEx(string lpszDeviceName, ref DEVMODE lpDevMode, nint hwnd, ChangeDisplaySettingsFlags dwflags, IntPtr lParam);
+    [DllImport("user32.dll", CharSet = CharSet.Ansi, BestFitMapping = false)]
+    private static extern DISP_CHANGE ChangeDisplaySettingsEx([MarshalAs(UnmanagedType.LPStr)]string lpszDeviceName, ref DEVMODE lpDevMode, nint hwnd, ChangeDisplaySettingsFlags dwflags, nint lParam);
     /// <summary>
     /// The <see href="https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-changedisplaysettingsexa">ChangeDisplaySettingsEx</see> function changes the settings of the specified display device to the specified graphics mode.
     /// Overload to support DEVMODE as a pointer.
@@ -265,7 +266,7 @@ internal sealed class DisplayService : IDisplayService
     /// <param name="dwflags">Indicates how the graphics mode should be changed. This parameter can be one of the following values.</param>
     /// <param name="lParam">If dwFlags is CDS_VIDEOPARAMETERS, lParam is a pointer to a VIDEOPARAMETERS structure. Otherwise lParam must be NULL.</param>
     /// <returns>Result enumeration</returns>
-    [DllImport("user32.dll")]
+    [DllImport("user32.dll", CharSet = CharSet.Ansi, BestFitMapping = false)]
 
     private static extern DISP_CHANGE ChangeDisplaySettingsEx(string? lpszDeviceName, nint lpDevMode, nint hwnd, ChangeDisplaySettingsFlags dwflags, nint lParam);
     /// <summary>
@@ -277,7 +278,7 @@ internal sealed class DisplayService : IDisplayService
     /// <param name="dwFlags">Set this flag to EDD_GET_DEVICE_INTERFACE_NAME (0x00000001) to retrieve the device interface name for GUID_DEVINTERFACE_MONITOR, which is registered by the operating system on a per monitor basis. The value is placed in the DeviceID member of the DISPLAY_DEVICE structure returned in lpDisplayDevice. 
     /// The resulting device interface name can be used with SetupAPI functions and serves as a link between GDI monitor devices and SetupAPI monitor devices.</param>
     /// <returns>Boolean representing operation success</returns>
-    [DllImport("user32.dll")]
+    [DllImport("user32.dll", CharSet = CharSet.Ansi, BestFitMapping = false)]
     private static extern bool EnumDisplayDevices(string? lpDevice, uint iDevNum, ref DISPLAY_DEVICE lpDisplayDevice, uint dwFlags);
     /// <summary>
     /// The <see href="https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-enumdisplaysettingsa">EnumDisplaySettings</see> function retrieves information about one of the graphics modes for a display device. 
@@ -287,7 +288,7 @@ internal sealed class DisplayService : IDisplayService
     /// <param name="modeNum">Graphics mode indexes start at zero. To obtain information for all of a display device's graphics modes, make a series of calls to EnumDisplaySettings, as follows: Set iModeNum to zero for the first call, and increment iModeNum by one for each subsequent call. Continue calling the function until the return value is zero.</param>
     /// <param name="devMode">A pointer to a DEVMODE structure into which the function stores information about the specified graphics mode. Before calling EnumDisplaySettings, set the dmSize member to sizeof(DEVMODE), and set the dmDriverExtra member to indicate the size, in bytes, of the additional space available to receive public driver data.</param>
     /// <returns>Boolean representing operation success</returns>
-    [DllImport("user32.dll")]
+    [DllImport("user32.dll", CharSet = CharSet.Ansi, BestFitMapping = false)]
     private static extern bool EnumDisplaySettings(string deviceName, int modeNum, ref DEVMODE devMode);
 
     // CCD Api: https://docs.microsoft.com/en-us/windows-hardware/drivers/display/connecting-and-configuring-displays
@@ -343,7 +344,7 @@ internal sealed class DisplayService : IDisplayService
     /// <returns>The function returns one of the following return codes.</returns>
     [DllImport("user32.dll")]
     private static extern ResultErrorCode DisplayConfigSetDeviceInfo([In] ref DISPLAYCONFIG_SET_ADVANCED_COLOR_STATE setPacket);
-
+    #pragma warning restore CA5392
     // ReSharper restore CommentTypo
     // ReSharper restore IdentifierTypo
     #endregion
