@@ -141,7 +141,5 @@ internal sealed class KeyboardHotKeyService : IHotKeyTrigger, IDisposable
         }
         _registrationLock.Dispose();
         _logger.DisposingCompleted();
-
-        // TODO: Need to dispose handler window? 
     }
 }

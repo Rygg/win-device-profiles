@@ -33,7 +33,9 @@ internal sealed class HotKeyService : IHotKeyService
         return UnregisterHotKey(hWnd, id);
     }
 
-#pragma warning disable CA5392 // Disable warning. User32 is a common dll and is intended to be suppressed. https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca5392
+    #region Native Methods
+
+    #pragma warning disable CA5392 // Disable warning. User32 is a common dll and is intended to be suppressed. https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca5392
     /// <summary>
     /// Defines a system-wide hot key.
     /// </summary>
@@ -52,5 +54,7 @@ internal sealed class HotKeyService : IHotKeyService
     /// <returns>If the function succeeds, the return value is nonzero. If the function fails, the return value is zero.To get extended error information, call GetLastError.</returns>
     [DllImport("user32.dll")]
     private static extern bool UnregisterHotKey(nint hWnd, int id);
-#pragma warning restore CA5392
+    #pragma warning restore CA5392
+
+    #endregion
 }
