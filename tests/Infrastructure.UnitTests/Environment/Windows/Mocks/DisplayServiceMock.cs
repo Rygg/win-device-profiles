@@ -8,10 +8,10 @@ namespace Infrastructure.UnitTests.Environment.Windows.Mocks;
 
 internal static class DisplayServiceMock
 {
-    private static readonly Mock<IDisplayService> DisplayService = new();
+    internal static Mock<IDisplayService> Mock { get; } = new();
 
-    internal static IDisplayService GetDisplayService => DisplayService.Object;
-    internal static void ClearInvocations() => DisplayService.Invocations.Clear();
+    internal static IDisplayService GetDisplayService => Mock.Object;
+    internal static void ClearInvocations() => Mock.Invocations.Clear();
     internal static void SetDefaultBehavior()
     {
         SetupGetDisplayDevice();
@@ -28,101 +28,101 @@ internal static class DisplayServiceMock
     
     private static void SetupGetDisplayDevice()
     {
-        DisplayService
+        Mock
             .Setup(m => m.GetDisplayDevice(It.IsAny<uint>()))
             .Returns((DISPLAY_DEVICE?)null);
-        DisplayService
+        Mock
             .Setup(m => m.GetDisplayDevice(0))
             .Returns(Display0);
-        DisplayService
+        Mock
             .Setup(m => m.GetDisplayDevice(1))
             .Returns(Display1);
-        DisplayService
+        Mock
             .Setup(m => m.GetDisplayDevice(2))
             .Returns(Display2);
-        DisplayService
+        Mock
             .Setup(m => m.GetDisplayDevice(3))
             .Returns(Display3);
     }
 
     private static void SetupGetDeviceModes()
     {
-        DisplayService
+        Mock
             .Setup(m => m.GetDisplayDeviceMode(It.IsAny<DISPLAY_DEVICE>()))
             .Throws(new Win32Exception("Something went wrong."));
-        DisplayService
+        Mock
             .Setup(m => m.GetDisplayDeviceMode(Display0))
             .Returns(DevMode0);
-        DisplayService
+        Mock
             .Setup(m => m.GetDisplayDeviceMode(Display1))
             .Returns(DevMode1);
-        DisplayService
+        Mock
             .Setup(m => m.GetDisplayDeviceMode(Display2))
             .Returns(DevMode2);
-        DisplayService
+        Mock
             .Setup(m => m.GetDisplayDeviceMode(Display3))
             .Returns(DevMode3);
     }
 
     private static void SetupDisplayConfigPathInformation()
     {
-        DisplayService
+        Mock
             .Setup(m => m.GetDisplayConfigPathInformation())
             .Returns(new List<DISPLAYCONFIG_PATH_INFO> { Path0, Path1, Path2, Path3 });
     }
 
     private static void SetupGetTargetDevices()
     {
-        DisplayService
+        Mock
             .Setup(m => m.GetDisplayConfigurationTargetDeviceInformation(It.IsAny<DISPLAYCONFIG_PATH_INFO>()))
             .Throws(new Win32Exception("Something went wrong."));
-        DisplayService
+        Mock
             .Setup(m => m.GetDisplayConfigurationTargetDeviceInformation(Path0))
             .Returns(TargetDevice0);
-        DisplayService
+        Mock
             .Setup(m => m.GetDisplayConfigurationTargetDeviceInformation(Path1))
             .Returns(TargetDevice1);
-        DisplayService
+        Mock
             .Setup(m => m.GetDisplayConfigurationTargetDeviceInformation(Path2))
             .Returns(TargetDevice2);
-        DisplayService
+        Mock
             .Setup(m => m.GetDisplayConfigurationTargetDeviceInformation(Path3))
             .Returns(TargetDevice3);
     }
     private static void SetupGetSourceDevices()
     {
-        DisplayService
+        Mock
             .Setup(m => m.GetDisplayConfigurationSourceDeviceInformation(It.IsAny<DISPLAYCONFIG_PATH_INFO>()))
             .Throws(new Win32Exception("Something went wrong."));
-        DisplayService
+        Mock
             .Setup(m => m.GetDisplayConfigurationSourceDeviceInformation(Path0))
             .Returns(SourceDevice0);
-        DisplayService
+        Mock
             .Setup(m => m.GetDisplayConfigurationSourceDeviceInformation(Path1))
             .Returns(SourceDevice1);
-        DisplayService
+        Mock
             .Setup(m => m.GetDisplayConfigurationSourceDeviceInformation(Path2))
             .Returns(SourceDevice2);
-        DisplayService
+        Mock
             .Setup(m => m.GetDisplayConfigurationSourceDeviceInformation(Path3))
             .Returns(SourceDevice3);
     }
 
     private static void SetupGetAdvancedColorState()
     {
-        DisplayService
+        Mock
             .Setup(m => m.GetDisplayConfigurationAdvancedColorInformation(It.IsAny<DISPLAYCONFIG_PATH_INFO>()))
             .Throws(new Win32Exception("Something went wrong."));
-        DisplayService
+        Mock
             .Setup(m => m.GetDisplayConfigurationAdvancedColorInformation(Path0))
             .Returns(ColorInfo0);
-        DisplayService
+        Mock
             .Setup(m => m.GetDisplayConfigurationAdvancedColorInformation(Path1))
             .Returns(ColorInfo1);
-        DisplayService
+        Mock
             .Setup(m => m.GetDisplayConfigurationAdvancedColorInformation(Path2))
             .Returns(ColorInfo2);
-        DisplayService
+        Mock
             .Setup(m => m.GetDisplayConfigurationAdvancedColorInformation(Path3))
             .Returns(ColorInfo3);
     }
@@ -134,7 +134,7 @@ internal static class DisplayServiceMock
             devMode.dmDisplayFrequency = refreshRate;
         }
 
-        DisplayService
+        Mock
             .Setup(m => m.SetStandardDeviceRefreshRate(
                 It.IsAny<DISPLAY_DEVICE>(),
                 ref It.Ref<DEVMODE>.IsAny,
@@ -144,7 +144,7 @@ internal static class DisplayServiceMock
             .Returns(true);
     }
     // Devices:
-    private static readonly DISPLAY_DEVICE Display0 = new()
+    internal static readonly DISPLAY_DEVICE Display0 = new()
     {
         cb = Marshal.SizeOf(new DISPLAY_DEVICE()),
         DeviceID = "0",
