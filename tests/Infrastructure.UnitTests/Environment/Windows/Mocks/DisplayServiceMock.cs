@@ -6,13 +6,12 @@ using Infrastructure.Environment.Windows.Common.User32.NativeTypes.Enums;
 
 namespace Infrastructure.UnitTests.Environment.Windows.Mocks;
 
-internal static class DisplayServiceMock
+internal sealed class DisplayServiceMock
 {
-    internal static Mock<IDisplayService> Mock { get; } = new();
+    internal Mock<IDisplayService> Mock { get; } = new();
 
-    internal static IDisplayService GetDisplayService => Mock.Object;
-    internal static void ClearInvocations() => Mock.Invocations.Clear();
-    internal static void SetDefaultBehavior()
+    internal IDisplayService GetDisplayService => Mock.Object;
+    internal void SetDefaultBehavior()
     {
         SetupGetDisplayDevice();
         SetupGetDeviceModes();
@@ -21,192 +20,161 @@ internal static class DisplayServiceMock
         SetupGetSourceDevices();
         SetupGetAdvancedColorState();
 
-        SetupSetStandardDeviceAsPrimaryDisplay();
-        SetupSetStandardDeviceDeviceMode();
         SetupSetStandardDeviceRefreshRate();
+
         SetupSetDisplayConfigurationAdvancedColorInformation();
     }
     
-    private static void SetupGetDisplayDevice()
+    private void SetupGetDisplayDevice()
     {
         Mock
             .Setup(m => m.GetDisplayDevice(It.IsAny<uint>()))
             .Returns((DISPLAY_DEVICE?)null);
         Mock
             .Setup(m => m.GetDisplayDevice(0))
-            .Returns(Display0);
+            .Returns(display0);
         Mock
             .Setup(m => m.GetDisplayDevice(1))
-            .Returns(Display1);
+            .Returns(display1);
         Mock
             .Setup(m => m.GetDisplayDevice(2))
-            .Returns(Display2);
+            .Returns(display2);
         Mock
             .Setup(m => m.GetDisplayDevice(3))
-            .Returns(Display3);
+            .Returns(display3);
     }
 
-    private static void SetupGetDeviceModes()
+    private void SetupGetDeviceModes()
     {
         Mock
             .Setup(m => m.GetDisplayDeviceMode(It.IsAny<DISPLAY_DEVICE>()))
             .Throws(new Win32Exception("Something went wrong."));
         Mock
-            .Setup(m => m.GetDisplayDeviceMode(Display0))
-            .Returns(DevMode0);
+            .Setup(m => m.GetDisplayDeviceMode(display0))
+            .Returns(devMode0);
         Mock
-            .Setup(m => m.GetDisplayDeviceMode(Display1))
-            .Returns(DevMode1);
+            .Setup(m => m.GetDisplayDeviceMode(display1))
+            .Returns(devMode1);
         Mock
-            .Setup(m => m.GetDisplayDeviceMode(Display2))
-            .Returns(DevMode2);
+            .Setup(m => m.GetDisplayDeviceMode(display2))
+            .Returns(devMode2);
         Mock
-            .Setup(m => m.GetDisplayDeviceMode(Display3))
-            .Returns(DevMode3);
+            .Setup(m => m.GetDisplayDeviceMode(display3))
+            .Returns(devMode3);
     }
 
-    private static void SetupDisplayConfigPathInformation()
+    private void SetupDisplayConfigPathInformation()
     {
         Mock
             .Setup(m => m.GetDisplayConfigPathInformation())
-            .Returns(new List<DISPLAYCONFIG_PATH_INFO> { Path0, Path1, Path2, Path3 });
+            .Returns(new List<DISPLAYCONFIG_PATH_INFO> { path0, path1, path2, path3 });
     }
 
-    private static void SetupGetTargetDevices()
+    private void SetupGetTargetDevices()
     {
         Mock
             .Setup(m => m.GetDisplayConfigurationTargetDeviceInformation(It.IsAny<DISPLAYCONFIG_PATH_INFO>()))
             .Throws(new Win32Exception("Something went wrong."));
         Mock
-            .Setup(m => m.GetDisplayConfigurationTargetDeviceInformation(Path0))
-            .Returns(TargetDevice0);
+            .Setup(m => m.GetDisplayConfigurationTargetDeviceInformation(path0))
+            .Returns(targetDevice0);
         Mock
-            .Setup(m => m.GetDisplayConfigurationTargetDeviceInformation(Path1))
-            .Returns(TargetDevice1);
+            .Setup(m => m.GetDisplayConfigurationTargetDeviceInformation(path1))
+            .Returns(targetDevice1);
         Mock
-            .Setup(m => m.GetDisplayConfigurationTargetDeviceInformation(Path2))
-            .Returns(TargetDevice2);
+            .Setup(m => m.GetDisplayConfigurationTargetDeviceInformation(path2))
+            .Returns(targetDevice2);
         Mock
-            .Setup(m => m.GetDisplayConfigurationTargetDeviceInformation(Path3))
-            .Returns(TargetDevice3);
+            .Setup(m => m.GetDisplayConfigurationTargetDeviceInformation(path3))
+            .Returns(targetDevice3);
     }
-    private static void SetupGetSourceDevices()
+    private void SetupGetSourceDevices()
     {
         Mock
             .Setup(m => m.GetDisplayConfigurationSourceDeviceInformation(It.IsAny<DISPLAYCONFIG_PATH_INFO>()))
             .Throws(new Win32Exception("Something went wrong."));
         Mock
-            .Setup(m => m.GetDisplayConfigurationSourceDeviceInformation(Path0))
-            .Returns(SourceDevice0);
+            .Setup(m => m.GetDisplayConfigurationSourceDeviceInformation(path0))
+            .Returns(sourceDevice0);
         Mock
-            .Setup(m => m.GetDisplayConfigurationSourceDeviceInformation(Path1))
-            .Returns(SourceDevice1);
+            .Setup(m => m.GetDisplayConfigurationSourceDeviceInformation(path1))
+            .Returns(sourceDevice1);
         Mock
-            .Setup(m => m.GetDisplayConfigurationSourceDeviceInformation(Path2))
-            .Returns(SourceDevice2);
+            .Setup(m => m.GetDisplayConfigurationSourceDeviceInformation(path2))
+            .Returns(sourceDevice2);
         Mock
-            .Setup(m => m.GetDisplayConfigurationSourceDeviceInformation(Path3))
-            .Returns(SourceDevice3);
+            .Setup(m => m.GetDisplayConfigurationSourceDeviceInformation(path3))
+            .Returns(sourceDevice3);
     }
 
-    private static void SetupGetAdvancedColorState()
+    private void SetupGetAdvancedColorState()
     {
+        colorInfo0 = colorInfo0 with { header = _colorInfoHeader0 };
+        colorInfo1 = colorInfo1 with { header = _colorInfoHeader1 };
+        colorInfo2 = colorInfo2 with { header = _colorInfoHeader2 };
+        colorInfo3 = colorInfo3 with { header = _colorInfoHeader3 };
+
         Mock
             .Setup(m => m.GetDisplayConfigurationAdvancedColorInformation(It.IsAny<DISPLAYCONFIG_PATH_INFO>()))
             .Throws(new Win32Exception("Something went wrong."));
         Mock
-            .Setup(m => m.GetDisplayConfigurationAdvancedColorInformation(Path0))
-            .Returns(ColorInfo0);
+            .Setup(m => m.GetDisplayConfigurationAdvancedColorInformation(path0))
+            .Returns(colorInfo0);
         Mock
-            .Setup(m => m.GetDisplayConfigurationAdvancedColorInformation(Path1))
-            .Returns(ColorInfo1);
+            .Setup(m => m.GetDisplayConfigurationAdvancedColorInformation(path1))
+            .Returns(colorInfo1);
         Mock
-            .Setup(m => m.GetDisplayConfigurationAdvancedColorInformation(Path2))
-            .Returns(ColorInfo2);
+            .Setup(m => m.GetDisplayConfigurationAdvancedColorInformation(path2))
+            .Returns(colorInfo2);
         Mock
-            .Setup(m => m.GetDisplayConfigurationAdvancedColorInformation(Path3))
-            .Returns(ColorInfo3);
+            .Setup(m => m.GetDisplayConfigurationAdvancedColorInformation(path3))
+            .Returns(colorInfo3);
     }
 
-    private static void SetupSetStandardDeviceRefreshRate()
+    private void SetupSetStandardDeviceRefreshRate()
     {
-        void UpdateRefreshRate(DISPLAY_DEVICE device, ref DEVMODE devMode, int refreshRate)
-        {
-            devMode.dmDisplayFrequency = refreshRate;
-        }
-
         Mock
             .Setup(m => m.SetStandardDeviceRefreshRate(
                 It.IsAny<DISPLAY_DEVICE>(),
                 ref It.Ref<DEVMODE>.IsAny,
                 It.IsAny<int>())
             )
-            .Callback(UpdateRefreshRate)
             .Returns(true);
     }
-    private static void SetupSetStandardDeviceAsPrimaryDisplay()
+
+    private void SetupSetDisplayConfigurationAdvancedColorInformation()
     {
-        void SetAsPrimary(DISPLAY_DEVICE device, ref DEVMODE devMode)
-        {
-            device.StateFlags = DisplayDeviceStateFlags.PrimaryDevice | DisplayDeviceStateFlags.AttachedToDesktop;
-            devMode.dmPosition.x = 0;
-            devMode.dmPosition.y = 0;
-        }
 
-        Mock
-            .Setup(m => m.SetStandardDeviceAsPrimaryDisplay(
-                It.IsAny<DISPLAY_DEVICE>(),
-                ref It.Ref<DEVMODE>.IsAny)
-            )
-            .Callback(SetAsPrimary);
-    }
 
-    private static void SetupSetStandardDeviceDeviceMode() // Only being used to refresh sizes for non primary displays.
-    {
-        void SetNonPrimary(DISPLAY_DEVICE device, ref DEVMODE devMode)
-        {
-            device.StateFlags =  DisplayDeviceStateFlags.AttachedToDesktop;
-        }
-
-        Mock
-            .Setup(m => m.SetStandardDeviceAsPrimaryDisplay(
-                It.IsAny<DISPLAY_DEVICE>(),
-                ref It.Ref<DEVMODE>.IsAny)
-            )
-            .Callback(SetNonPrimary);
-    }
-
-    private static void SetupSetDisplayConfigurationAdvancedColorInformation()
-    {
         void UpdateState(DISPLAYCONFIG_DEVICE_INFO_HEADER header, bool booleanValue)
         {
-            if (header.Equals(ColorInfoHeader0))
+            if (header.Equals(_colorInfoHeader0))
             {
-                ColorInfo0 = ColorInfo0 with
+                colorInfo0 = colorInfo0 with
                 {
                     value = booleanValue ? DISPLAYCONFIG_ADVANCED_COLOR_INFO_VALUE_FLAGS.AdvancedColorEnabled : DISPLAYCONFIG_ADVANCED_COLOR_INFO_VALUE_FLAGS.AdvancedColorSupported
                 };
                 return;
             }
-            if (header.Equals(ColorInfoHeader1))
+            if (header.Equals(_colorInfoHeader1))
             {
-                ColorInfo1 = ColorInfo1 with
+                colorInfo1 = colorInfo1 with
                 {
                     value = DISPLAYCONFIG_ADVANCED_COLOR_INFO_VALUE_FLAGS.AdvancedColorNotSupported
                 };
                 return;
             }
-            if (header.Equals(ColorInfoHeader1))
+            if (header.Equals(_colorInfoHeader1))
             {
-                ColorInfo2 = ColorInfo2 with
+                colorInfo2 = colorInfo2 with
                 {
                     value = booleanValue ? DISPLAYCONFIG_ADVANCED_COLOR_INFO_VALUE_FLAGS.AdvancedColorEnabled : DISPLAYCONFIG_ADVANCED_COLOR_INFO_VALUE_FLAGS.AdvancedColorSupported
                 };
                 return;
             }
-            if (header.Equals(ColorInfoHeader1))
+            if (header.Equals(_colorInfoHeader1))
             {
-                ColorInfo3 = ColorInfo3 with
+                colorInfo3 = colorInfo3 with
                 {
                     value = DISPLAYCONFIG_ADVANCED_COLOR_INFO_VALUE_FLAGS.AdvancedColorNotSupported
                 };
@@ -215,7 +183,7 @@ internal static class DisplayServiceMock
         }
         Mock
             .Setup(m => m.SetDisplayConfigurationAdvancedColorInformation(
-                ColorInfoHeader0,
+                _colorInfoHeader0,
                 It.IsAny<bool>())
             )
             .Callback(UpdateState);
@@ -223,7 +191,7 @@ internal static class DisplayServiceMock
     }
 
     // Devices:
-    internal static readonly DISPLAY_DEVICE Display0 = new()
+    internal readonly DISPLAY_DEVICE display0 = new()
     {
         cb = Marshal.SizeOf(new DISPLAY_DEVICE()),
         DeviceID = "0",
@@ -233,7 +201,7 @@ internal static class DisplayServiceMock
         StateFlags = DisplayDeviceStateFlags.AttachedToDesktop | DisplayDeviceStateFlags.PrimaryDevice
     };
 
-    internal static readonly DISPLAY_DEVICE Display1 = new()
+    internal readonly DISPLAY_DEVICE display1 = new()
     {
         cb = Marshal.SizeOf(new DISPLAY_DEVICE()),
         DeviceID = "1",
@@ -242,7 +210,7 @@ internal static class DisplayServiceMock
         DeviceString = "TestDeviceString1",
         StateFlags = DisplayDeviceStateFlags.AttachedToDesktop
     };
-    internal static readonly DISPLAY_DEVICE Display2 = new()
+    internal readonly DISPLAY_DEVICE display2 = new()
     {
         cb = Marshal.SizeOf(new DISPLAY_DEVICE()),
         DeviceID = "2",
@@ -251,7 +219,7 @@ internal static class DisplayServiceMock
         DeviceString = "TestDeviceString2",
         StateFlags = DisplayDeviceStateFlags.AttachedToDesktop
     };
-    internal static readonly DISPLAY_DEVICE Display3 = new()
+    internal readonly DISPLAY_DEVICE display3 = new()
     {
         cb = Marshal.SizeOf(new DISPLAY_DEVICE()),
         DeviceID = "3",
@@ -260,7 +228,7 @@ internal static class DisplayServiceMock
         DeviceString = "TestDeviceString3",
     };
     // Modes:
-    internal static readonly DEVMODE DevMode0 = new()
+    internal DEVMODE devMode0 = new()
     {
         dmPosition = new POINTL
         {
@@ -270,7 +238,7 @@ internal static class DisplayServiceMock
         dmPelsWidth = 1920,
         dmPelsHeight = 1080,
     };
-    internal static readonly DEVMODE DevMode1 = new()
+    internal DEVMODE devMode1 = new()
     {
         dmPosition = new POINTL
         {
@@ -281,7 +249,7 @@ internal static class DisplayServiceMock
         dmPelsWidth = 1920,
         dmPelsHeight = 1080,
     };
-    internal static readonly DEVMODE DevMode2 = new()
+    internal DEVMODE devMode2 = new()
     {
         dmPosition = new POINTL
         {
@@ -292,7 +260,7 @@ internal static class DisplayServiceMock
         dmPelsWidth = 3840,
         dmPelsHeight = 2160,
     };
-    internal static readonly DEVMODE DevMode3 = new()
+    internal DEVMODE devMode3 = new()
     {
         dmPosition = new POINTL
         {
@@ -304,7 +272,7 @@ internal static class DisplayServiceMock
         dmPelsHeight = 1080,
     };
     // Paths:
-    internal static readonly DISPLAYCONFIG_PATH_INFO Path0 = new()
+    internal readonly DISPLAYCONFIG_PATH_INFO path0 = new()
     {
         sourceInfo = new DISPLAYCONFIG_PATH_SOURCE_INFO
         {
@@ -315,7 +283,7 @@ internal static class DisplayServiceMock
             id = 0
         }
     };
-    internal static readonly DISPLAYCONFIG_PATH_INFO Path1 = new()
+    internal readonly DISPLAYCONFIG_PATH_INFO path1 = new()
     {
         sourceInfo = new DISPLAYCONFIG_PATH_SOURCE_INFO
         {
@@ -326,7 +294,7 @@ internal static class DisplayServiceMock
             id = 1
         }
     };
-    internal static readonly DISPLAYCONFIG_PATH_INFO Path2 = new()
+    internal readonly DISPLAYCONFIG_PATH_INFO path2 = new()
     {
         sourceInfo = new DISPLAYCONFIG_PATH_SOURCE_INFO
         {
@@ -337,7 +305,7 @@ internal static class DisplayServiceMock
             id = 2
         }
     };
-    internal static readonly DISPLAYCONFIG_PATH_INFO Path3 = new()
+    internal readonly DISPLAYCONFIG_PATH_INFO path3 = new()
     {
         sourceInfo = new DISPLAYCONFIG_PATH_SOURCE_INFO
         {
@@ -349,71 +317,67 @@ internal static class DisplayServiceMock
         }
     };
     // Targets:
-    internal static readonly DISPLAYCONFIG_TARGET_DEVICE_NAME TargetDevice0 = new()
+    internal readonly DISPLAYCONFIG_TARGET_DEVICE_NAME targetDevice0 = new()
     {
         monitorFriendlyDeviceName = "Monitor0",
     };
-    internal static readonly DISPLAYCONFIG_TARGET_DEVICE_NAME TargetDevice1 = new()
+    internal readonly DISPLAYCONFIG_TARGET_DEVICE_NAME targetDevice1 = new()
     {
         monitorFriendlyDeviceName = "Monitor1",
     };
-    internal static readonly DISPLAYCONFIG_TARGET_DEVICE_NAME TargetDevice2 = new()
+    internal readonly DISPLAYCONFIG_TARGET_DEVICE_NAME targetDevice2 = new()
     {
         monitorFriendlyDeviceName = "Monitor2",
     };
-    internal static readonly DISPLAYCONFIG_TARGET_DEVICE_NAME TargetDevice3 = new()
+    internal readonly DISPLAYCONFIG_TARGET_DEVICE_NAME targetDevice3 = new()
     {
         monitorFriendlyDeviceName = "Monitor3",
     };
     // Sources:
-    internal static readonly DISPLAYCONFIG_SOURCE_DEVICE_NAME SourceDevice0 = new()
+    internal readonly DISPLAYCONFIG_SOURCE_DEVICE_NAME sourceDevice0 = new()
     {
         viewGdiDeviceName = "TestDevice0"
     };
-    internal static readonly DISPLAYCONFIG_SOURCE_DEVICE_NAME SourceDevice1 = new()
+    internal readonly DISPLAYCONFIG_SOURCE_DEVICE_NAME sourceDevice1 = new()
     {
         viewGdiDeviceName = "TestDevice1"
     };
-    internal static readonly DISPLAYCONFIG_SOURCE_DEVICE_NAME SourceDevice2 = new()
+    internal readonly DISPLAYCONFIG_SOURCE_DEVICE_NAME sourceDevice2 = new()
     {
         viewGdiDeviceName = "TestDevice2"
     };
-    internal static readonly DISPLAYCONFIG_SOURCE_DEVICE_NAME SourceDevice3 = new()
+    internal readonly DISPLAYCONFIG_SOURCE_DEVICE_NAME sourceDevice3 = new()
     {
         viewGdiDeviceName = "TestDevice3"
     };
 
-    internal static DISPLAYCONFIG_GET_ADVANCED_COLOR_INFO ColorInfo0 = new()
+    internal DISPLAYCONFIG_GET_ADVANCED_COLOR_INFO colorInfo0 = new()
     {
         bitsPerColorChannel = 8,
         colorEncoding = DISPLAYCONFIG_COLOR_ENCODING.DISPLAYCONFIG_COLOR_ENCODING_RGB,
-        header = ColorInfoHeader0,
         value = DISPLAYCONFIG_ADVANCED_COLOR_INFO_VALUE_FLAGS.AdvancedColorEnabled
     };
-    internal static DISPLAYCONFIG_GET_ADVANCED_COLOR_INFO ColorInfo1 = new()
+    internal DISPLAYCONFIG_GET_ADVANCED_COLOR_INFO colorInfo1 = new()
     {
         bitsPerColorChannel = 8,
         colorEncoding = DISPLAYCONFIG_COLOR_ENCODING.DISPLAYCONFIG_COLOR_ENCODING_RGB,
-        header = ColorInfoHeader1,
         value = DISPLAYCONFIG_ADVANCED_COLOR_INFO_VALUE_FLAGS.AdvancedColorNotSupported
     };
-    internal static DISPLAYCONFIG_GET_ADVANCED_COLOR_INFO ColorInfo2 = new()
+    internal DISPLAYCONFIG_GET_ADVANCED_COLOR_INFO colorInfo2 = new()
     {
         bitsPerColorChannel = 8,
         colorEncoding = DISPLAYCONFIG_COLOR_ENCODING.DISPLAYCONFIG_COLOR_ENCODING_RGB,
-        header = ColorInfoHeader2,
         value = DISPLAYCONFIG_ADVANCED_COLOR_INFO_VALUE_FLAGS.AdvancedColorSupported
     };
-    internal static DISPLAYCONFIG_GET_ADVANCED_COLOR_INFO ColorInfo3 = new()
+    internal DISPLAYCONFIG_GET_ADVANCED_COLOR_INFO colorInfo3 = new()
     {
         bitsPerColorChannel = 8,
         colorEncoding = DISPLAYCONFIG_COLOR_ENCODING.DISPLAYCONFIG_COLOR_ENCODING_YCBCR420,
-        header = ColorInfoHeader3,
         value = DISPLAYCONFIG_ADVANCED_COLOR_INFO_VALUE_FLAGS.AdvancedColorNotSupported
     };
 
-    private static readonly DISPLAYCONFIG_DEVICE_INFO_HEADER ColorInfoHeader0 = new();
-    private static readonly DISPLAYCONFIG_DEVICE_INFO_HEADER ColorInfoHeader1 = new();
-    private static readonly DISPLAYCONFIG_DEVICE_INFO_HEADER ColorInfoHeader2 = new();
-    private static readonly DISPLAYCONFIG_DEVICE_INFO_HEADER ColorInfoHeader3 = new();
+    private readonly DISPLAYCONFIG_DEVICE_INFO_HEADER _colorInfoHeader0 = new();
+    private readonly DISPLAYCONFIG_DEVICE_INFO_HEADER _colorInfoHeader1 = new();
+    private readonly DISPLAYCONFIG_DEVICE_INFO_HEADER _colorInfoHeader2 = new();
+    private readonly DISPLAYCONFIG_DEVICE_INFO_HEADER _colorInfoHeader3 = new();
 }

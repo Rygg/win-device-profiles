@@ -54,14 +54,15 @@ internal sealed class DisplayService : IDisplayService
     /// <param name="displayDevice">DisplayDevice parameter</param>
     /// <param name="deviceMode">DeviceMode parameter.</param>
     /// <param name="newRefreshRate">New refresh rate to set.</param>
-    /// <returns>True if the operation was successful. False if the refresh rate is not supported.</returns>
+    /// <returns>True if the operation was successful. False is already set.</returns>
     /// <exception cref="Win32Exception">Something went wrong with the API calls.</exception>
+    /// <exception cref="InvalidOperationException">Selected RefreshRate is not supported.</exception>
     public bool SetStandardDeviceRefreshRate(DISPLAY_DEVICE displayDevice, ref DEVMODE deviceMode, int newRefreshRate)
     {
         var oldRefreshRate = deviceMode.dmDisplayFrequency;
         if (oldRefreshRate == newRefreshRate)
         {
-            return true;
+            return false;
         }
 
         // Test can the refresh frequency be set for this display:
@@ -71,7 +72,7 @@ internal sealed class DisplayService : IDisplayService
         if (testResult != DISP_CHANGE.Successful)
         {
             deviceMode.dmDisplayFrequency = oldRefreshRate; // Set old refresh rate back.
-            return false;
+            throw new InvalidOperationException();
         }
         // Valid refresh rate. Update to registry.
         var result = ChangeDisplaySettingsEx(displayDevice.DeviceName, ref deviceMode, (nint)null, (ChangeDisplaySettingsFlags.CDS_UPDATEREGISTRY | ChangeDisplaySettingsFlags.CDS_NORESET), nint.Zero);

@@ -12,7 +12,7 @@ public interface IDisplayDeviceController
     /// </summary>
     /// <param name="profile">DeviceProfile to be set as active.</param>
     /// <param name="cancellationToken">CancellationToken to cancel the operation.</param>
-    /// <returns>True if the operation was successful. Otherwise false.</returns>
+    /// <returns>True if the operation was successful. False if no changes were made.</returns>
     Task<bool> ChangeDisplaySettings(DeviceProfile profile, CancellationToken cancellationToken);
     
     /// <summary>

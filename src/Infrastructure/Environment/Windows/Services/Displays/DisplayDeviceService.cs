@@ -28,7 +28,7 @@ internal sealed class DisplayDeviceService : IDisplayDeviceController
     /// </summary>
     /// <param name="profile">DeviceProfile to be set as active.</param>
     /// <param name="cancellationToken">CancellationToken to cancel the operation.</param>
-    /// <returns>True if the operation was successful. Otherwise false.</returns>
+    /// <returns>True if the operation was successful. False if no changes were made.</returns>
     public Task<bool> ChangeDisplaySettings(DeviceProfile profile, CancellationToken cancellationToken)
     {
         if (profile == null)
@@ -40,13 +40,13 @@ internal sealed class DisplayDeviceService : IDisplayDeviceController
         var displaysForStandardSettings = profile.DisplaySettings.Where(ds => ds.PrimaryDisplay != null || ds.RefreshRate != null && ds.RefreshRate != 0);
         var displaysForAdvancedColorState = profile.DisplaySettings.Where(ds => ds.EnableHdr != null);
 
-        SetStandardDisplaySettings(displaysForStandardSettings, displays, cancellationToken);
+        var anyChanges = SetStandardDisplaySettings(displaysForStandardSettings, displays, cancellationToken);
         if (cancellationToken.IsCancellationRequested)
         {
             return Task.FromResult(false);
         }
-        SetAdvancedColorDisplaySettings(displaysForAdvancedColorState, displays);
-        return Task.FromResult(true);
+        var anyHdrChanges = SetAdvancedColorDisplaySettings(displaysForAdvancedColorState, displays);
+        return Task.FromResult(anyChanges || anyHdrChanges);
     }
 
     /// <summary>
@@ -164,7 +164,7 @@ internal sealed class DisplayDeviceService : IDisplayDeviceController
     /// <param name="displaySettings">Array of display settings to update.</param>
     /// <param name="currentDisplays">Current displays in the system.</param>
     /// <param name="cancellationToken">CancellationToken to cancel the operation.</param>
-    private void SetStandardDisplaySettings(IEnumerable<DisplaySettings> displaySettings, IDictionary<uint, WindowsDisplayData> currentDisplays, CancellationToken cancellationToken)
+    private bool SetStandardDisplaySettings(IEnumerable<DisplaySettings> displaySettings, IDictionary<uint, WindowsDisplayData> currentDisplays, CancellationToken cancellationToken)
     {
         var anyRegistryChanges = false;
         var primaryDisplaySet = false;
@@ -198,7 +198,9 @@ internal sealed class DisplayDeviceService : IDisplayDeviceController
         if (anyRegistryChanges && !cancellationToken.IsCancellationRequested) // No need to apply unless changes were made. Check for cancellation also.
         {
             _displayService.ApplyStandardDeviceChanges();
+            return true;
         }
+        return false;
     }
 
     /// <summary>
@@ -255,14 +257,21 @@ internal sealed class DisplayDeviceService : IDisplayDeviceController
             return false;
         }
         var display = currentDisplays[displayId];
-        var result = _displayService.SetStandardDeviceRefreshRate(display.DisplayDevice, ref display.DeviceMode, newRefreshRate);
-        if (result == false)
+        try
+        {
+            var result = _displayService.SetStandardDeviceRefreshRate(display.DisplayDevice, ref display.DeviceMode, newRefreshRate);
+            if (result == false)
+            {
+                return false;
+            }
+            _logger.UpdatedRegistrySettings(displayId);
+            return true;
+        }
+        catch (InvalidOperationException)
         {
             _logger.RefreshRateNotSupported(displayId, newRefreshRate);
             return false;
         }
-        _logger.UpdatedRegistrySettings(displayId);
-        return true;
     }
 
     /// <summary>
@@ -270,16 +279,20 @@ internal sealed class DisplayDeviceService : IDisplayDeviceController
     /// </summary>
     /// <param name="displaySettings">Array of display settings to update.</param>
     /// <param name="currentDisplays">Current displays in the system</param>
-    private void SetAdvancedColorDisplaySettings(IEnumerable<DisplaySettings> displaySettings, IDictionary<uint, WindowsDisplayData> currentDisplays)
+    private bool SetAdvancedColorDisplaySettings(IEnumerable<DisplaySettings> displaySettings, IDictionary<uint, WindowsDisplayData> currentDisplays)
     {
+        bool anyChange = false;
         foreach (var display in displaySettings) // Update advanced color state values for required displays.
         {
             _logger.UpdatingAdvancedColorState(display.DisplayId, display.EnableHdr!.Value); // Suppress nullable, should have been validated before.
             if (SetDisplayAdvancedColorState(display.DisplayId, display.EnableHdr!.Value, currentDisplays)) // Suppress nullable, should have been validated before.
             {
                 _logger.AdvancedColorStateUpdated(display.DisplayId);
+                anyChange = true;
             }
         }
+
+        return anyChange;
     }
 
     /// <summary>
