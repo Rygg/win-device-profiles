@@ -7,7 +7,7 @@ namespace Infrastructure.Environment.Windows.Common.User32;
 /// <summary>
 /// Import hot key methods from user32.dll
 /// </summary>
-internal sealed class HotKeyService : IHotKeyService
+internal sealed partial class HotKeyService : IHotKeyService
 {
     /// <summary>
     /// Defines a system-wide hot key.
@@ -41,14 +41,16 @@ internal sealed class HotKeyService : IHotKeyService
     /// <param name="fsModifiers">The keys that must be pressed in combination with the key specified by the uVirtKey parameter in order to generate the WM_HOTKEY message. The fsModifiers parameter can be a combination of the following values.</param>
     /// <param name="vlc">The virtual-key code of the hot key. See <see href="https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes">Virtual Key Codes.</see></param>
     /// <returns>If the function succeeds, the return value is nonzero. If the function fails, the return value is zero.To get extended error information, call GetLastError.</returns>
-    [DllImport("user32.dll")]
-    private static extern bool RegisterHotKey(nint hWnd, int id, FsModifiers fsModifiers, uint vlc);
+    [LibraryImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool RegisterHotKey(nint hWnd, int id, FsModifiers fsModifiers, uint vlc);
     /// <summary>
     /// Frees a hot key previously registered by the calling thread.
     /// </summary>
     /// <param name="hWnd">A handle to the window associated with the hot key to be freed. This parameter should be NULL if the hot key is not associated with a window.</param>
     /// <param name="id">The identifier of the hot key to be freed.</param>
     /// <returns>If the function succeeds, the return value is nonzero. If the function fails, the return value is zero.To get extended error information, call GetLastError.</returns>
-    [DllImport("user32.dll")]
-    private static extern bool UnregisterHotKey(nint hWnd, int id);
+    [LibraryImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool UnregisterHotKey(nint hWnd, int id);
 }
