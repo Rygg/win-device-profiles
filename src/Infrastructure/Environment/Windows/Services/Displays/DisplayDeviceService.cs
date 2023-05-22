@@ -301,7 +301,7 @@ internal sealed class DisplayDeviceService : IDisplayDeviceController
     /// <param name="displayId">DisplayId to be operated.</param>
     /// <param name="newState">New state of the advanced color mode.</param>
     /// <param name="currentDisplays">Current system displays</param>
-    /// <returns>A boolean value indicating the success of the operation. Returns true if the display is set to or already is in the the desired state.</returns>
+    /// <returns>A boolean value indicating the success of the operation. Returns true if any changes were actually made.</returns>
     /// <exception cref="Win32Exception">Exception is thrown if the WinAPI call fails.</exception>
     private bool SetDisplayAdvancedColorState(uint displayId, bool newState, IDictionary<uint, WindowsDisplayData> currentDisplays)
     {
@@ -320,7 +320,7 @@ internal sealed class DisplayDeviceService : IDisplayDeviceController
         if (advancedColorStateEnabled == newState)
         {
             _logger.AdvancedColorStateAlreadySet(displayId);
-            return true;
+            return false;
         }
         _displayService.SetDisplayConfigurationAdvancedColorInformation(displayData.AdvancedColorInformation.Value.header, newState);
         return true;
