@@ -99,7 +99,7 @@ internal sealed class DisplayDeviceService : IDisplayDeviceController
             displays.Add(displayId, new WindowsDisplayData
             {
                 DisplayDevice = device.Value,
-                DeviceMode = deviceMode
+                deviceMode = deviceMode
             });
 
             displayId++;
@@ -149,11 +149,11 @@ internal sealed class DisplayDeviceService : IDisplayDeviceController
             }
             // Get the target device name.
             var targetInfo = _displayService.GetDisplayConfigurationTargetDeviceInformation(path);
-            displays[path.sourceInfo.id].DisplayTargetInfo = targetInfo; // Save the device name to memory.
+            displays[path.sourceInfo.id].SetTargetInfo(targetInfo); // Save the device name to memory.
 
             // Get advanced color info (HDR).
             var colorInfo = _displayService.GetDisplayConfigurationAdvancedColorInformation(path);
-            displays[path.sourceInfo.id].AdvancedColorInformation = colorInfo; // Save to memory.
+            displays[path.sourceInfo.id].SetAdvancedColorInformation(colorInfo); // Save to memory.
         }
     }
 
@@ -225,18 +225,18 @@ internal sealed class DisplayDeviceService : IDisplayDeviceController
         }
 
         // Store the old position to fix offsets of other monitors.
-        var offsetX = newPrimary.DeviceMode.dmPosition.x; 
-        var offsetY = newPrimary.DeviceMode.dmPosition.y;
-        _displayService.SetStandardDeviceAsPrimaryDisplay(newPrimary.DisplayDevice, ref newPrimary.DeviceMode);
+        var offsetX = newPrimary.deviceMode.dmPosition.x; 
+        var offsetY = newPrimary.deviceMode.dmPosition.y;
+        _displayService.SetStandardDeviceAsPrimaryDisplay(newPrimary.DisplayDevice, ref newPrimary.deviceMode);
         _logger.UpdatedRegistrySettings(displayId);
         // Update the offsets of the rest of the displays:
         var otherDisplays = currentDisplays.Where(d => d.Key != displayId);
 
         foreach (var (id, display) in otherDisplays)
         {
-            display.DeviceMode.dmPosition.x -= offsetX; // Subtract old primary display offset to get correct new screen position.
-            display.DeviceMode.dmPosition.y -= offsetY;
-            _displayService.SetStandardDeviceDeviceMode(display.DisplayDevice, ref display.DeviceMode);
+            display.deviceMode.dmPosition.x -= offsetX; // Subtract old primary display offset to get correct new screen position.
+            display.deviceMode.dmPosition.y -= offsetY;
+            _displayService.SetStandardDeviceDeviceMode(display.DisplayDevice, ref display.deviceMode);
             _logger.UpdatedRegistrySettings(id);
         }
         return true;
@@ -259,7 +259,7 @@ internal sealed class DisplayDeviceService : IDisplayDeviceController
         var display = currentDisplays[displayId];
         try
         {
-            var result = _displayService.SetStandardDeviceRefreshRate(display.DisplayDevice, ref display.DeviceMode, newRefreshRate);
+            var result = _displayService.SetStandardDeviceRefreshRate(display.DisplayDevice, ref display.deviceMode, newRefreshRate);
             if (result == false)
             {
                 return false;
@@ -281,7 +281,7 @@ internal sealed class DisplayDeviceService : IDisplayDeviceController
     /// <param name="currentDisplays">Current displays in the system</param>
     private bool SetAdvancedColorDisplaySettings(IEnumerable<DisplaySettings> displaySettings, IDictionary<uint, WindowsDisplayData> currentDisplays)
     {
-        bool anyChange = false;
+        var anyChange = false;
         foreach (var display in displaySettings) // Update advanced color state values for required displays.
         {
             _logger.UpdatingAdvancedColorState(display.DisplayId, display.EnableHdr!.Value); // Suppress nullable, should have been validated before.
