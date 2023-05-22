@@ -21,9 +21,10 @@ internal static class DisplayServiceMock
         SetupGetSourceDevices();
         SetupGetAdvancedColorState();
 
-
-
+        SetupSetStandardDeviceAsPrimaryDisplay();
+        SetupSetStandardDeviceDeviceMode();
         SetupSetStandardDeviceRefreshRate();
+        SetupSetDisplayConfigurationAdvancedColorInformation();
     }
     
     private static void SetupGetDisplayDevice()
@@ -143,6 +144,84 @@ internal static class DisplayServiceMock
             .Callback(UpdateRefreshRate)
             .Returns(true);
     }
+    private static void SetupSetStandardDeviceAsPrimaryDisplay()
+    {
+        void SetAsPrimary(DISPLAY_DEVICE device, ref DEVMODE devMode)
+        {
+            device.StateFlags = DisplayDeviceStateFlags.PrimaryDevice | DisplayDeviceStateFlags.AttachedToDesktop;
+            devMode.dmPosition.x = 0;
+            devMode.dmPosition.y = 0;
+        }
+
+        Mock
+            .Setup(m => m.SetStandardDeviceAsPrimaryDisplay(
+                It.IsAny<DISPLAY_DEVICE>(),
+                ref It.Ref<DEVMODE>.IsAny)
+            )
+            .Callback(SetAsPrimary);
+    }
+
+    private static void SetupSetStandardDeviceDeviceMode() // Only being used to refresh sizes for non primary displays.
+    {
+        void SetNonPrimary(DISPLAY_DEVICE device, ref DEVMODE devMode)
+        {
+            device.StateFlags =  DisplayDeviceStateFlags.AttachedToDesktop;
+        }
+
+        Mock
+            .Setup(m => m.SetStandardDeviceAsPrimaryDisplay(
+                It.IsAny<DISPLAY_DEVICE>(),
+                ref It.Ref<DEVMODE>.IsAny)
+            )
+            .Callback(SetNonPrimary);
+    }
+
+    private static void SetupSetDisplayConfigurationAdvancedColorInformation()
+    {
+        void UpdateState(DISPLAYCONFIG_DEVICE_INFO_HEADER header, bool booleanValue)
+        {
+            if (header.Equals(ColorInfoHeader0))
+            {
+                ColorInfo0 = ColorInfo0 with
+                {
+                    value = booleanValue ? DISPLAYCONFIG_ADVANCED_COLOR_INFO_VALUE_FLAGS.AdvancedColorEnabled : DISPLAYCONFIG_ADVANCED_COLOR_INFO_VALUE_FLAGS.AdvancedColorSupported
+                };
+                return;
+            }
+            if (header.Equals(ColorInfoHeader1))
+            {
+                ColorInfo1 = ColorInfo1 with
+                {
+                    value = DISPLAYCONFIG_ADVANCED_COLOR_INFO_VALUE_FLAGS.AdvancedColorNotSupported
+                };
+                return;
+            }
+            if (header.Equals(ColorInfoHeader1))
+            {
+                ColorInfo2 = ColorInfo2 with
+                {
+                    value = booleanValue ? DISPLAYCONFIG_ADVANCED_COLOR_INFO_VALUE_FLAGS.AdvancedColorEnabled : DISPLAYCONFIG_ADVANCED_COLOR_INFO_VALUE_FLAGS.AdvancedColorSupported
+                };
+                return;
+            }
+            if (header.Equals(ColorInfoHeader1))
+            {
+                ColorInfo3 = ColorInfo3 with
+                {
+                    value = DISPLAYCONFIG_ADVANCED_COLOR_INFO_VALUE_FLAGS.AdvancedColorNotSupported
+                };
+
+            }
+        }
+        Mock
+            .Setup(m => m.SetDisplayConfigurationAdvancedColorInformation(
+                ColorInfoHeader0,
+                It.IsAny<bool>())
+            )
+            .Callback(UpdateState);
+
+    }
+
     // Devices:
     internal static readonly DISPLAY_DEVICE Display0 = new()
     {
@@ -304,32 +383,37 @@ internal static class DisplayServiceMock
         viewGdiDeviceName = "TestDevice3"
     };
 
-    internal static readonly DISPLAYCONFIG_GET_ADVANCED_COLOR_INFO ColorInfo0 = new()
+    internal static DISPLAYCONFIG_GET_ADVANCED_COLOR_INFO ColorInfo0 = new()
     {
         bitsPerColorChannel = 8,
         colorEncoding = DISPLAYCONFIG_COLOR_ENCODING.DISPLAYCONFIG_COLOR_ENCODING_RGB,
-        header = new DISPLAYCONFIG_DEVICE_INFO_HEADER(),
+        header = ColorInfoHeader0,
         value = DISPLAYCONFIG_ADVANCED_COLOR_INFO_VALUE_FLAGS.AdvancedColorEnabled
     };
-    internal static readonly DISPLAYCONFIG_GET_ADVANCED_COLOR_INFO ColorInfo1 = new()
+    internal static DISPLAYCONFIG_GET_ADVANCED_COLOR_INFO ColorInfo1 = new()
     {
         bitsPerColorChannel = 8,
         colorEncoding = DISPLAYCONFIG_COLOR_ENCODING.DISPLAYCONFIG_COLOR_ENCODING_RGB,
-        header = new DISPLAYCONFIG_DEVICE_INFO_HEADER(),
+        header = ColorInfoHeader1,
         value = DISPLAYCONFIG_ADVANCED_COLOR_INFO_VALUE_FLAGS.AdvancedColorNotSupported
     };
-    internal static readonly DISPLAYCONFIG_GET_ADVANCED_COLOR_INFO ColorInfo2 = new()
+    internal static DISPLAYCONFIG_GET_ADVANCED_COLOR_INFO ColorInfo2 = new()
     {
         bitsPerColorChannel = 8,
         colorEncoding = DISPLAYCONFIG_COLOR_ENCODING.DISPLAYCONFIG_COLOR_ENCODING_RGB,
-        header = new DISPLAYCONFIG_DEVICE_INFO_HEADER(),
+        header = ColorInfoHeader2,
         value = DISPLAYCONFIG_ADVANCED_COLOR_INFO_VALUE_FLAGS.AdvancedColorSupported
     };
-    internal static readonly DISPLAYCONFIG_GET_ADVANCED_COLOR_INFO ColorInfo3 = new()
+    internal static DISPLAYCONFIG_GET_ADVANCED_COLOR_INFO ColorInfo3 = new()
     {
         bitsPerColorChannel = 8,
         colorEncoding = DISPLAYCONFIG_COLOR_ENCODING.DISPLAYCONFIG_COLOR_ENCODING_YCBCR420,
-        header = new DISPLAYCONFIG_DEVICE_INFO_HEADER(),
+        header = ColorInfoHeader3,
         value = DISPLAYCONFIG_ADVANCED_COLOR_INFO_VALUE_FLAGS.AdvancedColorNotSupported
     };
+
+    private static readonly DISPLAYCONFIG_DEVICE_INFO_HEADER ColorInfoHeader0 = new();
+    private static readonly DISPLAYCONFIG_DEVICE_INFO_HEADER ColorInfoHeader1 = new();
+    private static readonly DISPLAYCONFIG_DEVICE_INFO_HEADER ColorInfoHeader2 = new();
+    private static readonly DISPLAYCONFIG_DEVICE_INFO_HEADER ColorInfoHeader3 = new();
 }
