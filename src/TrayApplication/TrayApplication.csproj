@@ -5,6 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AnalysisLevel>latest-all</AnalysisLevel>
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     <OutputType>WinExe</OutputType>
     <Forms>True</Forms>
     <UseWindowsForms>True</UseWindowsForms>

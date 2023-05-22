@@ -92,11 +92,27 @@ public sealed class DeviceProfilesApplicationContext : ApplicationContext
         _logger.StartingShutdown();
         _trayIcon.Visible = false; // Hide tray icon, so it won't remain there until hovered on.
         _applicationCts.Cancel();
-        _applicationCts.Dispose();
-        _trayIcon.Dispose();
-        //_application.Dispose(); // TODO: Dispose the main controller. Should be disposed along with the Host in Program.cs?
         _logger.ApplicationShuttingDown();
         Dispose();
         System.Windows.Forms.Application.Exit();
+    }
+
+    /// <summary>
+    /// Dispose the context.
+    /// </summary>
+    public new void Dispose()
+    {
+        Dispose(true);
+        base.Dispose();
+    }
+    /// <summary>
+    /// Override for base class disposer to dispose all disposable fields from this file.
+    /// </summary>
+    /// <param name="disposing"></param>
+    protected override void Dispose(bool disposing)
+    {
+        _applicationCts.Dispose();
+        _trayIcon.Dispose();
+        base.Dispose(disposing); // Dispose base.
     }
 }
