@@ -23,12 +23,10 @@ public sealed class DeviceProfilesApplicationContext : ApplicationContext
         ISender mediatR,
         ILogger<DeviceProfilesApplicationContext> logger,
         TrayIconBuilder trayIconBuilder
-        )
+    )
     {
-        if (trayIconBuilder == null)
-        {
-            throw new ArgumentNullException(nameof(trayIconBuilder));
-        }
+        ArgumentNullException.ThrowIfNull(trayIconBuilder);
+        
         _mediatR = mediatR;
         _logger = logger;
         _applicationCts = new CancellationTokenSource();

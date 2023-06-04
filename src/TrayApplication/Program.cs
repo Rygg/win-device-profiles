@@ -1,5 +1,6 @@
 ﻿using Application;
 using Infrastructure;
+using Infrastructure.Persistence;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using TrayApplication.Components.Windows.Forms;
@@ -20,6 +21,12 @@ internal static class Program
             .AddInfrastructureServices()
             .AddTrayApplicationServices()
             .Build();
+
+        using (var scope = host.Services.CreateScope())
+        {
+            var initializer = scope.ServiceProvider.GetRequiredService<DeviceProfilesDbContextInitializer>();
+            initializer.InitializeAsync(CancellationToken.None).GetAwaiter().GetResult();
+        }
 
         System.Windows.Forms.Application.Run(host.Services.GetRequiredService<DeviceProfilesApplicationContext>());
     }

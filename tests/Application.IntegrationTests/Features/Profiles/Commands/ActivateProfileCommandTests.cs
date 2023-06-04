@@ -1,5 +1,5 @@
 ﻿using Application.Features.Profiles.Commands;
-using Domain.Models;
+using Domain.Entities;
 using FluentValidation;
 
 namespace Application.IntegrationTests.Features.Profiles.Commands;

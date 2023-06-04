@@ -1,6 +1,6 @@
 using System.ComponentModel;
 using Domain.Enums;
-using Domain.Models;
+using Domain.ValueObjects;
 using Infrastructure.Environment.Windows.Common.User32.Interfaces;
 using Infrastructure.Environment.Windows.Common.User32.NativeTypes.Enums;
 using Infrastructure.Environment.Windows.Services.Keyboard;

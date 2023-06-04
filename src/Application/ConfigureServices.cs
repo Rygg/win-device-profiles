@@ -18,10 +18,8 @@ public static class ConfigureServices
     /// </summary>
     public static IHostBuilder AddApplicationServices(this IHostBuilder builder)
     {
-        if (builder == null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
+        ArgumentNullException.ThrowIfNull(builder);
+        
         builder.ConfigureServices((context, services) =>
         {
             services

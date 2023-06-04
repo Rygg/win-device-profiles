@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using Application.Common.Interfaces;
 using Domain.Enums;
-using Domain.Models;
+using Domain.ValueObjects;
 using Infrastructure.Environment.Windows.Common.User32.Interfaces;
 using Infrastructure.Environment.Windows.Common.User32.NativeTypes.Enums;
 using Infrastructure.Extensions;
@@ -44,10 +44,7 @@ internal sealed class KeyboardHotKeyService : IHotKeyTrigger, IDisposable
     /// <exception cref="InvalidOperationException">HotKey could not be registered.</exception>
     public async Task RegisterHotKeyAsync(HotKeyCombination hotKey, CancellationToken ct)
     {
-        if (hotKey == null)
-        {
-            throw new ArgumentNullException(nameof(hotKey));
-        }
+        ArgumentNullException.ThrowIfNull(hotKey);
 
         if (hotKey.Key == SupportedKeys.None)
         {

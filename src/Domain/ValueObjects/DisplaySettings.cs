@@ -1,4 +1,4 @@
-﻿namespace Domain.Models;
+﻿namespace Domain.ValueObjects;
 
 /// <summary>
 /// Model for DisplaySettings.

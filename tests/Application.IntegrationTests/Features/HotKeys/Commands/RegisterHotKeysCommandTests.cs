@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 using Application.Features.HotKeys.Commands;
-using Domain.Models;
+using Domain.ValueObjects;
 
 namespace Application.IntegrationTests.Features.HotKeys.Commands;
 

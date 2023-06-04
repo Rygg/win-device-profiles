@@ -1,5 +1,7 @@
-﻿namespace Domain.Models;
-public sealed record DeviceProfile
+﻿using Domain.ValueObjects;
+
+namespace Domain.Entities;
+public sealed class DeviceProfile
 {
     /// <summary>
     /// Identifier of the profile.

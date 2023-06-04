@@ -1,5 +1,5 @@
 ﻿using System.Globalization;
-using Domain.Models;
+using Domain.Entities;
 using Microsoft.Extensions.Logging;
 using TrayApplication.Extensions;
 using TrayApplication.Resources.Text;
@@ -54,9 +54,11 @@ public sealed class TrayIconBuilder
         DeviceProfile[] profiles
         )
     {
+        ArgumentNullException.ThrowIfNull(profiles);
+
         var contextMenu = new ContextMenuStrip();
         ToolStripMenuItem profileItem;
-        if (!profiles.Any())
+        if (profiles.Length == 0)
         {
             profileItem = new ToolStripMenuItem(Strings.TrayIconNoProfilesAvailable)
             {

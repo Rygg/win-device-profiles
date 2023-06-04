@@ -1,5 +1,5 @@
 ﻿using Application.Common.Options;
-using Domain.Models;
+using Domain.Entities;
 using MediatR;
 using Microsoft.Extensions.Options;
 
@@ -13,10 +13,8 @@ public sealed class GetProfilesQueryHandler : IRequestHandler<GetProfilesQuery, 
 
     public GetProfilesQueryHandler(IOptions<ProfileOptions> profileOptions)
     {
-        if (profileOptions == null)
-        {
-            throw new ArgumentNullException(nameof(profileOptions));
-        }
+        ArgumentNullException.ThrowIfNull(profileOptions);
+        
         _deviceProfiles = profileOptions.Value.Profiles
             .Select(p => p.ToDeviceProfile())
             .ToArray();

@@ -1,5 +1,6 @@
-﻿using Domain.Enums;
-using Domain.Models;
+﻿using Domain.Entities;
+using Domain.Enums;
+using Domain.ValueObjects;
 
 namespace Application.Common.Options;
 
@@ -18,10 +19,7 @@ public sealed record ProfileOptions
     /// </summary>
     public static bool Validate(ProfileOptions options)
     {
-        if (options == null)
-        {
-            throw new ArgumentNullException(nameof(options));
-        }
+        ArgumentNullException.ThrowIfNull(options);
 
         if(!options.Profiles.All(p => p.IsValid()))
         {

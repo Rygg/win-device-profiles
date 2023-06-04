@@ -1,9 +1,6 @@
-using System.Runtime.CompilerServices;
 using Application.Features.HotKeys.Commands;
 using Application.Features.HotKeys.Queries;
-using Application.Features.Profiles.Commands;
 using Application.Features.Profiles.Queries;
-using Domain.Models;
 using Microsoft.Extensions.Logging;
 using TrayApplication.Components.Windows.Forms;
 using TrayApplication.Components.Windows.Forms.TrayIcon;

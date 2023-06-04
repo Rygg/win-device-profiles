@@ -1,6 +1,6 @@
 ﻿using Application.Common.Interfaces;
 using Application.Common.Options;
-using Domain.Models;
+using Domain.Entities;
 using MediatR;
 using Microsoft.Extensions.Options;
 
@@ -18,11 +18,8 @@ public sealed class RegisterHotKeysCommandHandler : IRequestHandler<RegisterHotK
         IHotKeyTrigger hotKeyTrigger
         )
     {
-        if (profileOptions == null)
-        {
-            throw new ArgumentNullException(nameof(profileOptions));
-        }
-
+        ArgumentNullException.ThrowIfNull(profileOptions);
+        
         _hotKeyTrigger = hotKeyTrigger;
         _deviceProfiles = profileOptions.Value.Profiles
             .Select(p => p.ToDeviceProfile())
@@ -35,7 +32,7 @@ public sealed class RegisterHotKeysCommandHandler : IRequestHandler<RegisterHotK
         {
             if (profile.HotKey != null)
             {
-                await _hotKeyTrigger.RegisterHotKeyAsync(profile.HotKey, cancellationToken).ConfigureAwait(true); // TODO: Hotkeys}
+                await _hotKeyTrigger.RegisterHotKeyAsync(profile.HotKey, cancellationToken).ConfigureAwait(true);
             }
         }
     }

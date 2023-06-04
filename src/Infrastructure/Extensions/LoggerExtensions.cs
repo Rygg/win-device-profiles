@@ -1,5 +1,4 @@
-﻿using Domain.Enums;
-using Domain.Models;
+﻿using Domain.ValueObjects;
 using Infrastructure.Interfaces.Models;
 using Microsoft.Extensions.Logging;
 
@@ -258,4 +257,13 @@ public static partial class LoggerExtensions
         )
     ]
     public static partial void CannotSetAdvancedColorMode(this ILogger logger, uint displayId);
+
+    [LoggerMessage(
+            EventId = 460,
+            EventName = nameof(ErrorOccurredDuringMigration),
+            Level = LogLevel.Critical,
+            Message = "An exception occurred during initial database migration."
+        )
+    ]
+    public static partial void ErrorOccurredDuringMigration(this ILogger logger, Exception ex);
 }

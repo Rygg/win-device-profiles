@@ -1,7 +1,7 @@
 ﻿using Application.Common.Extensions;
 using Application.Common.Interfaces;
 using Application.Common.Options;
-using Domain.Models;
+using Domain.Entities;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -31,10 +31,7 @@ public sealed class SetProfileCommandHandler : IRequestHandler<ActivateProfileCo
         IOptions<ProfileOptions> profileOptions
         )
     {
-        if (profileOptions == null)
-        {
-            throw new ArgumentNullException(nameof(profileOptions));
-        }
+        ArgumentNullException.ThrowIfNull(profileOptions);
 
         _displayDeviceController = displayDeviceController;
         _logger = logger;
@@ -45,13 +42,10 @@ public sealed class SetProfileCommandHandler : IRequestHandler<ActivateProfileCo
 
     public async Task Handle(ActivateProfileCommand request, CancellationToken cancellationToken)
     {
-        if (request == null)
-        {
-            throw new ArgumentNullException(nameof(request));
-        }
+        ArgumentNullException.ThrowIfNull(request);
 
         var clickedProfile = _deviceProfiles
-            .FirstOrDefault(p => p.Id == request.ProfileId) ?? 
+                                 .FirstOrDefault(p => p.Id == request.ProfileId) ?? 
                              throw new ArgumentException(nameof(request.ProfileId), $"Profile with identifier {request.ProfileId} not found from the configuration"); ; // Get the clicked profile.
         
 

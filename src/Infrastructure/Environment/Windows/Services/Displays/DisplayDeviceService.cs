@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using Application.Common.Interfaces;
-using Domain.Models;
+using Domain.Entities;
+using Domain.ValueObjects;
 using Infrastructure.Environment.Windows.Common.User32.Interfaces;
 using Infrastructure.Environment.Windows.Common.User32.NativeTypes.Enums;
 using Infrastructure.Environment.Windows.Services.Displays.Models;
@@ -31,10 +32,7 @@ internal sealed class DisplayDeviceService : IDisplayDeviceController
     /// <returns>True if the operation was successful. False if no changes were made.</returns>
     public Task<bool> ChangeDisplaySettings(DeviceProfile profile, CancellationToken cancellationToken)
     {
-        if (profile == null)
-        {
-            throw new ArgumentNullException(nameof(profile));
-        }
+        ArgumentNullException.ThrowIfNull(profile);
 
         var displays = RetrieveSystemDisplayInformation(cancellationToken);
         var displaysForStandardSettings = profile.DisplaySettings.Where(ds => ds.PrimaryDisplay != null || ds.RefreshRate != null && ds.RefreshRate != 0);
@@ -71,7 +69,7 @@ internal sealed class DisplayDeviceService : IDisplayDeviceController
     /// <param name="cancellationToken">CancellationToken for the operation.</param>
     /// <returns>Dictionary containing the environment DisplayIds and a model containing all the display information.</returns>
     /// <exception cref="Win32Exception">Something went wrong with the native library communication.</exception>
-    private IDictionary<uint, WindowsDisplayData> RetrieveSystemDisplayInformation(CancellationToken cancellationToken)
+    private Dictionary<uint, WindowsDisplayData> RetrieveSystemDisplayInformation(CancellationToken cancellationToken)
     {
         var displays = new Dictionary<uint,WindowsDisplayData>();
         _logger.RetrievingDisplayDevices();
@@ -122,10 +120,10 @@ internal sealed class DisplayDeviceService : IDisplayDeviceController
     /// </summary>
     /// <exception cref="Win32Exception">Something went wrong in the Native methods.</exception>
     /// <exception cref="InvalidOperationException"></exception>
-    private void UpdateRetrievedDisplaysWithAdvancedInformation(IDictionary<uint,WindowsDisplayData> displays)
+    private void UpdateRetrievedDisplaysWithAdvancedInformation(Dictionary<uint,WindowsDisplayData> displays)
     {
         _logger.RetrievingAdvancedDisplayInformation();
-        if (!displays.Any())
+        if (displays.Count == 0)
         {
             return;
         }
