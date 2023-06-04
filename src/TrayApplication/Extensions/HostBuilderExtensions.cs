@@ -1,7 +1,9 @@
-﻿using Infrastructure.Interfaces;
+﻿using System.Globalization;
+using Infrastructure.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using Serilog;
+using Serilog.Events;
 using TrayApplication.Components.Windows.Forms;
 using TrayApplication.Components.Windows.Forms.HotKeys;
 using TrayApplication.Components.Windows.Forms.TrayIcon;
@@ -35,9 +37,31 @@ internal static class HostBuilderExtensions
     /// </summary>
     private static IHostBuilder ConfigureLogging(this IHostBuilder builder)
     {
-        return builder.ConfigureLogging((context,options) =>
+        const string logFile = "Logs\\DeviceProfiles.log";
+        const string logTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz}[{Level:u3}][{SourceContext:l}]: {Message:lj}{NewLine}{Exception}";
+        const RollingInterval logInterval = RollingInterval.Day;
+
+        return builder.UseSerilog((hostingContext, _, loggingConfiguration) =>
         {
-            options.AddConfiguration(context.Configuration);
+            loggingConfiguration
+                .Enrich.FromLogContext()
+                .WriteTo.File(
+                    path: logFile,
+                    outputTemplate: logTemplate,
+                    formatProvider: CultureInfo.InvariantCulture,
+                    retainedFileCountLimit: 30,
+                    rollingInterval: logInterval
+                );
+
+            var logLevelBlock = hostingContext.Configuration.GetSection("LogLevel");
+            if(Enum.TryParse(logLevelBlock.Value, true, out LogEventLevel logLevel))
+            {
+                loggingConfiguration.MinimumLevel.Is(logLevel);
+            }
+            else
+            {
+                loggingConfiguration.MinimumLevel.Error();
+            }
         });
     }
 }

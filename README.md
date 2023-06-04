@@ -4,7 +4,7 @@ This project is designed to create support for switching between different devic
 
 The application runs in the system tray, and profiles can be enabled either by pressing configured hotkey combinations or by clicking the desired profile from the tray icon context menu. The ideal functionality is achieved by setting the application to automatically start up with Windows.
 
-The project is built using [.NET 7.0](https://dotnet.microsoft.com/en-us/download/dotnet/7.0) and it uses the user32.dll of the Win32 API to control the user devices. This project uses the [NUnit](https://nunit.org/) library for tests. Application icon by [Asher](https://findicons.com/icon/68744/workgroup)
+The project is built using [.NET 7.0](https://dotnet.microsoft.com/en-us/download/dotnet/7.0) and it uses the user32.dll of the Win32 API to control the user devices. This project uses the [NUnit](https://nunit.org/) library for tests and [Serilog](https://serilog.net/) for logging. Application icon by [Asher](https://findicons.com/icon/68744/workgroup)
 
 ## Tools ##
 Project is currently developed using [Microsoft Visual Studio 2022](https://visualstudio.microsoft.com/vs/).
@@ -12,22 +12,21 @@ Project is currently developed using [Microsoft Visual Studio 2022](https://visu
 ## Configuration ##
 The application is configured by changing the appsettings.json a fairly simple configuration file. The currently available configuration settings are: 
 
-* Logging:LogLevel: [(LogLevel)](https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.logging.loglevel?view=dotnet-plat-ext-7.0) Sets the log level of the application. The supported values:
+* LogLevel: [(MinimumLevel)](https://github.com/serilog/serilog/wiki/Configuration-Basics) Sets the log level of the application. The supported values:
 
-    * Trace
+    * Verbose
     * Debug
     * Information
     * Warning
     * Error
-    * Critical 
-    * None
+    * Fatal
 
 * ProfilesOptions: Application reads the user profiles from this section during application startup.
 
 appsettings.json:
 ```
 {
-  "LogLevel": "Info",
+  "LogLevel": "Error",
   "ProfileOptions": "Profiles {...}"
 }
 ```
