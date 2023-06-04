@@ -16,6 +16,7 @@
     <AssemblyName>DeviceProfiles</AssemblyName>
     <ApplicationIcon>Resources\Images\app.ico</ApplicationIcon>
     <UserSecretsId>625db272-df29-448d-a208-d88f2ce3cd4c</UserSecretsId>
+    <PublishSingleFile>true</PublishSingleFile>
   </PropertyGroup>
 
   <ItemGroup>
