@@ -30,16 +30,17 @@ namespace Infrastructure.Migrations
                 name: "DisplaySettings",
                 columns: table => new
                 {
-                    DeviceProfileId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Id = table.Column<int>(type: "INTEGER", nullable: false),
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
                     DisplayId = table.Column<uint>(type: "INTEGER", nullable: false),
                     PrimaryDisplay = table.Column<bool>(type: "INTEGER", nullable: true),
                     EnableHdr = table.Column<bool>(type: "INTEGER", nullable: true),
-                    RefreshRate = table.Column<int>(type: "INTEGER", nullable: true)
+                    RefreshRate = table.Column<int>(type: "INTEGER", nullable: true),
+                    DeviceProfileId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DisplaySettings", x => new { x.DeviceProfileId, x.Id });
+                    table.PrimaryKey("PK_DisplaySettings", x => x.Id);
                     table.ForeignKey(
                         name: "FK_DisplaySettings_DeviceProfiles_DeviceProfileId",
                         column: x => x.DeviceProfileId,
@@ -47,6 +48,11 @@ namespace Infrastructure.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DisplaySettings_DeviceProfileId",
+                table: "DisplaySettings",
+                column: "DeviceProfileId");
         }
 
         /// <inheritdoc />
@@ -60,5 +66,4 @@ namespace Infrastructure.Migrations
         }
     }
 }
-
 #pragma warning restore CA1062

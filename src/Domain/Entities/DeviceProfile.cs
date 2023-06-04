@@ -1,13 +1,9 @@
-﻿using Domain.ValueObjects;
+﻿using Domain.Common;
+using Domain.ValueObjects;
 
 namespace Domain.Entities;
-public sealed class DeviceProfile
+public sealed class DeviceProfile : BaseEntity
 {
-    /// <summary>
-    /// Identifier of the profile.
-    /// </summary>
-    public int Id { get; init; }
-
     /// <summary>
     /// Name of the profile.
     /// </summary>
@@ -21,5 +17,6 @@ public sealed class DeviceProfile
     /// <summary>
     /// DisplaySettings for the profile. Required.
     /// </summary>
-    public ICollection<DisplaySettings> DisplaySettings { get; init; } = Array.Empty<DisplaySettings>();
+    public ICollection<DisplaySettings> DisplaySettings { get; init; } = new List<DisplaySettings>();
+
 }

@@ -1,9 +1,11 @@
-﻿namespace Domain.ValueObjects;
+﻿using Domain.Common;
+
+namespace Domain.Entities;
 
 /// <summary>
 /// Model for DisplaySettings.
 /// </summary>
-public sealed record DisplaySettings
+public sealed class DisplaySettings : BaseEntity
 {
     /// <summary>
     /// Display identifier to be used to link the display to the Environment structures.
@@ -25,4 +27,19 @@ public sealed record DisplaySettings
     /// </summary>
     public int? RefreshRate { get; init; }
 
+
+    public override bool Equals(object? obj)
+    {
+        if (obj is not DisplaySettings ds)
+        {
+            return false;
+        }
+            
+        return DisplayId == ds.DisplayId && PrimaryDisplay == ds.PrimaryDisplay && EnableHdr == ds.EnableHdr && RefreshRate == ds.RefreshRate;
+    }
+
+    public override int GetHashCode()
+    {
+        return DisplayId.GetHashCode() ^ PrimaryDisplay.GetHashCode() ^ EnableHdr.GetHashCode() ^ RefreshRate.GetHashCode();
+    }
 }

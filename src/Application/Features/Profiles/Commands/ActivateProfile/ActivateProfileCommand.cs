@@ -6,7 +6,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Application.Features.Profiles.Commands;
+namespace Application.Features.Profiles.Commands.ActivateProfile;
 
 public sealed record ActivateProfileCommand : IRequest
 {
@@ -26,7 +26,7 @@ public sealed class SetProfileCommandHandler : IRequestHandler<ActivateProfileCo
     private readonly DeviceProfile[] _deviceProfiles;
 
     public SetProfileCommandHandler(
-        IDisplayDeviceController displayDeviceController, 
+        IDisplayDeviceController displayDeviceController,
         ILogger<SetProfileCommandHandler> logger,
         IOptions<ProfileOptions> profileOptions
         )
@@ -45,9 +45,9 @@ public sealed class SetProfileCommandHandler : IRequestHandler<ActivateProfileCo
         ArgumentNullException.ThrowIfNull(request);
 
         var clickedProfile = _deviceProfiles
-                                 .FirstOrDefault(p => p.Id == request.ProfileId) ?? 
+                                 .FirstOrDefault(p => p.Id == request.ProfileId) ??
                              throw new ArgumentException(nameof(request.ProfileId), $"Profile with identifier {request.ProfileId} not found from the configuration"); ; // Get the clicked profile.
-        
+
 
         if (await _displayDeviceController.ChangeDisplaySettings(clickedProfile, cancellationToken).ConfigureAwait(false))
         {

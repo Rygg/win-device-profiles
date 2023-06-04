@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using Domain.Entities;
-using Domain.ValueObjects;
 using Infrastructure.Environment.Windows.Common.User32.NativeTypes.Enums;
 using Infrastructure.Environment.Windows.Common.User32.NativeTypes.Structs;
 using Infrastructure.Environment.Windows.Services.Displays;

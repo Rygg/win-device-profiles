@@ -1,4 +1,4 @@
-﻿using Application.Features.Profiles.Commands;
+﻿using Application.Features.Profiles.Commands.ActivateProfile;
 using Domain.Entities;
 using FluentValidation;
 

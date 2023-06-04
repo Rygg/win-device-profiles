@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(DeviceProfilesDbContext))]
-    [Migration("20230604130039_InitialCreate")]
+    [Migration("20230604145212_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -38,13 +38,13 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.DeviceProfile", b =>
                 {
-                    b.OwnsMany("Domain.ValueObjects.DisplaySettings", "DisplaySettings", b1 =>
+                    b.OwnsMany("Domain.Entities.DisplaySettings", "DisplaySettings", b1 =>
                         {
-                            b1.Property<int>("DeviceProfileId")
-                                .HasColumnType("INTEGER");
-
                             b1.Property<int>("Id")
                                 .ValueGeneratedOnAdd()
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("DeviceProfileId")
                                 .HasColumnType("INTEGER");
 
                             b1.Property<uint>("DisplayId")
@@ -59,7 +59,9 @@ namespace Infrastructure.Migrations
                             b1.Property<int?>("RefreshRate")
                                 .HasColumnType("INTEGER");
 
-                            b1.HasKey("DeviceProfileId", "Id");
+                            b1.HasKey("Id");
+
+                            b1.HasIndex("DeviceProfileId");
 
                             b1.ToTable("DisplaySettings");
 

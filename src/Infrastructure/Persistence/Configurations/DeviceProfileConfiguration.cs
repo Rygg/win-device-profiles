@@ -21,6 +21,7 @@ public sealed class DeviceProfileConfiguration : IEntityTypeConfiguration<Device
         builder.OwnsMany(dp => dp.DisplaySettings, displaySettingsBuilder =>
         {
             displaySettingsBuilder.WithOwner();
+            displaySettingsBuilder.HasKey(ds => ds.Id);
             displaySettingsBuilder.Property(ds => ds.DisplayId).IsRequired();
         });
     }

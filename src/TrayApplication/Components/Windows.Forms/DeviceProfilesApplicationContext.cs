@@ -2,7 +2,7 @@
 using Application.Features.Devices.Queries;
 using Application.Features.HotKeys.Commands;
 using Application.Features.HotKeys.Queries;
-using Application.Features.Profiles.Commands;
+using Application.Features.Profiles.Commands.ActivateProfile;
 using Application.Features.Profiles.Queries;
 using MediatR;
 using Microsoft.Extensions.Logging;

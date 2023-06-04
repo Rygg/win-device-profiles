@@ -1,7 +1,13 @@
 using Application.Common.Interfaces;
+using Application.Common.Options;
+using Infrastructure.Persistence;
 using MediatR;
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 
 namespace Application.IntegrationTests;
 
@@ -10,6 +16,12 @@ public class BaseTestFixture
 {
     private IHost _host = null!;
     private IServiceScopeFactory _scopeFactory = null!;
+    protected IConfiguration configuration = null!;
+
+    private static readonly SqliteConnectionStringBuilder ConnectionStringBuilder = new("Data Source=tests.db")
+    {
+        Mode = SqliteOpenMode.ReadWriteCreate
+    };
 
     protected readonly Mock<IHotKeyTrigger> hotKeyTriggerMock = new();
     protected readonly Mock<IDisplayDeviceController> displayControllerMock = new();
@@ -23,9 +35,16 @@ public class BaseTestFixture
             {
                 services.AddTransient(_ => hotKeyTriggerMock.Object);
                 services.AddTransient(_ => displayControllerMock.Object);
+                services
+                    .AddDbContext<DeviceProfilesDbContext>(options =>
+                        options.UseSqlite(ConnectionStringBuilder.ToString(),
+                            sqlBuilder => sqlBuilder.MigrationsAssembly(typeof(DeviceProfilesDbContext).Assembly.FullName)));
+                services.AddScoped<DeviceProfilesDbContextInitializer>();
+                services.AddScoped<IDeviceProfilesDbContext>(provider => provider.GetRequiredService<DeviceProfilesDbContext>());
             })
             .Build();
 
+        configuration = _host.Services.GetRequiredService<IConfiguration>();
         _scopeFactory = _host.Services.GetRequiredService<IServiceScopeFactory>();
     }
 
@@ -36,13 +55,24 @@ public class BaseTestFixture
     }
 
     [SetUp]
-    public void SetUp()
+    public async Task SetUp()
     {
         hotKeyTriggerMock.Reset();
         displayControllerMock.Reset();
+
+        using var scope = _scopeFactory.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<DeviceProfilesDbContext>();
+        var dbInitializer = scope.ServiceProvider.GetRequiredService<DeviceProfilesDbContextInitializer>();
+        await dbContext.Database.EnsureDeletedAsync();
+        await dbInitializer.InitializeAsync(CancellationToken.None);
     }
 
-
+    protected DeviceProfileOptions[] GetProfilesFromConfiguration()
+    {
+        using var scope = _scopeFactory.CreateScope();
+        var options = scope.ServiceProvider.GetRequiredService<IOptions<ProfileOptions>>();
+        return options.Value.Profiles.ToArray();
+    }
 
     protected async Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request)
     {
@@ -60,5 +90,12 @@ public class BaseTestFixture
         var mediator = scope.ServiceProvider.GetRequiredService<ISender>();
 
         await mediator.Send(request);
+    }
+
+    protected async Task<TEntity?> FindAsync<TEntity>(params object[] keyValues) where TEntity : class
+    {
+        using var scope = _scopeFactory.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<DeviceProfilesDbContext>();
+        return await context.FindAsync<TEntity>(keyValues);
     }
 }
