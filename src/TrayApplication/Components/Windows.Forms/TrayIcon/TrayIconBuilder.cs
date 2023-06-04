@@ -90,7 +90,6 @@ public sealed class TrayIconBuilder
     /// </summary>
     /// <param name="profile"></param>
     /// <param name="index"></param>
-    /// <returns></returns>
     private static string GetProfileContextMenuText(DeviceProfile profile, int index)
     {
         var hotkeyString = profile.HotKey != null ? $"({profile.HotKey}) | " : string.Empty;
