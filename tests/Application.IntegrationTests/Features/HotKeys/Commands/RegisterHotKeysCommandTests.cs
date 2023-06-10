@@ -9,6 +9,7 @@ public sealed class RegisterHotKeysCommandTests : BaseTestFixture
     [Test]
     public async Task Handle_RegistrationSucceeds_RegistersHotKeysFromConfiguration()
     {
+        await PopulateDbWithTestProfiles();
         var command = new RegisterHotKeysCommand();
         var act = async () => await SendAsync(command);
         await act.Should().NotThrowAsync("Command should not throw an exception.");
@@ -32,6 +33,7 @@ public sealed class RegisterHotKeysCommandTests : BaseTestFixture
         hotKeyTriggerMock.Setup(m => m.RegisterHotKeyAsync(It.IsAny<HotKeyCombination>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new Win32Exception("Something went wrong with NativeAPI."));
 
+        await PopulateDbWithTestProfiles();
         var command = new RegisterHotKeysCommand();
         var act = async () => await SendAsync(command);
         await act.Should().ThrowAsync<Exception>("Command should throw an exception.");
@@ -53,6 +55,7 @@ public sealed class RegisterHotKeysCommandTests : BaseTestFixture
             .Returns(Task.CompletedTask)
             .ThrowsAsync(new Win32Exception("Something went wrong with NativeAPI."));
 
+        await PopulateDbWithTestProfiles();
         var command = new RegisterHotKeysCommand();
         var act = async () => await SendAsync(command);
         await act.Should().ThrowAsync<Exception>("Command should throw an exception.");

@@ -1,8 +1,6 @@
 ﻿using Application.Common.Interfaces;
-using Application.Common.Options;
-using Domain.Entities;
 using MediatR;
-using Microsoft.Extensions.Options;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.HotKeys.Commands;
 
@@ -10,25 +8,22 @@ public sealed record RegisterHotKeysCommand : IRequest;
 
 public sealed class RegisterHotKeysCommandHandler : IRequestHandler<RegisterHotKeysCommand>
 {
-    private readonly DeviceProfile[] _deviceProfiles;
+    private readonly IDeviceProfilesDbContext _dbContext;
     private readonly IHotKeyTrigger _hotKeyTrigger;
 
     public RegisterHotKeysCommandHandler(
-        IOptions<ProfileOptions> profileOptions,
+        IDeviceProfilesDbContext dbContext,
         IHotKeyTrigger hotKeyTrigger
         )
     {
-        ArgumentNullException.ThrowIfNull(profileOptions);
-        
+        _dbContext = dbContext;
         _hotKeyTrigger = hotKeyTrigger;
-        _deviceProfiles = profileOptions.Value.Profiles
-            .Select(p => p.ToDeviceProfile())
-            .ToArray();
     }
 
     public async Task Handle(RegisterHotKeysCommand request, CancellationToken cancellationToken)
     {
-        foreach (var profile in _deviceProfiles)
+        var profiles = await _dbContext.DeviceProfiles.ToArrayAsync(cancellationToken).ConfigureAwait(false);
+        foreach (var profile in profiles)
         {
             if (profile.HotKey != null)
             {

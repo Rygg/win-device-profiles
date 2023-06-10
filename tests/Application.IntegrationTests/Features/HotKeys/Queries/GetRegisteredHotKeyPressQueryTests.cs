@@ -7,6 +7,7 @@ public sealed class GetRegisteredHotKeyPressQueryTests : BaseTestFixture
     [Test]
     public async Task Handle_HotKeyPressed_ReturnsCorrectProfile()
     {
+        await PopulateDbWithTestProfiles();
         hotKeyTriggerMock
             .Setup(m => m.GetHotKeyPressAsync(
                 It.IsAny<CancellationToken>()))

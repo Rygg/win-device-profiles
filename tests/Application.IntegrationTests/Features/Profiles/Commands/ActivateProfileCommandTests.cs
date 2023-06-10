@@ -28,6 +28,7 @@ public sealed class ActivateProfileCommandTests : BaseTestFixture
     [Test]
     public async Task Handle_ValidCommand_ActivatesCorrectProfile()
     {
+        await PopulateDbWithTestProfiles();
         var command = new ActivateProfileCommand
         {
             ProfileId = 1,

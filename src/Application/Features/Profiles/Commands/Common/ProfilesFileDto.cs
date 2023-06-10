@@ -88,7 +88,7 @@ public sealed record DeviceProfileDto
     /// <summary>
     /// Display configuration for the profile.
     /// </summary>
-    public IReadOnlyCollection<DisplayOptions> DisplaySettings { get; init; } = new List<DisplayOptions>();
+    public IReadOnlyCollection<DisplaySettingsDto> DisplaySettings { get; init; } = new List<DisplaySettingsDto>();
 
 
     /// <summary>
@@ -213,7 +213,7 @@ public sealed record ModifierDto
 /// <summary>
 /// Display settings.
 /// </summary>
-public sealed record DisplayOptions
+public sealed record DisplaySettingsDto
 {
     /// <summary>
     /// Display identifier to be used to link the display to the Environment structures.

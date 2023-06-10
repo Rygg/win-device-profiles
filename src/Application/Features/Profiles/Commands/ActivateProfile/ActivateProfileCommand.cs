@@ -1,8 +1,8 @@
 ﻿using Application.Common.Extensions;
 using Application.Common.Interfaces;
-using Application.Common.Options;
 using Domain.Entities;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -21,33 +21,29 @@ public sealed record ActivateProfileCommand : IRequest
 /// </summary>
 public sealed class SetProfileCommandHandler : IRequestHandler<ActivateProfileCommand>
 {
+    private readonly IDeviceProfilesDbContext _dbContext;
     private readonly IDisplayDeviceController _displayDeviceController;
     private readonly ILogger<SetProfileCommandHandler> _logger;
-    private readonly DeviceProfile[] _deviceProfiles;
 
     public SetProfileCommandHandler(
+        IDeviceProfilesDbContext dbContext,
         IDisplayDeviceController displayDeviceController,
-        ILogger<SetProfileCommandHandler> logger,
-        IOptions<ProfileOptions> profileOptions
+        ILogger<SetProfileCommandHandler> logger
         )
+    
     {
-        ArgumentNullException.ThrowIfNull(profileOptions);
-
         _displayDeviceController = displayDeviceController;
         _logger = logger;
-        _deviceProfiles = profileOptions.Value.Profiles
-            .Select(p => p.ToDeviceProfile())
-            .ToArray();
+        _dbContext = dbContext;
     }
 
     public async Task Handle(ActivateProfileCommand request, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        var clickedProfile = _deviceProfiles
-                                 .FirstOrDefault(p => p.Id == request.ProfileId) ??
-                             throw new ArgumentException(nameof(request.ProfileId), $"Profile with identifier {request.ProfileId} not found from the configuration"); ; // Get the clicked profile.
-
+        var clickedProfile = 
+            await _dbContext.DeviceProfiles.FirstOrDefaultAsync(dp => dp.Id == request.ProfileId, cancellationToken).ConfigureAwait(false)
+            ?? throw new ArgumentException(nameof(request.ProfileId), $"Profile with identifier {request.ProfileId} not found from the configuration"); ; // Get the clicked profile.
 
         if (await _displayDeviceController.ChangeDisplaySettings(clickedProfile, cancellationToken).ConfigureAwait(false))
         {

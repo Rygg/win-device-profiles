@@ -67,29 +67,36 @@ public class BaseTestFixture
         await dbInitializer.InitializeAsync(CancellationToken.None);
     }
 
-    protected async Task<ProfilesFileDto> GetTestProfilesFromFile()
+    protected static async Task<ProfilesFileDto> GetTestProfilesFromFile()
     {
         var result = await File.ReadAllTextAsync("testProfiles.json");
         return JsonSerializer.Deserialize<ProfilesFileDto>(result, JsonSerializerOptions.Default)
                ?? throw new InvalidOperationException("Test Profiles could not be parsed.");
-        
+    }
+
+    protected async Task PopulateDbWithTestProfiles()
+    {
+        var result = await File.ReadAllTextAsync("testProfiles.json");
+        var file = JsonSerializer.Deserialize<ProfilesFileDto>(result, JsonSerializerOptions.Default)
+                   ?? throw new InvalidOperationException("Test Profiles could not be parsed.");
+        var profiles = file.Profiles.Select(p => p.ToDeviceProfile());
+        using var scope = _scopeFactory.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<DeviceProfilesDbContext>();
+        context.DeviceProfiles.AddRange(profiles);
+        await context.SaveChangesAsync(CancellationToken.None);
     }
 
     protected async Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request)
     {
         using var scope = _scopeFactory.CreateScope();
-
         var mediator = scope.ServiceProvider.GetRequiredService<ISender>();
-
         return await mediator.Send(request);
     }
 
     protected async Task SendAsync(IRequest request)
     {
         using var scope = _scopeFactory.CreateScope();
-
         var mediator = scope.ServiceProvider.GetRequiredService<ISender>();
-
         await mediator.Send(request);
     }
 

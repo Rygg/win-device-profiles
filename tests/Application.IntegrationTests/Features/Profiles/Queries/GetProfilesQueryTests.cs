@@ -7,6 +7,7 @@ public sealed class GetProfilesQueryTests : BaseTestFixture
     [Test]
     public async Task Handle_ReturnsCorrectProfiles()
     {
+        await PopulateDbWithTestProfiles();
         var query = new GetProfilesQuery();
         var result = await SendAsync(query);
         result.Should().NotBeNull();

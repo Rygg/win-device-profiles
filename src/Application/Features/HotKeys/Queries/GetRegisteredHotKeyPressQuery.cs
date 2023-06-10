@@ -1,5 +1,4 @@
 ﻿using Application.Common.Interfaces;
-using Application.Common.Options;
 using Domain.Entities;
 using Domain.ValueObjects;
 using MediatR;
@@ -11,20 +10,16 @@ public sealed record GetRegisteredHotKeyPressQuery : IRequest<DeviceProfile>;
 
 public sealed class GetRegisteredHotKeyPressQueryHandler : IRequestHandler<GetRegisteredHotKeyPressQuery, DeviceProfile>
 {
-    private readonly DeviceProfile[] _deviceProfiles;
+    private readonly IDeviceProfilesDbContext _dbContext; 
     private readonly IHotKeyTrigger _hotKeyTrigger;
 
     public GetRegisteredHotKeyPressQueryHandler(
-        IOptions<ProfileOptions> profileOptions,
+        IDeviceProfilesDbContext dbContext,
         IHotKeyTrigger hotKeyTrigger
         )
     {
-        ArgumentNullException.ThrowIfNull(profileOptions);
-
+        _dbContext = dbContext;
         _hotKeyTrigger = hotKeyTrigger;
-        _deviceProfiles = profileOptions.Value.Profiles
-            .Select(p => p.ToDeviceProfile())
-            .ToArray();
     }
 
     public async Task<DeviceProfile> Handle(GetRegisteredHotKeyPressQuery request, CancellationToken cancellationToken)
@@ -36,7 +31,7 @@ public sealed class GetRegisteredHotKeyPressQueryHandler : IRequestHandler<GetRe
 
     private DeviceProfile GetDeviceProfileFromKeyTrigger(HotKeyCombination hotKeyTrigger)
     {
-        return _deviceProfiles
+        return _dbContext.DeviceProfiles
             .Single(p => p.HotKey != null && p.HotKey == hotKeyTrigger);
     }
 }
