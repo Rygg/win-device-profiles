@@ -1,10 +1,29 @@
-﻿using Application.Features.Profiles.Commands.ImportProfiles;
+﻿using Application.Common.Options;
+using Application.Features.Profiles.Commands.ImportProfiles;
 using Domain.Entities;
 
 namespace Application.IntegrationTests.Features.Profiles.Commands;
 
 public sealed class ImportProfilesCommandTests : BaseTestFixture
 {
+    [Test]
+    public async Task Handle_DefaultCommand_ThrowsValidationException()
+    {
+        var command = new ImportProfilesCommand();
+        var act = async () => await SendAsync(command);
+        await act.Should().ThrowExactlyAsync<ValidationException>();
+    }
+
+    [Test]
+    public async Task Handle_InvalidProfilesInCommand_ThrowsValidationException()
+    {
+        var command = new ImportProfilesCommand
+        {
+            Profiles = new[] { new DeviceProfileOptions() } // This should not be valid profiles. 
+        };
+        var act = async () => await SendAsync(command);
+        await act.Should().ThrowExactlyAsync<ValidationException>();
+    }
 
     [Test]
     public async Task Handle_ValidCommand_ImportsProfiles()
