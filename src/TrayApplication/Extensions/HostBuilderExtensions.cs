@@ -4,7 +4,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
-using TrayApplication.Components.Windows.Forms;
+using TrayApplication.Components.Interfaces;
+using TrayApplication.Components.Windows.Forms.Context;
 using TrayApplication.Components.Windows.Forms.HotKeys;
 using TrayApplication.Components.Windows.Forms.TrayIcon;
 
@@ -27,8 +28,9 @@ internal static class HostBuilderExtensions
             .ConfigureServices(services =>
             {
                 services.AddSingleton<IWindowsHotKeyEventSender, KeyboardHotKeyHandle>(); // Add keyboard hot key handle as singleton.
-                services.AddSingleton<TrayIconBuilder>();
-                services.AddSingleton<DeviceProfilesApplicationContext>();
+                services.AddSingleton<ITrayIconProvider, ApplicationTrayIconProvider>(); // Add tray icon provider as a singleton.
+                services.AddSingleton<IApplicationCancellationTokenSource, DeviceProfilesCancellationTokenSource>(); // Add global cts as a singleton.
+                services.AddSingleton<DeviceProfilesApplicationContext>(); // Add application context as a singleton.
             });
     }
 

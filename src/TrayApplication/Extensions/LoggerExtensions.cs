@@ -59,6 +59,14 @@ public static partial class LoggerExtensions
         )
     ]
     public static partial void CreatedContextMenu(this ILogger logger);
+    [LoggerMessage(
+            EventId = 614,
+            EventName = nameof(GlobalTokenCancelled),
+            Level = LogLevel.Debug,
+            Message = "Application's CancellationTokenSource was cancelled."
+        )
+    ]
+    public static partial void GlobalTokenCancelled(this ILogger logger);
 
     [LoggerMessage(
             EventId = 621,

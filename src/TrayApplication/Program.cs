@@ -3,7 +3,7 @@ using Infrastructure;
 using Infrastructure.Persistence;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using TrayApplication.Components.Windows.Forms;
+using TrayApplication.Components.Windows.Forms.Context;
 using TrayApplication.Extensions;
 
 namespace TrayApplication;
