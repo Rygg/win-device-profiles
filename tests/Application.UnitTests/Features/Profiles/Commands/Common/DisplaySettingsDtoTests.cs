@@ -1,14 +1,14 @@
-﻿using Application.Common.Options;
+﻿using Application.Features.Profiles.Commands.Common;
 
-namespace Application.UnitTests.Common.Options;
+namespace Application.UnitTests.Features.Profiles.Commands.Common;
 
 [TestFixture]
-public sealed class DisplayOptionsTests
+public sealed class DisplaySettingsDtoTests
 {
     [Test]
     public void IsValid_DefaultObject_ReturnsFalse()
     {
-        var displayOptions = new DisplayOptions();
+        var displayOptions = new DisplaySettingsDto();
         var result = displayOptions.IsValid();
         result.Should().BeFalse("default value should not be valid.");
     }
@@ -16,7 +16,7 @@ public sealed class DisplayOptionsTests
     [Test]
     public void IsValid_OnlyIdentifier_ReturnsFalse()
     {
-        var displayOptions = new DisplayOptions
+        var displayOptions = new DisplaySettingsDto
         {
             DisplayId = 0
         };
@@ -27,7 +27,7 @@ public sealed class DisplayOptionsTests
     [Test]
     public void IsValid_OnlyPrimaryField_ReturnsFalse()
     {
-        var displayOptions = new DisplayOptions
+        var displayOptions = new DisplaySettingsDto
         {
             Primary = true,
         };
@@ -38,7 +38,7 @@ public sealed class DisplayOptionsTests
     [Test]
     public void IsValid_OnlyEnableHdr_ReturnsFalse()
     {
-        var displayOptions = new DisplayOptions
+        var displayOptions = new DisplaySettingsDto
         {
             Hdr = false,
         };
@@ -49,7 +49,7 @@ public sealed class DisplayOptionsTests
     [Test]
     public void IsValid_OnlyRefreshRate_ReturnsFalse()
     {
-        var displayOptions = new DisplayOptions
+        var displayOptions = new DisplaySettingsDto
         {
             RefreshRate = 120
         };
@@ -60,7 +60,7 @@ public sealed class DisplayOptionsTests
     [Test]
     public void IsValid_IdAndPrimaryField_ReturnsTrue()
     {
-        var displayOptions = new DisplayOptions
+        var displayOptions = new DisplaySettingsDto
         {
             DisplayId = 1,
             Primary = true,
@@ -72,7 +72,7 @@ public sealed class DisplayOptionsTests
     [Test]
     public void IsValid_IdAndHdrField_ReturnsTrue()
     {
-        var displayOptions = new DisplayOptions
+        var displayOptions = new DisplaySettingsDto
         {
             DisplayId = 1,
             Hdr = true,
@@ -84,7 +84,7 @@ public sealed class DisplayOptionsTests
     [Test]
     public void IsValid_IdAndRefreshRateField_ReturnsTrue()
     {
-        var displayOptions = new DisplayOptions
+        var displayOptions = new DisplaySettingsDto
         {
             DisplayId = 1,
             RefreshRate = 120
@@ -96,7 +96,7 @@ public sealed class DisplayOptionsTests
     [Test]
     public void IsValid_IdAndPrimaryAndRefreshRateField_ReturnsTrue()
     {
-        var displayOptions = new DisplayOptions
+        var displayOptions = new DisplaySettingsDto
         {
             DisplayId = 1,
             Primary = false,
@@ -109,7 +109,7 @@ public sealed class DisplayOptionsTests
     [Test]
     public void IsValid_IdAndPrimaryAndHdrField_ReturnsTrue()
     {
-        var displayOptions = new DisplayOptions
+        var displayOptions = new DisplaySettingsDto
         {
             DisplayId = 1,
             Primary = false,
@@ -122,7 +122,7 @@ public sealed class DisplayOptionsTests
     [Test]
     public void IsValid_IdAndRefreshRateAndHdrField_ReturnsTrue()
     {
-        var displayOptions = new DisplayOptions
+        var displayOptions = new DisplaySettingsDto
         {
             DisplayId = 1,
             Hdr = true,
@@ -135,7 +135,7 @@ public sealed class DisplayOptionsTests
     [Test]
     public void IsValid_AllFieldsPresent_ReturnsTrue()
     {
-        var displayOptions = new DisplayOptions
+        var displayOptions = new DisplaySettingsDto
         {
             DisplayId = 1,
             Primary = true,
@@ -149,7 +149,7 @@ public sealed class DisplayOptionsTests
     [Test]
     public void ToDisplaySettings_InvalidConfiguration_ThrowsException()
     {
-        var displayOptions = new DisplayOptions();
+        var displayOptions = new DisplaySettingsDto();
         var act = displayOptions.ToDisplaySettings;
         act.Should().Throw<InvalidOperationException>("the converted object is not valid.");
     }
@@ -157,7 +157,7 @@ public sealed class DisplayOptionsTests
     [Test]
     public void ToDisplaySettings_ValidConfigurations_ReturnValidObjects()
     {
-        var displayOptions = new DisplayOptions
+        var displayOptions = new DisplaySettingsDto
         {
             DisplayId = 2,
             Primary = true,
@@ -169,7 +169,7 @@ public sealed class DisplayOptionsTests
         result.EnableHdr.Should().BeNull();
         result.RefreshRate.Should().BeNull();
 
-        var displayOptions2 = new DisplayOptions
+        var displayOptions2 = new DisplaySettingsDto
         {
             DisplayId = 1,
             Primary = true,

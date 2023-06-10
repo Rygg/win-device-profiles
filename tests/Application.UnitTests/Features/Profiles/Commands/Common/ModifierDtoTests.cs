@@ -1,15 +1,15 @@
-﻿using Application.Common.Options;
+﻿using Application.Features.Profiles.Commands.Common;
 using Domain.Enums;
 
-namespace Application.UnitTests.Common.Options;
+namespace Application.UnitTests.Features.Profiles.Commands.Common;
 
 [TestFixture]
-public sealed class ModifierOptionsTests
+public sealed class ModifierDtoTests
 {
     [Test]
     public void ToSupportedModifiers_NoModifiers_ProducesCorrectResults()
     {
-        var options = new ModifierOptions
+        var options = new ModifierDto
         {
             Alt = false,
             Ctrl = false,
@@ -23,7 +23,7 @@ public sealed class ModifierOptionsTests
     [Test]
     public void ToSupportedModifiers_AltModifier_ProducesCorrectResults()
     {
-        var options = new ModifierOptions
+        var options = new ModifierDto
         {
             Alt = true,
             Ctrl = false,
@@ -40,7 +40,7 @@ public sealed class ModifierOptionsTests
     [Test]
     public void ToSupportedModifiers_CtrlModifier_ProducesCorrectResults()
     {
-        var options = new ModifierOptions
+        var options = new ModifierDto
         {
             Alt = false,
             Ctrl = true,
@@ -57,7 +57,7 @@ public sealed class ModifierOptionsTests
     [Test]
     public void ToSupportedModifiers_ShiftModifier_ProducesCorrectResults()
     {
-        var options = new ModifierOptions
+        var options = new ModifierDto
         {
             Alt = false,
             Ctrl = false,
@@ -74,7 +74,7 @@ public sealed class ModifierOptionsTests
     [Test]
     public void ToSupportedModifiers_WinModifier_ProducesCorrectResults()
     {
-        var options = new ModifierOptions
+        var options = new ModifierDto
         {
             Alt = false,
             Ctrl = false,
@@ -91,7 +91,7 @@ public sealed class ModifierOptionsTests
     [Test]
     public void ToSupportedModifiers_AltAndWinModifier_ProducesCorrectResults()
     {
-        var options = new ModifierOptions
+        var options = new ModifierDto
         {
             Alt = true,
             Ctrl = false,
@@ -108,7 +108,7 @@ public sealed class ModifierOptionsTests
     [Test]
     public void ToSupportedModifiers_AltAndShiftModifier_ProducesCorrectResults()
     {
-        var options = new ModifierOptions
+        var options = new ModifierDto
         {
             Alt = true,
             Ctrl = false,
@@ -125,7 +125,7 @@ public sealed class ModifierOptionsTests
     [Test]
     public void ToSupportedModifiers_AltAndCtrlModifier_ProducesCorrectResults()
     {
-        var options = new ModifierOptions
+        var options = new ModifierDto
         {
             Alt = true,
             Ctrl = true,
@@ -142,7 +142,7 @@ public sealed class ModifierOptionsTests
     [Test]
     public void ToSupportedModifiers_CtrlAndShiftModifier_ProducesCorrectResults()
     {
-        var options = new ModifierOptions
+        var options = new ModifierDto
         {
             Alt = false,
             Ctrl = true,
@@ -159,7 +159,7 @@ public sealed class ModifierOptionsTests
     [Test]
     public void ToSupportedModifiers_CtrlAndWinModifier_ProducesCorrectResults()
     {
-        var options = new ModifierOptions
+        var options = new ModifierDto
         {
             Alt = false,
             Ctrl = true,
@@ -176,7 +176,7 @@ public sealed class ModifierOptionsTests
     [Test]
     public void ToSupportedModifiers_ShiftAndWinModifier_ProducesCorrectResults()
     {
-        var options = new ModifierOptions
+        var options = new ModifierDto
         {
             Alt = false,
             Ctrl = false,
@@ -193,7 +193,7 @@ public sealed class ModifierOptionsTests
     [Test]
     public void ToSupportedModifiers_CtrlAndShiftAndWinModifier_ProducesCorrectResults()
     {
-        var options = new ModifierOptions
+        var options = new ModifierDto
         {
             Alt = false,
             Ctrl = true,
@@ -210,7 +210,7 @@ public sealed class ModifierOptionsTests
     [Test]
     public void ToSupportedModifiers_AltAndShiftAndWinModifier_ProducesCorrectResults()
     {
-        var options = new ModifierOptions
+        var options = new ModifierDto
         {
             Alt = true,
             Ctrl = false,
@@ -227,7 +227,7 @@ public sealed class ModifierOptionsTests
     [Test]
     public void ToSupportedModifiers_AltAndShiftAndCtrlModifier_ProducesCorrectResults()
     {
-        var options = new ModifierOptions
+        var options = new ModifierDto
         {
             Alt = true,
             Ctrl = true,
@@ -244,7 +244,7 @@ public sealed class ModifierOptionsTests
     [Test]
     public void ToSupportedModifiers_AltAndCtrlAndShiftModifier_ProducesCorrectResults()
     {
-        var options = new ModifierOptions
+        var options = new ModifierDto
         {
             Alt = true,
             Ctrl = true,
@@ -261,7 +261,7 @@ public sealed class ModifierOptionsTests
     [Test]
     public void ToSupportedModifiers_AllModifiers_ProducesCorrectResults()
     {
-        var options = new ModifierOptions
+        var options = new ModifierDto
         {
             Alt = true,
             Ctrl = true,

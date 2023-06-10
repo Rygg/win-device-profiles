@@ -1,15 +1,15 @@
-﻿using Application.Common.Options;
+﻿using Application.Features.Profiles.Commands.Common;
 using Domain.Enums;
 
-namespace Application.UnitTests.Common.Options;
+namespace Application.UnitTests.Features.Profiles.Commands.Common;
 
 [TestFixture]
-public sealed class HotKeyOptionsTests
+public sealed class HotKeyDtoTests
 {
     [Test]
     public void IsValid_DefaultObject_ReturnsFalse()
     {
-        var options = new HotKeyOptions();
+        var options = new HotKeyDto();
         var result = options.IsValid();
         result.Should().BeFalse("default object should not be valid.");
     }
@@ -17,7 +17,7 @@ public sealed class HotKeyOptionsTests
     [Test]
     public void IsValid_ObjectWithNoKeys_ReturnsFalse()
     {
-        var options = new HotKeyOptions
+        var options = new HotKeyDto()
         {
             Key = SupportedKeys.None
         };
@@ -28,7 +28,7 @@ public sealed class HotKeyOptionsTests
     [Test]
     public void IsValid_ObjectWithKeyOnly_ReturnsTrue()
     {
-        var options = new HotKeyOptions
+        var options = new HotKeyDto
         {
             Key = SupportedKeys.D3
         };
@@ -39,10 +39,10 @@ public sealed class HotKeyOptionsTests
     [Test]
     public void IsValid_ObjectWithKeyAndDefaultModifiers_ReturnsTrue()
     {
-        var options = new HotKeyOptions
+        var options = new HotKeyDto
         {
             Key = SupportedKeys.D3,
-            Modifiers = new ModifierOptions()
+            Modifiers = new ModifierDto()
         };
         var result = options.IsValid();
         result.Should().BeTrue("object should be valid.");
@@ -51,10 +51,10 @@ public sealed class HotKeyOptionsTests
     [Test]
     public void IsValid_ObjectWithKeyAndModifiers_ReturnsTrue()
     {
-        var options = new HotKeyOptions
+        var options = new HotKeyDto
         {
             Key = SupportedKeys.D3,
-            Modifiers = new ModifierOptions
+            Modifiers = new ModifierDto
             {
                 Ctrl = true,
                 Shift = true,
@@ -67,7 +67,7 @@ public sealed class HotKeyOptionsTests
     [Test]
     public void ToHotKeyCombination_InvalidObject_ThrowsException()
     {
-        var options = new HotKeyOptions();
+        var options = new HotKeyDto();
         var act = options.ToHotKeyCombination;
         act.Should().Throw<InvalidOperationException>("object should not be valid.");
     }
@@ -75,10 +75,10 @@ public sealed class HotKeyOptionsTests
     [Test]
     public void ToHotKeyCombination_ValidObject_ProducesCorrectObject()
     {
-        var options = new HotKeyOptions
+        var options = new HotKeyDto
         {
             Key = SupportedKeys.D3,
-            Modifiers = new ModifierOptions
+            Modifiers = new ModifierDto
             {
                 Ctrl = true,
                 Shift = true,

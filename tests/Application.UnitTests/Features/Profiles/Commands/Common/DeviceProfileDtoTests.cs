@@ -1,15 +1,15 @@
-﻿using Application.Common.Options;
+﻿using Application.Features.Profiles.Commands.Common;
 using Domain.Enums;
 
-namespace Application.UnitTests.Common.Options;
+namespace Application.UnitTests.Features.Profiles.Commands.Common;
 
 [TestFixture]
-public sealed class DeviceProfileOptionsTests
+public sealed class DeviceProfileDtoTests
 {
     [Test]
     public void IsValid_DefaultObject_ReturnsFalse()
     {
-        var options = new DeviceProfileOptions();
+        var options = new DeviceProfileDto();
         var result = options.IsValid();
         result.Should().BeFalse("default object should not be valid.");
     }
@@ -17,15 +17,15 @@ public sealed class DeviceProfileOptionsTests
     [Test]
     public void IsValid_NoIdentifier_ReturnsFalse()
     {
-        var options = new DeviceProfileOptions
+        var options = new DeviceProfileDto
         {
             Id = null,
             Name = "TestProfile",
-            HotKey = new HotKeyOptions
+            HotKey = new HotKeyDto
             {
                 Key = SupportedKeys.D1
             },
-            DisplaySettings = new List<DisplayOptions>
+            DisplaySettings = new List<DisplaySettingsDto>
             {
                 new()
                 {
@@ -43,15 +43,15 @@ public sealed class DeviceProfileOptionsTests
     [Test]
     public void IsValid_NoName_ReturnsFalse()
     {
-        var options = new DeviceProfileOptions
+        var options = new DeviceProfileDto
         {
             Id = 0,
             Name = null,
-            HotKey = new HotKeyOptions
+            HotKey = new HotKeyDto
             {
                 Key = SupportedKeys.D1
             },
-            DisplaySettings = new List<DisplayOptions>
+            DisplaySettings = new List<DisplaySettingsDto>
             {
                 new()
                 {
@@ -69,11 +69,11 @@ public sealed class DeviceProfileOptionsTests
     [Test]
     public void IsValid_NoHotKeys_ReturnsTrue()
     {
-        var options = new DeviceProfileOptions
+        var options = new DeviceProfileDto
         {
             Id = 0,
             Name = "TestProfile",
-            DisplaySettings = new List<DisplayOptions>
+            DisplaySettings = new List<DisplaySettingsDto>
             {
                 new()
                 {
@@ -91,11 +91,11 @@ public sealed class DeviceProfileOptionsTests
     [Test]
     public void IsValid_NoDisplaySettings_ReturnsTrue()
     {
-        var options = new DeviceProfileOptions
+        var options = new DeviceProfileDto
         {
             Id = 0,
             Name = "TestProfile",
-            HotKey = new HotKeyOptions
+            HotKey = new HotKeyDto
             {
                 Key = SupportedKeys.D1
             }
@@ -107,7 +107,7 @@ public sealed class DeviceProfileOptionsTests
     [Test]
     public void ToDeviceProfile_InvalidProfileOptions_ReturnsCorrectObject()
     {
-        var options = new DeviceProfileOptions();
+        var options = new DeviceProfileDto();
         var act = options.ToDeviceProfile;
         act.Should().Throw<InvalidOperationException>("options should not be valid.");
     }
@@ -115,15 +115,15 @@ public sealed class DeviceProfileOptionsTests
     [Test]
     public void ToDeviceProfile_ValidDeviceProfileOptions_ReturnsCorrectObject()
     {
-        var options = new DeviceProfileOptions
+        var options = new DeviceProfileDto
         {
             Id = 2,
             Name = "TestProfile",
-            HotKey = new HotKeyOptions
+            HotKey = new HotKeyDto
             {
                 Key = SupportedKeys.D1
             },
-            DisplaySettings = new List<DisplayOptions>
+            DisplaySettings = new List<DisplaySettingsDto>
             {
                 new()
                 {
@@ -150,10 +150,10 @@ public sealed class DeviceProfileOptionsTests
         result.DisplaySettings.Should().HaveCount(2);
         result.DisplaySettings
             .Should()
-            .Contain(ds => 
-                ds.DisplayId == 0 
-                && ds.PrimaryDisplay == true 
-                && ds.EnableHdr == true 
+            .Contain(ds =>
+                ds.DisplayId == 0
+                && ds.PrimaryDisplay == true
+                && ds.EnableHdr == true
                 && ds.RefreshRate == 60
             );
         result.DisplaySettings
@@ -169,11 +169,11 @@ public sealed class DeviceProfileOptionsTests
     [Test]
     public void ToDeviceProfile_ValidDeviceProfileOptionsWithoutHotKey_ReturnsCorrectObject()
     {
-        var options = new DeviceProfileOptions
+        var options = new DeviceProfileDto
         {
             Id = 2,
             Name = "TestProfile",
-            DisplaySettings = new List<DisplayOptions>
+            DisplaySettings = new List<DisplaySettingsDto>
             {
                 new()
                 {
@@ -203,11 +203,11 @@ public sealed class DeviceProfileOptionsTests
     [Test]
     public void ToDeviceProfile_ValidDeviceProfileOptionsWithoutDisplaySettings_ReturnsCorrectObject()
     {
-        var options = new DeviceProfileOptions
+        var options = new DeviceProfileDto
         {
             Id = 2,
             Name = "TestProfile",
-            HotKey = new HotKeyOptions
+            HotKey = new HotKeyDto
             {
                 Key = SupportedKeys.D2
             },
@@ -218,6 +218,6 @@ public sealed class DeviceProfileOptionsTests
         result.HotKey.Should().NotBeNull();
         result.HotKey!.Key.Should().Be(SupportedKeys.D2);
         result.DisplaySettings.Should().BeEmpty();
-        
+
     }
 }

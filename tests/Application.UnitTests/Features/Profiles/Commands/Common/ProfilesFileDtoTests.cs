@@ -1,41 +1,34 @@
-using Application.Common.Options;
+using Application.Features.Profiles.Commands.Common;
 using Domain.Enums;
 
-namespace Application.UnitTests.Common.Options;
+namespace Application.UnitTests.Features.Profiles.Commands.Common;
 
 [TestFixture]
-public sealed class ProfileOptionsTests // Testing general validation rules for Profile validation.
+public sealed class ProfilesFileDtoTests // Testing general validation rules for Profile validation.
 {
     [Test]
-    public void Validate_Null_ThrowsArgumentNullException()
+    public void Validate_DefaultDto_ReturnsFalse()
     {
-        var action = () => ProfileOptions.Validate(null!);
-        action.Should().Throw<ArgumentNullException>("null value should not be allowed.");
-    }
-
-    [Test]
-    public void Validate_DefaultOptions_ReturnsTrue()
-    {
-        var profile = new ProfileOptions();
-        var validationResult = ProfileOptions.Validate(profile);
-        validationResult.Should().BeTrue("default options should pass the validation.");
+        var profile = new ProfilesFileDto();
+        var validationResult = profile.Validate();
+        validationResult.Should().BeFalse();
     }
 
     [Test]
     public void Validate_MissingDisplayIdentifier_ReturnsFalse()
     {
-        var profile = new ProfileOptions
+        var profile = new ProfilesFileDto
         {
-            Profiles = new List<DeviceProfileOptions>
+            Profiles = new List<DeviceProfileDto>
             {
                 new()
                 {
                     Id = 1,
                     Name = "TestProfile1",
-                    HotKey = new HotKeyOptions
+                    HotKey = new HotKeyDto
                     {
                         Key = SupportedKeys.NumPad1,
-                        Modifiers = new ModifierOptions
+                        Modifiers = new ModifierDto
                         {
                             Ctrl = true,
                             Shift = true,
@@ -43,7 +36,7 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
                             Win = false
                         }
                     },
-                    DisplaySettings = new List<DisplayOptions>
+                    DisplaySettings = new List<DisplaySettingsDto>
                     {
                         new()
                         {
@@ -55,25 +48,25 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
                 },
             }
         };
-        var validationResult = ProfileOptions.Validate(profile);
+        var validationResult = profile.Validate();
         validationResult.Should().BeFalse("Missing DisplayIdentifier should not be allowed for profiles.");
     }
 
     [Test]
     public void Validate_MissingProfileId_ReturnsFalse()
     {
-        var profile = new ProfileOptions
+        var profile = new ProfilesFileDto
         {
-            Profiles = new List<DeviceProfileOptions>
+            Profiles = new List<DeviceProfileDto>
             {
                 new()
                 {
                     Id = 1,
                     Name = "TestProfile1",
-                    HotKey = new HotKeyOptions
+                    HotKey = new HotKeyDto
                     {
                         Key = SupportedKeys.NumPad1,
-                        Modifiers = new ModifierOptions
+                        Modifiers = new ModifierDto
                         {
                             Ctrl = true,
                             Shift = true,
@@ -81,7 +74,7 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
                             Win = false
                         }
                     },
-                    DisplaySettings = new List<DisplayOptions>
+                    DisplaySettings = new List<DisplaySettingsDto>
                     {
                         new()
                         {
@@ -93,10 +86,10 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
                 new()
                 {
                     Name = "TestProfile2",
-                    HotKey = new HotKeyOptions
+                    HotKey = new HotKeyDto
                     {
                         Key = SupportedKeys.NumPad1,
-                        Modifiers = new ModifierOptions
+                        Modifiers = new ModifierDto
                         {
                             Ctrl = true,
                             Shift = true,
@@ -104,7 +97,7 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
                             Win = false
                         }
                     },
-                    DisplaySettings = new List<DisplayOptions>
+                    DisplaySettings = new List<DisplaySettingsDto>
                     {
                         new()
                         {
@@ -115,24 +108,24 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
                 },
             }
         };
-        var validationResult = ProfileOptions.Validate(profile);
+        var validationResult = profile.Validate();
         validationResult.Should().BeFalse("Missing profile identifiers should not be allowed.");
     }
 
     [Test]
     public void Validate_MissingProfileName_ReturnsFalse()
     {
-        var profile = new ProfileOptions
+        var profile = new ProfilesFileDto
         {
-            Profiles = new List<DeviceProfileOptions>
+            Profiles = new List<DeviceProfileDto>
             {
                 new()
                 {
                     Id = 1,
-                    HotKey = new HotKeyOptions
+                    HotKey = new HotKeyDto
                     {
                         Key = SupportedKeys.NumPad1,
-                        Modifiers = new ModifierOptions
+                        Modifiers = new ModifierDto
                         {
                             Ctrl = true,
                             Shift = true,
@@ -140,7 +133,7 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
                             Win = false
                         }
                     },
-                    DisplaySettings = new List<DisplayOptions>
+                    DisplaySettings = new List<DisplaySettingsDto>
                     {
                         new()
                         {
@@ -153,10 +146,10 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
                 {
                     Id = 2,
                     Name = "TestProfile2",
-                    HotKey = new HotKeyOptions
+                    HotKey = new HotKeyDto
                     {
                         Key = SupportedKeys.NumPad1,
-                        Modifiers = new ModifierOptions
+                        Modifiers = new ModifierDto
                         {
                             Ctrl = true,
                             Shift = true,
@@ -164,7 +157,7 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
                             Win = false
                         }
                     },
-                    DisplaySettings = new List<DisplayOptions>
+                    DisplaySettings = new List<DisplaySettingsDto>
                     {
                         new()
                         {
@@ -175,22 +168,22 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
                 },
             }
         };
-        var validationResult = ProfileOptions.Validate(profile);
+        var validationResult = profile.Validate();
         validationResult.Should().BeFalse("Missing profile names should not be allowed.");
     }
 
     [Test]
     public void Validate_MissingHotKeys_ReturnsTrue()
     {
-        var profile = new ProfileOptions
+        var profile = new ProfilesFileDto
         {
-            Profiles = new List<DeviceProfileOptions>
+            Profiles = new List<DeviceProfileDto>
             {
                 new()
                 {
                     Id = 1,
                     Name = "TestProfile1",
-                    DisplaySettings = new List<DisplayOptions>
+                    DisplaySettings = new List<DisplaySettingsDto>
                     {
                         new()
                         {
@@ -203,16 +196,16 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
                 },
             }
         };
-        var validationResult = ProfileOptions.Validate(profile);
+        var validationResult = profile.Validate();
         validationResult.Should().BeTrue("Missing HotKeys should be allowed for profiles.");
     }
 
     [Test]
     public void Validate_MissingDisplaySettings_ReturnsTrue()
     {
-        var profile = new ProfileOptions
+        var profile = new ProfilesFileDto
         {
-            Profiles = new List<DeviceProfileOptions>
+            Profiles = new List<DeviceProfileDto>
             {
                 new()
                 {
@@ -221,25 +214,25 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
                 },
             }
         };
-        var validationResult = ProfileOptions.Validate(profile);
+        var validationResult = profile.Validate();
         validationResult.Should().BeTrue("Missing DisplaySettings should be allowed for profiles.");
     }
 
     [Test]
     public void Validate_DuplicateProfileIds_ReturnsFalse()
     {
-        var profile = new ProfileOptions
+        var profile = new ProfilesFileDto
         {
-            Profiles = new List<DeviceProfileOptions>
+            Profiles = new List<DeviceProfileDto>
             {
                 new()
                 {
                     Id = 1,
                     Name = "TestProfile1",
-                    HotKey = new HotKeyOptions
+                    HotKey = new HotKeyDto
                     {
                         Key = SupportedKeys.NumPad1,
-                        Modifiers = new ModifierOptions
+                        Modifiers = new ModifierDto
                         {
                             Ctrl = true,
                             Shift = true,
@@ -247,7 +240,7 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
                             Win = false
                         }
                     },
-                    DisplaySettings = new List<DisplayOptions>
+                    DisplaySettings = new List<DisplaySettingsDto>
                     {
                         new()
                         {
@@ -260,10 +253,10 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
                 {
                     Id = 1,
                     Name = "TestProfile2",
-                    HotKey = new HotKeyOptions
+                    HotKey = new HotKeyDto
                     {
                         Key = SupportedKeys.NumPad1,
-                        Modifiers = new ModifierOptions
+                        Modifiers = new ModifierDto
                         {
                             Ctrl = true,
                             Shift = true,
@@ -271,7 +264,7 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
                             Win = false
                         }
                     },
-                    DisplaySettings = new List<DisplayOptions>
+                    DisplaySettings = new List<DisplaySettingsDto>
                     {
                         new()
                         {
@@ -282,25 +275,25 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
                 },
             }
         };
-        var validationResult = ProfileOptions.Validate(profile);
+        var validationResult = profile.Validate();
         validationResult.Should().BeFalse("Duplicate profile identifiers should not be allowed between profiles.");
     }
 
     [Test]
     public void Validate_DuplicateHotKeyBindings_ReturnsFalse()
     {
-        var profile = new ProfileOptions
+        var profile = new ProfilesFileDto
         {
-            Profiles = new List<DeviceProfileOptions>
+            Profiles = new List<DeviceProfileDto>
             {
                 new()
                 {
                     Id = 1,
                     Name = "TestProfile1",
-                    HotKey = new HotKeyOptions
+                    HotKey = new HotKeyDto
                     {
                         Key = SupportedKeys.NumPad1,
-                        Modifiers = new ModifierOptions
+                        Modifiers = new ModifierDto
                         {
                             Ctrl = true,
                             Shift = true,
@@ -308,7 +301,7 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
                             Win = false
                         }
                     },
-                    DisplaySettings = new List<DisplayOptions>
+                    DisplaySettings = new List<DisplaySettingsDto>
                     {
                         new()
                         {
@@ -321,10 +314,10 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
                 {
                     Id = 2,
                     Name = "TestProfile2",
-                    HotKey = new HotKeyOptions
+                    HotKey = new HotKeyDto
                     {
                         Key = SupportedKeys.NumPad1,
-                        Modifiers = new ModifierOptions
+                        Modifiers = new ModifierDto
                         {
                             Ctrl = true,
                             Shift = true,
@@ -332,7 +325,7 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
                             Win = false
                         }
                     },
-                    DisplaySettings = new List<DisplayOptions>
+                    DisplaySettings = new List<DisplaySettingsDto>
                     {
                         new()
                         {
@@ -343,25 +336,25 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
                 },
             }
         };
-        var validationResult = ProfileOptions.Validate(profile);
+        var validationResult = profile.Validate();
         validationResult.Should().BeFalse("Duplicate HotKey validations should not be allowed between profiles.");
     }
 
     [Test]
     public void Validate_DuplicateDisplayIds_ReturnsFalse()
     {
-        var profile = new ProfileOptions
+        var profile = new ProfilesFileDto
         {
-            Profiles = new List<DeviceProfileOptions>
+            Profiles = new List<DeviceProfileDto>
             {
                 new()
                 {
                     Id = 1,
                     Name = "TestProfile",
-                    HotKey = new HotKeyOptions
+                    HotKey = new HotKeyDto
                     {
                         Key = SupportedKeys.NumPad1,
-                        Modifiers = new ModifierOptions
+                        Modifiers = new ModifierDto
                         {
                             Ctrl = true,
                             Shift = false,
@@ -369,7 +362,7 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
                             Win = false
                         }
                     },
-                    DisplaySettings = new List<DisplayOptions>
+                    DisplaySettings = new List<DisplaySettingsDto>
                     {
                         new()
                         {
@@ -395,26 +388,26 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
                 }
             }
         };
-        var validationResult = ProfileOptions.Validate(profile);
+        var validationResult = profile.Validate();
         validationResult.Should().BeFalse("Duplicate DisplayIds should not be allowed within a profile.");
     }
 
     [Test]
     public void Validate_DuplicatePrimaryDisplays_ReturnsFalse()
     {
-        var profile = new ProfileOptions
+        var profile = new ProfilesFileDto
         {
-            Profiles = new List<DeviceProfileOptions>
+            Profiles = new List<DeviceProfileDto>
             {
                 new()
                 {
                     Id = 1,
                     Name = "TestProfile1",
-                    HotKey = new HotKeyOptions
+                    HotKey = new HotKeyDto
                     {
                         Key = SupportedKeys.NumPad1,
                     },
-                    DisplaySettings = new List<DisplayOptions>
+                    DisplaySettings = new List<DisplaySettingsDto>
                     {
                         new()
                         {
@@ -430,22 +423,22 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
                 }
             }
         };
-        var validationResult = ProfileOptions.Validate(profile);
+        var validationResult = profile.Validate();
         validationResult.Should().BeFalse("Duplicate primary displays should not be allowed.");
     }
 
     [Test]
     public void Validate_ValidDisplaySettingConfigurations_ReturnsTrue()
     {
-        var profile = new ProfileOptions
+        var profile = new ProfilesFileDto
         {
-            Profiles = new List<DeviceProfileOptions>
+            Profiles = new List<DeviceProfileDto>
             {
                 new()
                 {
                     Id = 1,
                     Name = "TestProfile1",
-                    DisplaySettings = new List<DisplayOptions>
+                    DisplaySettings = new List<DisplaySettingsDto>
                     {
                         new()
                         {
@@ -459,7 +452,7 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
                 {
                     Id = 2,
                     Name = "TestProfile2",
-                    DisplaySettings = new List<DisplayOptions>
+                    DisplaySettings = new List<DisplaySettingsDto>
                     {
                         new()
                         {
@@ -473,7 +466,7 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
                 {
                     Id = 3,
                     Name = "TestProfile3",
-                    DisplaySettings = new List<DisplayOptions>
+                    DisplaySettings = new List<DisplaySettingsDto>
                     {
                         new()
                         {
@@ -492,7 +485,7 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
                 {
                     Id = 4,
                     Name = "TestProfile4",
-                    DisplaySettings = new List<DisplayOptions>
+                    DisplaySettings = new List<DisplaySettingsDto>
                     {
                         new()
                         {
@@ -510,22 +503,22 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
                 },
             }
         };
-        var validationResult = ProfileOptions.Validate(profile);
+        var validationResult = profile.Validate();
         validationResult.Should().BeTrue("ProfileSettings should be valid.");
     }
 
     [Test]
     public void Validate_ValidHotKeyConfigurations_ReturnsTrue()
     {
-        var profile = new ProfileOptions
+        var profile = new ProfilesFileDto
         {
-            Profiles = new List<DeviceProfileOptions>
+            Profiles = new List<DeviceProfileDto>
             {
                 new()
                 {
                     Id = 1,
                     Name = "TestProfile1",
-                    DisplaySettings = new List<DisplayOptions>
+                    DisplaySettings = new List<DisplaySettingsDto>
                     {
                         new()
                         {
@@ -538,11 +531,11 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
                 {
                     Id = 2,
                     Name = "TestProfile2",
-                    HotKey = new HotKeyOptions
+                    HotKey = new HotKeyDto
                     {
                         Key = SupportedKeys.NumPad1,
                     },
-                    DisplaySettings = new List<DisplayOptions>
+                    DisplaySettings = new List<DisplaySettingsDto>
                     {
                         new()
                         {
@@ -555,17 +548,17 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
                 {
                     Id = 3,
                     Name = "TestProfile3",
-                    HotKey = new HotKeyOptions
+                    HotKey = new HotKeyDto
                     {
                         Key = SupportedKeys.NumPad1,
-                        Modifiers = new ModifierOptions
+                        Modifiers = new ModifierDto
                         {
                             Ctrl = true,
                             Shift = true,
                             Alt = false,
                         }
                     },
-                    DisplaySettings = new List<DisplayOptions>
+                    DisplaySettings = new List<DisplaySettingsDto>
                     {
                         new()
                         {
@@ -578,7 +571,7 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
                 {
                     Id = 4,
                     Name = "TestProfile4",
-                    DisplaySettings = new List<DisplayOptions>
+                    DisplaySettings = new List<DisplaySettingsDto>
                     {
                         new()
                         {
@@ -597,7 +590,7 @@ public sealed class ProfileOptionsTests // Testing general validation rules for 
             }
         };
 
-        var validationResult = ProfileOptions.Validate(profile);
+        var validationResult = profile.Validate();
         validationResult.Should().BeTrue("ProfileSettings should be valid.");
     }
 }
