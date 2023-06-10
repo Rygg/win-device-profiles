@@ -94,4 +94,21 @@ public static partial class LoggerExtensions
         )
     ]
     public static partial void EventHandlerTriggeredByWrongType(this ILogger logger, string eventHandlerName);
+
+    [LoggerMessage(
+            EventId = 652,
+            EventName = nameof(ProfilesCouldNotBeDeserialized),
+            Level = LogLevel.Error,
+            Message = "Profiles could not be deserialized from the given file input."
+        )
+    ]
+    public static partial void ProfilesCouldNotBeDeserialized(this ILogger logger);
+    [LoggerMessage(
+            EventId = 653,
+            EventName = nameof(ExceptionOnFileImport),
+            Level = LogLevel.Error,
+            Message = "Exception occurred while trying to import profiles from a file."
+        )
+    ]
+    public static partial void ExceptionOnFileImport(this ILogger logger, Exception ex);
 }

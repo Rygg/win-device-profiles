@@ -1,4 +1,4 @@
-﻿using Application.Common.Options;
+﻿using Application.Features.Profiles.Commands.Common;
 using Application.Features.Profiles.Commands.ImportProfiles;
 using Domain.Entities;
 
@@ -19,7 +19,21 @@ public sealed class ImportProfilesCommandTests : BaseTestFixture
     {
         var command = new ImportProfilesCommand
         {
-            Profiles = new[] { new DeviceProfileOptions() } // This should not be valid profiles. 
+            ProfileFile = new ProfilesFileDto() // This should not be valid profiles. 
+        };
+        var act = async () => await SendAsync(command);
+        await act.Should().ThrowExactlyAsync<ValidationException>();
+    }
+
+    [Test]
+    public async Task Handle_EmptyProfilesInCommand_ThrowsValidationException()
+    {
+        var command = new ImportProfilesCommand
+        {
+            ProfileFile = new ProfilesFileDto()
+            {
+                Profiles = Array.Empty<DeviceProfileDto>() // This should not be valid profiles. 
+            } 
         };
         var act = async () => await SendAsync(command);
         await act.Should().ThrowExactlyAsync<ValidationException>();
@@ -28,10 +42,10 @@ public sealed class ImportProfilesCommandTests : BaseTestFixture
     [Test]
     public async Task Handle_ValidCommand_ImportsProfiles()
     {
-        var profiles = GetProfilesFromConfiguration();
+        var file = await GetTestProfilesFromFile();
         var command = new ImportProfilesCommand
         {
-            Profiles = profiles
+            ProfileFile = file
         };
         var act = async () => await SendAsync(command);
         await act.Should().NotThrowAsync();
@@ -44,9 +58,9 @@ public sealed class ImportProfilesCommandTests : BaseTestFixture
         profile2.Should().NotBeNull();
         profile3.Should().NotBeNull();
 
-        var configProfile1 = profiles.First(p => p.Id == 1).ToDeviceProfile();
-        var configProfile2 = profiles.First(p => p.Id == 2).ToDeviceProfile();
-        var configProfile3 = profiles.First(p => p.Id == 3).ToDeviceProfile();
+        var configProfile1 = file.Profiles.First(p => p.Id == 1).ToDeviceProfile();
+        var configProfile2 = file.Profiles.First(p => p.Id == 2).ToDeviceProfile();
+        var configProfile3 = file.Profiles.First(p => p.Id == 3).ToDeviceProfile();
 
         profile1.Should().BeEquivalentTo(configProfile1);
         profile2.Should().BeEquivalentTo(configProfile2);

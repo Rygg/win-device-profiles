@@ -10,7 +10,7 @@ namespace TrayApplication.UnitTests;
 [TestFixture]
 public sealed class DeviceProfilesApplicationContextTests
 {
-    private readonly Mock<ISender> _sender = new();
+    private readonly Mock<IRequestSender> _sender = new();
     private readonly ITrayIconProvider _trayIconProvider = Mock.Of<ITrayIconProvider>();
     private readonly IApplicationCancellationTokenSource _cts = Mock.Of<IApplicationCancellationTokenSource>();
     private readonly ILogger<DeviceProfilesApplicationContext> _logger = Mock.Of<ILogger<DeviceProfilesApplicationContext>>();
@@ -32,15 +32,15 @@ public sealed class DeviceProfilesApplicationContextTests
     [Test]
     public void Created_RetrievesCurrentProfiles()
     {
-        _sut = new DeviceProfilesApplicationContext(_sender.Object, _logger, _trayIconProvider, _cts);
-        _sender.Verify(m => m.Send(It.IsAny<GetProfilesQuery>(), It.IsAny<CancellationToken>()), Times.Once);
+        _sut = new DeviceProfilesApplicationContext(_sender.Object,_trayIconProvider, _cts, _logger);
+        _sender.Verify(m => m.SendAsync(It.IsAny<GetProfilesQuery>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Test]
     public void Created_StartsBackgroundLoop()
     {
-        _sut = new DeviceProfilesApplicationContext(_sender.Object, _logger, _trayIconProvider, _cts);
-        _sender.Verify(m => m.Send(It.IsAny<RegisterHotKeysCommand>(), It.IsAny<CancellationToken>()), Times.Once);
-        _sender.Verify(m => m.Send(It.IsAny<GetRegisteredHotKeyPressQuery>(), It.IsAny<CancellationToken>()), Times.Once);
+        _sut = new DeviceProfilesApplicationContext(_sender.Object, _trayIconProvider, _cts, _logger);
+        _sender.Verify(m => m.SendAsync(It.IsAny<RegisterHotKeysCommand>(), It.IsAny<CancellationToken>()), Times.Once);
+        _sender.Verify(m => m.SendAsync(It.IsAny<GetRegisteredHotKeyPressQuery>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 }

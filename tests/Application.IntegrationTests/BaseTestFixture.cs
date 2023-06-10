@@ -1,5 +1,5 @@
 using Application.Common.Interfaces;
-using Application.Common.Options;
+using Application.Features.Profiles.Commands.Common;
 using Infrastructure.Persistence;
 using MediatR;
 using Microsoft.Data.Sqlite;
@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
+using System.Text.Json;
 
 namespace Application.IntegrationTests;
 
@@ -67,11 +67,12 @@ public class BaseTestFixture
         await dbInitializer.InitializeAsync(CancellationToken.None);
     }
 
-    protected DeviceProfileOptions[] GetProfilesFromConfiguration()
+    protected async Task<ProfilesFileDto> GetTestProfilesFromFile()
     {
-        using var scope = _scopeFactory.CreateScope();
-        var options = scope.ServiceProvider.GetRequiredService<IOptions<ProfileOptions>>();
-        return options.Value.Profiles.ToArray();
+        var result = await File.ReadAllTextAsync("testProfiles.json");
+        return JsonSerializer.Deserialize<ProfilesFileDto>(result, JsonSerializerOptions.Default)
+               ?? throw new InvalidOperationException("Test Profiles could not be parsed.");
+        
     }
 
     protected async Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request)

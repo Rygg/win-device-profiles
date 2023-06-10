@@ -1,8 +1,10 @@
 ﻿using System.Globalization;
+using System.Text.Json;
 using Application.Features.Devices.Queries;
 using Application.Features.Profiles.Commands.ActivateProfile;
+using Application.Features.Profiles.Commands.Common;
+using Application.Features.Profiles.Commands.ImportProfiles;
 using Domain.Entities;
-using MediatR;
 using Microsoft.Extensions.Logging;
 using TrayApplication.Components.Interfaces;
 using TrayApplication.Extensions;
@@ -16,21 +18,21 @@ namespace TrayApplication.Components.Windows.Forms.TrayIcon;
 public sealed class ApplicationTrayIconProvider : ITrayIconProvider
 {
     private readonly ILogger<ApplicationTrayIconProvider> _logger;
-    private readonly ISender _mediatR;
+    private readonly IRequestSender _sender;
     private readonly CancellationToken _applicationCancellationToken;
     
     private Action? _onTrayIconClosed;
 
     public ApplicationTrayIconProvider(
-        ISender mediatR, 
+        IRequestSender sender,
         IApplicationCancellationTokenSource applicationCancellationTokenSource,
         ILogger<ApplicationTrayIconProvider> logger
-        )
+    )
     {
         ArgumentNullException.ThrowIfNull(applicationCancellationTokenSource);
 
-        _mediatR = mediatR;
         _logger = logger;
+        _sender = sender;
         _applicationCancellationToken = applicationCancellationTokenSource.Token;
         TrayIcon = new NotifyIcon
         {
@@ -38,7 +40,6 @@ public sealed class ApplicationTrayIconProvider : ITrayIconProvider
             Visible = true,
             Icon = new Icon(typeof(Program), "Resources.Images.app.ico"),
         };
-
     }
 
     /// <inheritdoc cref="ITrayIconProvider.TrayIcon"/>
@@ -57,8 +58,15 @@ public sealed class ApplicationTrayIconProvider : ITrayIconProvider
         var profilesSection = BuildProfilesSection(profiles);
 
         var contextMenu = new ContextMenuStrip();
+        // Add Import/Export items:
+        contextMenu.Items.Add(Strings.TrayIconImportProfiles, null, OnImportProfiles);
+        contextMenu.Items.Add(Strings.TrayIconExportProfiles, null, OnExportProfiles);
+        // Separator
+        contextMenu.Items.Add(new ToolStripSeparator());
         contextMenu.Items.Add(Strings.TrayIconCopyDataToClipboard, null, OnCopyDataToClipboard);
+        // Add the profiles section.
         contextMenu.Items.Add(profilesSection); // Add the created profile container.
+        // Separator
         contextMenu.Items.Add(new ToolStripSeparator()); // Add a separator.
         contextMenu.Items.Add(Strings.TrayIconExitText, null, OnExit); // Add an exit button.
         _logger.CreatedContextMenu();
@@ -74,7 +82,51 @@ public sealed class ApplicationTrayIconProvider : ITrayIconProvider
     {
         TrayIcon.Visible = false; // Hide tray icon, so it won't remain there until hovered on.
         TrayIcon.Dispose();
-        _onTrayIconClosed?.Invoke(); // Invoke the callback.
+        _onTrayIconClosed?.Invoke(); // Invoke the callback if it is set.
+    }
+
+    /// <summary>
+    /// Event handler for importing profiles from a file.
+    /// </summary>
+    private void OnImportProfiles(object? sender, EventArgs e)
+    {
+        using var openFileDialog = new OpenFileDialog
+        {
+            Title = Strings.ImportProfilesDialogTitle,
+            Filter = Strings.ImportProfilesDialogFilter,
+            FileName = "profiles.json"
+        };
+        if (openFileDialog.ShowDialog() == DialogResult.OK)
+        {
+            try
+            {
+                using var reader = new StreamReader(openFileDialog.OpenFile());
+                var file = JsonSerializer.Deserialize<ProfilesFileDto>(reader.BaseStream, JsonSerializerOptions.Default);
+                if (file == null || !file.Profiles.Any())
+                {
+                    _logger.ProfilesCouldNotBeDeserialized();
+                    return;
+                }
+                var command = new ImportProfilesCommand
+                {
+                    ProfileFile = file
+                };
+                _sender.SendAsync(command, _applicationCancellationToken).GetAwaiter().GetResult();
+            }
+            catch (Exception ex)
+            {
+                _logger.ExceptionOnFileImport(ex);
+                throw;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Event handler for exporting the current profiles to a file.
+    /// </summary>
+    private void OnExportProfiles(object? sender, EventArgs e)
+    {
+        // TODO:
     }
 
     /// <summary>
@@ -82,7 +134,7 @@ public sealed class ApplicationTrayIconProvider : ITrayIconProvider
     /// </summary>
     private void OnCopyDataToClipboard(object? sender, EventArgs e)
     {
-        var deviceData = _mediatR.Send(new GetCurrentDeviceInformationQuery(), _applicationCancellationToken).GetAwaiter().GetResult();
+        var deviceData = _sender.SendAsync(new GetCurrentDeviceInformationQuery(), _applicationCancellationToken).GetAwaiter().GetResult();
         Clipboard.SetText(deviceData);
         _logger.CopiedInformationToClipboard(deviceData);
     }
@@ -123,8 +175,6 @@ public sealed class ApplicationTrayIconProvider : ITrayIconProvider
     /// <summary>
     /// Change a profile based on the click.
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
     private void OnProfileClick(object? sender, EventArgs e)
     {
         if (sender is not ToolStripMenuItem menuItem)
@@ -134,17 +184,15 @@ public sealed class ApplicationTrayIconProvider : ITrayIconProvider
         }
 
         var profileId = int.Parse(menuItem.Name, CultureInfo.InvariantCulture);
-        _mediatR.Send(new ActivateProfileCommand { ProfileId = profileId }, _applicationCancellationToken).GetAwaiter().GetResult();
+        _sender.SendAsync(new ActivateProfileCommand { ProfileId = profileId }, _applicationCancellationToken).GetAwaiter().GetResult();
     }
 
     /// <summary>
     /// Get the context menu text for this profile based on the profile and the iteration. 
     /// </summary>
-    /// <param name="profile"></param>
-    /// <param name="index"></param>
     private static string GetProfileContextMenuText(DeviceProfile profile, int index)
     {
-        var hotkeyString = profile.HotKey != null ? $"({profile.HotKey}) | " : string.Empty;
+        var hotkeyString = profile.HotKey != null ? $"({profile.HotKey}) | " : string.Empty; // TODO: Not working properly.
         return $"{Strings.TrayIconProfile} #{index + 1}: {hotkeyString}{profile}";
     }
 }

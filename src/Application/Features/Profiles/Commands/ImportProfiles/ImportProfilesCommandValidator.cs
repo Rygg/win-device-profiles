@@ -6,7 +6,8 @@ public sealed class ImportProfilesCommandValidator : AbstractValidator<ImportPro
 {
     public ImportProfilesCommandValidator()
     {
-        RuleFor(c => c.Profiles).NotEmpty();
-        RuleForEach(c => c.Profiles).Must(p => p.IsValid());
+        RuleFor(c => c.ProfileFile).NotEmpty();
+        RuleFor(c => c.ProfileFile).Must(pf => pf.Validate());
+        RuleForEach(c => c.ProfileFile.Profiles).Must(p => p.IsValid());
     }
 }

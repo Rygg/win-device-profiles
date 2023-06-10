@@ -30,6 +30,7 @@ internal static class HostBuilderExtensions
                 services.AddSingleton<IWindowsHotKeyEventSender, KeyboardHotKeyHandle>(); // Add keyboard hot key handle as singleton.
                 services.AddSingleton<ITrayIconProvider, ApplicationTrayIconProvider>(); // Add tray icon provider as a singleton.
                 services.AddSingleton<IApplicationCancellationTokenSource, DeviceProfilesCancellationTokenSource>(); // Add global cts as a singleton.
+                services.AddSingleton<IRequestSender, ScopedRequestSender>(); // Add scoped request sender as a singleton.
                 services.AddSingleton<DeviceProfilesApplicationContext>(); // Add application context as a singleton.
             });
     }

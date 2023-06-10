@@ -2,7 +2,6 @@
 using Application.Features.HotKeys.Queries;
 using Application.Features.Profiles.Commands.ActivateProfile;
 using Application.Features.Profiles.Queries;
-using MediatR;
 using Microsoft.Extensions.Logging;
 using TrayApplication.Components.Interfaces;
 using TrayApplication.Extensions;
@@ -11,26 +10,28 @@ namespace TrayApplication.Components.Windows.Forms.Context;
 
 public sealed class DeviceProfilesApplicationContext : ApplicationContext
 {
-    private readonly ISender _mediatR;
     private readonly ILogger<DeviceProfilesApplicationContext> _logger;
+    private readonly IRequestSender _sender;
     private readonly ITrayIconProvider _trayIconProvider;
     private readonly IApplicationCancellationTokenSource _applicationCancellationTokenSource;
 
     //private readonly NotifyIcon _trayIcon;
 
     public DeviceProfilesApplicationContext(
-        ISender mediatR,
-        ILogger<DeviceProfilesApplicationContext> logger,
+        IRequestSender sender,
         ITrayIconProvider trayIconProvider, 
-        IApplicationCancellationTokenSource applicationCancellationTokenSource)
+        IApplicationCancellationTokenSource applicationCancellationTokenSource,
+        ILogger<DeviceProfilesApplicationContext> logger
+        )
     {
-        _mediatR = mediatR;
         _logger = logger;
+        _sender = sender;
         _trayIconProvider = trayIconProvider;
         _applicationCancellationTokenSource = applicationCancellationTokenSource;
+        
         _trayIconProvider.SetOnCloseCallback(CloseApplication); // Set the application to close when the tray icon closes.
 
-        var profiles = _mediatR.Send(new GetProfilesQuery(), _applicationCancellationTokenSource.Token).GetAwaiter().GetResult();
+        var profiles = _sender.SendAsync(new GetProfilesQuery(), _applicationCancellationTokenSource.Token).GetAwaiter().GetResult();
 
         _trayIconProvider.UpdateTrayIconContents(profiles);
         _ = BackgroundLoop();
@@ -41,11 +42,11 @@ public sealed class DeviceProfilesApplicationContext : ApplicationContext
     /// </summary>
     private async Task BackgroundLoop()
     {
-        await _mediatR.Send(new RegisterHotKeysCommand(), _applicationCancellationTokenSource.Token).ConfigureAwait(false);
+        await _sender.SendAsync(new RegisterHotKeysCommand(), _applicationCancellationTokenSource.Token).ConfigureAwait(false);
         while (!_applicationCancellationTokenSource.Token.IsCancellationRequested)
         {
-            var profile = await _mediatR.Send(new GetRegisteredHotKeyPressQuery(), _applicationCancellationTokenSource.Token).ConfigureAwait(false);
-            await _mediatR.Send(new ActivateProfileCommand { ProfileId = profile.Id }, _applicationCancellationTokenSource.Token).ConfigureAwait(false);
+            var profile = await _sender.SendAsync(new GetRegisteredHotKeyPressQuery(), _applicationCancellationTokenSource.Token).ConfigureAwait(false);
+            await _sender.SendAsync(new ActivateProfileCommand { ProfileId = profile.Id }, _applicationCancellationTokenSource.Token).ConfigureAwait(false);
         }
     }
 

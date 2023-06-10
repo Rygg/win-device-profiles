@@ -28,6 +28,8 @@ internal static class Program
             initializer.InitializeAsync(CancellationToken.None).GetAwaiter().GetResult();
         }
 
+        System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
+        System.Windows.Forms.Application.EnableVisualStyles();
         System.Windows.Forms.Application.Run(host.Services.GetRequiredService<DeviceProfilesApplicationContext>());
     }
 }

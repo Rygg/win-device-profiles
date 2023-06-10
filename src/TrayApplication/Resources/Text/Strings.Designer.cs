@@ -61,6 +61,24 @@ namespace TrayApplication.Resources.Text {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to JSON Files (*.json) |*.json.
+        /// </summary>
+        internal static string ImportProfilesDialogFilter {
+            get {
+                return ResourceManager.GetString("ImportProfilesDialogFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Import Profiles.
+        /// </summary>
+        internal static string ImportProfilesDialogTitle {
+            get {
+                return ResourceManager.GetString("ImportProfilesDialogTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to HDR.
         /// </summary>
         internal static string ProfileSummaryHdr {
@@ -111,6 +129,24 @@ namespace TrayApplication.Resources.Text {
         internal static string TrayIconExitText {
             get {
                 return ResourceManager.GetString("TrayIconExitText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Export current profiles to a file.
+        /// </summary>
+        internal static string TrayIconExportProfiles {
+            get {
+                return ResourceManager.GetString("TrayIconExportProfiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Import new profiles from a file.
+        /// </summary>
+        internal static string TrayIconImportProfiles {
+            get {
+                return ResourceManager.GetString("TrayIconImportProfiles", resourceCulture);
             }
         }
         

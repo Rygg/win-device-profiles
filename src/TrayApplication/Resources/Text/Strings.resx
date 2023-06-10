@@ -147,4 +147,16 @@
   <data name="ProfileSummarySdr" xml:space="preserve">
     <value>SDR</value>
   </data>
+  <data name="TrayIconImportProfiles" xml:space="preserve">
+    <value>Import new profiles from a file</value>
+  </data>
+  <data name="ImportProfilesDialogFilter" xml:space="preserve">
+    <value>JSON Files (*.json) |*.json</value>
+  </data>
+  <data name="ImportProfilesDialogTitle" xml:space="preserve">
+    <value>Import Profiles</value>
+  </data>
+  <data name="TrayIconExportProfiles" xml:space="preserve">
+    <value>Export current profiles to a file</value>
+  </data>
 </root>

@@ -1,12 +1,15 @@
 ﻿using Application.Common.Interfaces;
-using Application.Common.Options;
+using Application.Features.Profiles.Commands.Common;
 using MediatR;
 
 namespace Application.Features.Profiles.Commands.ImportProfiles;
 
+/// <summary>
+/// This command overrides all current profiles in the database with the imported ones.
+/// </summary>
 public sealed record ImportProfilesCommand : IRequest
 {
-    public IEnumerable<DeviceProfileOptions> Profiles { get; init; } = Enumerable.Empty<DeviceProfileOptions>();
+    public ProfilesFileDto ProfileFile { get; init; } = new();
 }
 
 public sealed class ImportProfilesCommandHandler : IRequestHandler<ImportProfilesCommand>
@@ -22,11 +25,9 @@ public sealed class ImportProfilesCommandHandler : IRequestHandler<ImportProfile
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        var profiles = request.Profiles.Select(p => p.ToDeviceProfile()).ToList();
-        foreach (var profile in profiles)
-        {
-            _dbContext.DeviceProfiles.Add(profile);
-            await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false); // Save one-by-one to differentiate between record type value objects.
-        }
+        var profiles = request.ProfileFile.Profiles.Select(p => p.ToDeviceProfile()).ToList();
+        _dbContext.DeviceProfiles.RemoveRange(_dbContext.DeviceProfiles); // Clear current database tables. This should be fine as there is not too many profiles.
+        await _dbContext.DeviceProfiles.AddRangeAsync(profiles, cancellationToken).ConfigureAwait(true);
+        await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(true);
     }
 }
