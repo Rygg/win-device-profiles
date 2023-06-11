@@ -25,7 +25,12 @@ public sealed class GetRegisteredHotKeyPressQueryHandler : IRequestHandler<GetRe
     {
         var key = await _hotKeyTrigger.GetHotKeyPressAsync(cancellationToken).ConfigureAwait(false);
         var profile = await _dbContext.DeviceProfiles
-            .SingleAsync(p => p.HotKey != null && p.HotKey.Equals(key), cancellationToken).ConfigureAwait(false);
+            .SingleAsync(p => 
+                    p.HotKey != null && 
+                    p.HotKey.Key == key.Key && 
+                    p.HotKey.Modifiers == key.Modifiers,
+                cancellationToken)
+            .ConfigureAwait(false);
         return profile;
     }
 }
