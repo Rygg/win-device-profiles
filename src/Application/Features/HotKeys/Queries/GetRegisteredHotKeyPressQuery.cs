@@ -1,8 +1,7 @@
 ﻿using Application.Common.Interfaces;
 using Domain.Entities;
-using Domain.ValueObjects;
 using MediatR;
-using Microsoft.Extensions.Options;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.HotKeys.Queries;
 
@@ -25,13 +24,8 @@ public sealed class GetRegisteredHotKeyPressQueryHandler : IRequestHandler<GetRe
     public async Task<DeviceProfile> Handle(GetRegisteredHotKeyPressQuery request, CancellationToken cancellationToken)
     {
         var key = await _hotKeyTrigger.GetHotKeyPressAsync(cancellationToken).ConfigureAwait(false);
-        var profile = GetDeviceProfileFromKeyTrigger(key);
+        var profile = await _dbContext.DeviceProfiles
+            .SingleAsync(p => p.HotKey != null && p.HotKey.Equals(key), cancellationToken).ConfigureAwait(false);
         return profile;
-    }
-
-    private DeviceProfile GetDeviceProfileFromKeyTrigger(HotKeyCombination hotKeyTrigger)
-    {
-        return _dbContext.DeviceProfiles
-            .Single(p => p.HotKey != null && p.HotKey == hotKeyTrigger);
     }
 }
