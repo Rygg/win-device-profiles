@@ -41,7 +41,7 @@ public sealed class ActivateProfileCommandTests : BaseTestFixture
                     It.Is<DeviceProfile>(dp =>
                         dp.Id == 1
                         && dp.Name == TestConfiguration.TestProfile1.Name
-                        && dp.HotKey == TestConfiguration.TestProfile1.HotKey
+                        && dp.HotKey!.Equals(TestConfiguration.TestProfile1.HotKey)
                         && dp.DisplaySettings.SequenceEqual(TestConfiguration.TestProfile1.DisplaySettings)
                     ),
                     It.IsAny<CancellationToken>()
@@ -58,10 +58,10 @@ public sealed class ActivateProfileCommandTests : BaseTestFixture
         displayControllerMock
             .Verify(m => m.ChangeDisplaySettings(
                     It.Is<DeviceProfile>(dp =>
-                        dp.Id == 1
-                        && dp.Name == TestConfiguration.TestProfile1.Name
-                        && dp.HotKey == TestConfiguration.TestProfile1.HotKey
-                        && dp.DisplaySettings.SequenceEqual(TestConfiguration.TestProfile1.DisplaySettings)
+                        dp.Id == 3
+                        && dp.Name == TestConfiguration.TestProfile3.Name
+                        && dp.HotKey!.Equals(TestConfiguration.TestProfile3.HotKey)
+                        && dp.DisplaySettings.SequenceEqual(TestConfiguration.TestProfile3.DisplaySettings)
                     ),
                     It.IsAny<CancellationToken>()
                 ),

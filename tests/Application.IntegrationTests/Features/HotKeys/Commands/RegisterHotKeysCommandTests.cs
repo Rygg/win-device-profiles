@@ -20,7 +20,7 @@ public sealed class RegisterHotKeysCommandTests : BaseTestFixture
         {
             hotKeyTriggerMock
                 .Verify(m => m.RegisterHotKeyAsync(
-                        It.Is<HotKeyCombination>(hotkey => hotkey == registeredKey),
+                        It.Is<HotKeyCombination>(hotkey => hotkey.Equals(registeredKey)),
                         It.IsAny<CancellationToken>()),
                     Times.Once
                 );
@@ -66,7 +66,7 @@ public sealed class RegisterHotKeysCommandTests : BaseTestFixture
         {
             hotKeyTriggerMock
                 .Verify(m => m.RegisterHotKeyAsync(
-                        It.Is<HotKeyCombination>(hotkey => hotkey == registeredKey),
+                        It.Is<HotKeyCombination>(hotkey => hotkey.Equals(registeredKey)),
                         It.IsAny<CancellationToken>()),
                     Times.Once
                 );
