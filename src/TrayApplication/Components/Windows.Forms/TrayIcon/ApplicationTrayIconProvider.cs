@@ -101,7 +101,7 @@ public sealed class ApplicationTrayIconProvider : ITrayIconProvider
             try
             {
                 using var reader = new StreamReader(openFileDialog.OpenFile());
-                var file = JsonSerializer.Deserialize<ProfilesFileDto>(reader.BaseStream, JsonSerializerOptions.Default);
+                var file = ProfilesFileDto.Deserialize(reader.BaseStream);
                 if (file == null || !file.Profiles.Any())
                 {
                     _logger.ProfilesCouldNotBeDeserialized();

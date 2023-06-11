@@ -1,6 +1,7 @@
 ﻿using Domain.Entities;
 using Domain.Enums;
 using Domain.ValueObjects;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace Application.Features.Profiles.Commands.Common;
@@ -65,6 +66,17 @@ public sealed record ProfilesFileDto
         }
         return true;
     }
+
+    /// <summary>
+    /// Deserialize a dto this from a readable stream.
+    /// </summary>
+    public static ProfilesFileDto? Deserialize(Stream stream)
+    {
+        return JsonSerializer.Deserialize<ProfilesFileDto>(stream, new JsonSerializerOptions()
+        {
+            PropertyNameCaseInsensitive = true,
+        });
+    }
 }
 
 /// <summary>
@@ -118,7 +130,7 @@ public sealed record DeviceProfileDto
     {
         if (!IsValid())
         {
-            throw new InvalidOperationException("Configuration is not valid.");
+            throw new InvalidOperationException("DeviceProfileDto is not valid.");
         }
 
         return new DeviceProfile
@@ -162,7 +174,7 @@ public sealed record HotKeyDto
     {
         if (!IsValid())
         {
-            throw new InvalidOperationException("Configuration is not valid.");
+            throw new InvalidOperationException("HotKeyDto is not valid.");
         }
 
         return new HotKeyCombination
@@ -254,12 +266,12 @@ public sealed record DisplaySettingsDto
     {
         if (!IsValid())
         {
-            throw new InvalidOperationException("Configuration is not valid.");
+            throw new InvalidOperationException("DisplaySettingsDto is not valid.");
         }
 
         return new DisplaySettings
         {
-            DisplayId = DisplayId!.Value, // This is not null because configuration is validated.
+            DisplayId = DisplayId!.Value, // This is not null because this should be validated.
             PrimaryDisplay = Primary,
             EnableHdr = Hdr,
             RefreshRate = RefreshRate,

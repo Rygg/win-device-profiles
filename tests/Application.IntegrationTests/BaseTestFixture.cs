@@ -67,18 +67,16 @@ public class BaseTestFixture
         await dbInitializer.InitializeAsync(CancellationToken.None);
     }
 
-    protected static async Task<ProfilesFileDto> GetTestProfilesFromFile()
+    protected static ProfilesFileDto GetTestProfilesFromFile()
     {
-        var result = await File.ReadAllTextAsync("testProfiles.json");
-        return JsonSerializer.Deserialize<ProfilesFileDto>(result, JsonSerializerOptions.Default)
-               ?? throw new InvalidOperationException("Test Profiles could not be parsed.");
+        using var stream = File.Open("testProfiles.json", FileMode.Open, FileAccess.Read);
+        return ProfilesFileDto.Deserialize(stream) ?? throw new InvalidOperationException("Test Profiles could not be parsed.");
     }
 
     protected async Task PopulateDbWithTestProfiles()
     {
-        var result = await File.ReadAllTextAsync("testProfiles.json");
-        var file = JsonSerializer.Deserialize<ProfilesFileDto>(result, JsonSerializerOptions.Default)
-                   ?? throw new InvalidOperationException("Test Profiles could not be parsed.");
+        await using var stream = File.Open("testProfiles.json", FileMode.Open, FileAccess.Read);
+        var file = ProfilesFileDto.Deserialize(stream) ?? throw new InvalidOperationException("Test Profiles could not be parsed.");
         var profiles = file.Profiles.Select(p => p.ToDeviceProfile());
         using var scope = _scopeFactory.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<DeviceProfilesDbContext>();

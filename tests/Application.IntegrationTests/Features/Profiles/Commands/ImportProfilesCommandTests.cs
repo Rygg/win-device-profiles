@@ -42,7 +42,7 @@ public sealed class ImportProfilesCommandTests : BaseTestFixture
     [Test]
     public async Task Handle_ValidCommand_ImportsProfiles()
     {
-        var file = await GetTestProfilesFromFile();
+        var file = GetTestProfilesFromFile();
         var command = new ImportProfilesCommand
         {
             ProfileFile = file
@@ -70,7 +70,7 @@ public sealed class ImportProfilesCommandTests : BaseTestFixture
     [Test]
     public async Task Handle_ValidCommand_DestroysOldProfiles()
     {
-        var file = await GetTestProfilesFromFile();
+        var file = GetTestProfilesFromFile();
         var command = new ImportProfilesCommand
         {
             ProfileFile = file
