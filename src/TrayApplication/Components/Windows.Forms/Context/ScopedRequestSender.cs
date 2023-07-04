@@ -1,8 +1,7 @@
-﻿using MediatR;
-using Microsoft.Extensions.DependencyInjection;
-using TrayApplication.Components.Interfaces;
+﻿using DeviceProfiles.TrayApplication.Components.Interfaces;
+using MediatR;
 
-namespace TrayApplication.Components.Windows.Forms.Context;
+namespace DeviceProfiles.TrayApplication.Components.Windows.Forms.Context;
 
 /// <summary>
 /// Implementation for the IRequestSender interface sending scoped requests to the application layer.

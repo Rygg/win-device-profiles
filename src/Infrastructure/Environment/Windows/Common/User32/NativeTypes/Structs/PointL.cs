@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace Infrastructure.Environment.Windows.Common.User32.NativeTypes.Structs;
+namespace DeviceProfiles.Infrastructure.Environment.Windows.Common.User32.NativeTypes.Structs;
 
 /// <summary>
 /// The POINTL structure contains the coordinates of a point.

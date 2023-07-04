@@ -1,7 +1,6 @@
-﻿using Domain.Enums;
-using Microsoft.Extensions.Logging;
+﻿using DeviceProfiles.Domain.Enums;
 
-namespace TrayApplication.Extensions;
+namespace DeviceProfiles.TrayApplication.Extensions;
 
 public static partial class LoggerExtensions
 {

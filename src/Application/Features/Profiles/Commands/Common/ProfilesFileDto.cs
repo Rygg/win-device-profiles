@@ -1,10 +1,10 @@
-﻿using Domain.Entities;
-using Domain.Enums;
-using Domain.ValueObjects;
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.Json.Serialization;
+using DeviceProfiles.Domain.Entities;
+using DeviceProfiles.Domain.Enums;
+using DeviceProfiles.Domain.ValueObjects;
 
-namespace Application.Features.Profiles.Commands.Common;
+namespace DeviceProfiles.Application.Features.Profiles.Commands.Common;
 
 /// <summary>
 /// Data model for a profiles file.

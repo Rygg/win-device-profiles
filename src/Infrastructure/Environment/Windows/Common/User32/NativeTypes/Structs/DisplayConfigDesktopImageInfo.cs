@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace Infrastructure.Environment.Windows.Common.User32.NativeTypes.Structs;
+namespace DeviceProfiles.Infrastructure.Environment.Windows.Common.User32.NativeTypes.Structs;
 /// <summary>
 /// The DISPLAYCONFIG_DESKTOP_IMAGE_INFO structure contains information about the image displayed on the desktop.
 /// </summary>

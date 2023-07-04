@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel;
-using Infrastructure.Environment.Windows.Common.User32.Interfaces;
-using Infrastructure.Environment.Windows.Common.User32.NativeTypes.Structs;
 using System.Runtime.InteropServices;
-using Infrastructure.Environment.Windows.Common.User32.NativeTypes.Enums;
+using DeviceProfiles.Infrastructure.Environment.Windows.Common.User32.Interfaces;
+using DeviceProfiles.Infrastructure.Environment.Windows.Common.User32.NativeTypes.Enums;
+using DeviceProfiles.Infrastructure.Environment.Windows.Common.User32.NativeTypes.Structs;
 
-namespace Infrastructure.UnitTests.Environment.Windows.Mocks;
+namespace DeviceProfiles.Infrastructure.UnitTests.Environment.Windows.Mocks;
 
 internal sealed class DisplayServiceMock
 {

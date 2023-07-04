@@ -1,6 +1,6 @@
-﻿using Infrastructure.Environment.Windows.Common.User32.NativeTypes.Enums;
+﻿using DeviceProfiles.Infrastructure.Environment.Windows.Common.User32.NativeTypes.Enums;
 
-namespace Infrastructure.Environment.Windows.Common.User32.Interfaces;
+namespace DeviceProfiles.Infrastructure.Environment.Windows.Common.User32.Interfaces;
 
 internal interface IHotKeyService
 {

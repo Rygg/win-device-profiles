@@ -1,9 +1,8 @@
-﻿using Application.Common.Interfaces;
-using Domain.Entities;
-using MediatR;
+﻿using DeviceProfiles.Application.Common.Interfaces;
+using DeviceProfiles.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Application.Features.HotKeys.Queries;
+namespace DeviceProfiles.Application.Features.HotKeys.Queries;
 
 public sealed record GetRegisteredHotKeyPressQuery : IRequest<DeviceProfile>;
 

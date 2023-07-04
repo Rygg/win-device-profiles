@@ -1,15 +1,12 @@
-﻿using System.Globalization;
-using Infrastructure.Interfaces;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+﻿using DeviceProfiles.Infrastructure.Interfaces;
+using DeviceProfiles.TrayApplication.Components.Interfaces;
+using DeviceProfiles.TrayApplication.Components.Windows.Forms.Context;
+using DeviceProfiles.TrayApplication.Components.Windows.Forms.HotKeys;
+using DeviceProfiles.TrayApplication.Components.Windows.Forms.TrayIcon;
 using Serilog;
 using Serilog.Events;
-using TrayApplication.Components.Interfaces;
-using TrayApplication.Components.Windows.Forms.Context;
-using TrayApplication.Components.Windows.Forms.HotKeys;
-using TrayApplication.Components.Windows.Forms.TrayIcon;
 
-namespace TrayApplication.Extensions;
+namespace DeviceProfiles.TrayApplication.Extensions;
 
 /// <summary>
 /// Extension methods to support dependency injections.

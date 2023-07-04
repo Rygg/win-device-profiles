@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.Environment.Windows.Common.User32.NativeTypes.Enums;
+﻿namespace DeviceProfiles.Infrastructure.Environment.Windows.Common.User32.NativeTypes.Enums;
 
 /// <summary>
 /// The DISPLAYCONFIG_ROTATION enumeration specifies the clockwise rotation of the display.

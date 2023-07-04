@@ -1,6 +1,6 @@
-﻿using Domain.Entities;
+﻿using DeviceProfiles.Domain.Entities;
 
-namespace Application.Common.Interfaces;
+namespace DeviceProfiles.Application.Common.Interfaces;
 
 /// <summary>
 /// Interface for DisplayControllers

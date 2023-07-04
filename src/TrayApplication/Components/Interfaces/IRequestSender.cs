@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace TrayApplication.Components.Interfaces;
+namespace DeviceProfiles.TrayApplication.Components.Interfaces;
 
 /// <summary>
 /// Interface for sending requests in scopes.

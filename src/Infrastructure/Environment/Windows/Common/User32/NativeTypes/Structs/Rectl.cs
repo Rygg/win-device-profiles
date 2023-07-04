@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace Infrastructure.Environment.Windows.Common.User32.NativeTypes.Structs;
+namespace DeviceProfiles.Infrastructure.Environment.Windows.Common.User32.NativeTypes.Structs;
 
 /// <summary>
 /// The RECTL structure defines a rectangle by the coordinates of its upper-left and lower-right corners

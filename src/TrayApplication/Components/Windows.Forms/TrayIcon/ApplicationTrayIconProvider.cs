@@ -1,16 +1,13 @@
-﻿using System.Globalization;
-using System.Text.Json;
-using Application.Features.Devices.Queries;
-using Application.Features.Profiles.Commands.ActivateProfile;
-using Application.Features.Profiles.Commands.Common;
-using Application.Features.Profiles.Commands.ImportProfiles;
-using Domain.Entities;
-using Microsoft.Extensions.Logging;
-using TrayApplication.Components.Interfaces;
-using TrayApplication.Extensions;
-using TrayApplication.Resources.Text;
+﻿using DeviceProfiles.Application.Features.Devices.Queries;
+using DeviceProfiles.Application.Features.Profiles.Commands.ActivateProfile;
+using DeviceProfiles.Application.Features.Profiles.Commands.Common;
+using DeviceProfiles.Application.Features.Profiles.Commands.ImportProfiles;
+using DeviceProfiles.Domain.Entities;
+using DeviceProfiles.TrayApplication.Components.Interfaces;
+using DeviceProfiles.TrayApplication.Extensions;
+using DeviceProfiles.TrayApplication.Resources.Text;
 
-namespace TrayApplication.Components.Windows.Forms.TrayIcon;
+namespace DeviceProfiles.TrayApplication.Components.Windows.Forms.TrayIcon;
 
 /// <summary>
 /// Class provides the tray icon functionality for the application context.

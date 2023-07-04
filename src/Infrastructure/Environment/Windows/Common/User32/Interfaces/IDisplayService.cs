@@ -1,7 +1,7 @@
-﻿using Infrastructure.Environment.Windows.Common.User32.NativeTypes.Structs;
-using System.ComponentModel;
+﻿using System.ComponentModel;
+using DeviceProfiles.Infrastructure.Environment.Windows.Common.User32.NativeTypes.Structs;
 
-namespace Infrastructure.Environment.Windows.Common.User32.Interfaces;
+namespace DeviceProfiles.Infrastructure.Environment.Windows.Common.User32.Interfaces;
 
 internal interface IDisplayService
 {

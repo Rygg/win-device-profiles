@@ -3,7 +3,7 @@
 #nullable disable
 #pragma warning disable CA1062
 
-namespace Infrastructure.Migrations
+namespace DeviceProfiles.Infrastructure.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration

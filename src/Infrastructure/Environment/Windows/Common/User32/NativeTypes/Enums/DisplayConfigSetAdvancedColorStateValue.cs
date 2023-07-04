@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.Environment.Windows.Common.User32.NativeTypes.Enums;
+﻿namespace DeviceProfiles.Infrastructure.Environment.Windows.Common.User32.NativeTypes.Enums;
 /// <summary>
 /// Enumeration of possible values for DISPLAYCONFIG_SET_ADVANCED_COLOR_STATE.value.
 /// </summary>

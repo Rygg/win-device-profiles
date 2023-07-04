@@ -1,8 +1,8 @@
 ﻿using System.Runtime.InteropServices;
-using Infrastructure.Environment.Windows.Common.User32.Interfaces;
-using Infrastructure.Environment.Windows.Common.User32.NativeTypes.Enums;
+using DeviceProfiles.Infrastructure.Environment.Windows.Common.User32.Interfaces;
+using DeviceProfiles.Infrastructure.Environment.Windows.Common.User32.NativeTypes.Enums;
 
-namespace Infrastructure.Environment.Windows.Common.User32;
+namespace DeviceProfiles.Infrastructure.Environment.Windows.Common.User32;
 
 /// <summary>
 /// Import hot key methods from user32.dll

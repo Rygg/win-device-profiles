@@ -1,4 +1,4 @@
-﻿namespace Domain.Enums;
+﻿namespace DeviceProfiles.Domain.Enums;
 
 /// <summary>
 /// Supported KeyModifiers for hot key events. These match windows FsKeyModifiers enumeration.

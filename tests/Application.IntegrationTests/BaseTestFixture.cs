@@ -1,15 +1,14 @@
-using Application.Common.Interfaces;
-using Application.Features.Profiles.Commands.Common;
-using Infrastructure.Persistence;
+using DeviceProfiles.Application.Common.Interfaces;
+using DeviceProfiles.Application.Features.Profiles.Commands.Common;
+using DeviceProfiles.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System.Text.Json;
 
-namespace Application.IntegrationTests;
+namespace DeviceProfiles.Application.IntegrationTests;
 
 [TestFixture]
 public class BaseTestFixture

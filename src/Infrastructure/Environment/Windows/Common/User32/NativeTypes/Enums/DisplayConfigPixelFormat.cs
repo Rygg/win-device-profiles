@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.Environment.Windows.Common.User32.NativeTypes.Enums;
+﻿namespace DeviceProfiles.Infrastructure.Environment.Windows.Common.User32.NativeTypes.Enums;
 
 /// <summary>
 /// The DISPLAYCONFIG_PIXELFORMAT enumeration specifies pixel format in various bits per pixel (BPP) values.

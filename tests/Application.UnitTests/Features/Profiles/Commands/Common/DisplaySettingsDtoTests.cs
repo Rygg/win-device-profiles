@@ -1,6 +1,6 @@
-﻿using Application.Features.Profiles.Commands.Common;
+﻿using DeviceProfiles.Application.Features.Profiles.Commands.Common;
 
-namespace Application.UnitTests.Features.Profiles.Commands.Common;
+namespace DeviceProfiles.Application.UnitTests.Features.Profiles.Commands.Common;
 
 [TestFixture]
 public sealed class DisplaySettingsDtoTests

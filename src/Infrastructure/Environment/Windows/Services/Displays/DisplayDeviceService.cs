@@ -1,13 +1,11 @@
-﻿using System.ComponentModel;
-using Application.Common.Interfaces;
-using Domain.Entities;
-using Infrastructure.Environment.Windows.Common.User32.Interfaces;
-using Infrastructure.Environment.Windows.Common.User32.NativeTypes.Enums;
-using Infrastructure.Environment.Windows.Services.Displays.Models;
-using Infrastructure.Extensions;
-using Microsoft.Extensions.Logging;
+﻿using DeviceProfiles.Application.Common.Interfaces;
+using DeviceProfiles.Domain.Entities;
+using DeviceProfiles.Infrastructure.Environment.Windows.Common.User32.Interfaces;
+using DeviceProfiles.Infrastructure.Environment.Windows.Common.User32.NativeTypes.Enums;
+using DeviceProfiles.Infrastructure.Environment.Windows.Services.Displays.Models;
+using DeviceProfiles.Infrastructure.Extensions;
 
-namespace Infrastructure.Environment.Windows.Services.Displays;
+namespace DeviceProfiles.Infrastructure.Environment.Windows.Services.Displays;
 
 /// <summary>
 /// Service for controlling all things related to Windows environment Display controlling.

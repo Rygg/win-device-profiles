@@ -1,8 +1,7 @@
-﻿using Application.Common.Interfaces;
-using MediatR;
+﻿using DeviceProfiles.Application.Common.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace Application.Features.HotKeys.Commands;
+namespace DeviceProfiles.Application.Features.HotKeys.Commands;
 
 public sealed record RegisterHotKeysCommand : IRequest;
 

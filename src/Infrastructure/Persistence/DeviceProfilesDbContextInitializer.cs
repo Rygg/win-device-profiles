@@ -1,8 +1,7 @@
-﻿using Infrastructure.Extensions;
+﻿using DeviceProfiles.Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
-namespace Infrastructure.Persistence;
+namespace DeviceProfiles.Infrastructure.Persistence;
 
 public sealed class DeviceProfilesDbContextInitializer
 {

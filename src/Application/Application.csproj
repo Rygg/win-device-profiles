@@ -7,6 +7,8 @@
     <DebugType>embedded</DebugType>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
+    <AssemblyName>DeviceProfiles.Application</AssemblyName>
+    <RootNamespace>DeviceProfiles.Application</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="FluentValidation" Version="11.5.2" />
@@ -19,5 +21,12 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Domain\Domain.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Using Include="FluentValidation" />
+    <Using Include="MediatR" />
+    <Using Include="Microsoft.Extensions.DependencyInjection" />
+    <Using Include="Microsoft.Extensions.Hosting" />
+    <Using Include="Microsoft.Extensions.Logging" />
   </ItemGroup>
 </Project>

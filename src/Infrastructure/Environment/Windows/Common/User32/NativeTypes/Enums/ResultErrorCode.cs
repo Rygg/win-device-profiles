@@ -1,7 +1,7 @@
-﻿namespace Infrastructure.Environment.Windows.Common.User32.NativeTypes.Enums;
+﻿namespace DeviceProfiles.Infrastructure.Environment.Windows.Common.User32.NativeTypes.Enums;
 
 /// <summary>
-/// Enum containing the required result errror codes. Selected the required values from <see href="https://docs.microsoft.com/en-us/windows/win32/debug/system-error-codes--0-499-">here</see>
+/// Enum containing the required result error codes. Selected the required values from <see href="https://docs.microsoft.com/en-us/windows/win32/debug/system-error-codes--0-499-">here</see>
 /// </summary>
 internal enum ResultErrorCode : int
 {

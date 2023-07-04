@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace Infrastructure.Environment.Windows.Common.User32.NativeTypes.Structs;
+namespace DeviceProfiles.Infrastructure.Environment.Windows.Common.User32.NativeTypes.Structs;
 
 /// <summary>
 /// The DEVMODE data structure contains information about the initialization and environment of a printer or a display device.

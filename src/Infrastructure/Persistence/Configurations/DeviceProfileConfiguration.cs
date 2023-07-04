@@ -1,8 +1,8 @@
-﻿using Domain.Entities;
+﻿using DeviceProfiles.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Infrastructure.Persistence.Configurations;
+namespace DeviceProfiles.Infrastructure.Persistence.Configurations;
 
 public sealed class DeviceProfileConfiguration : IEntityTypeConfiguration<DeviceProfile>
 {

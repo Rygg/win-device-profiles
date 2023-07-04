@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace Infrastructure.Environment.Windows.Common.User32.NativeTypes.Structs;
+namespace DeviceProfiles.Infrastructure.Environment.Windows.Common.User32.NativeTypes.Structs;
 [StructLayout(LayoutKind.Explicit)]
 internal struct DISPLAYCONFIG_MODE_INFO_union
 {

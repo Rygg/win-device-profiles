@@ -1,15 +1,13 @@
-﻿using System.ComponentModel;
-using Application.Common.Interfaces;
-using Domain.Enums;
-using Domain.ValueObjects;
-using Infrastructure.Environment.Windows.Common.User32.Interfaces;
-using Infrastructure.Environment.Windows.Common.User32.NativeTypes.Enums;
-using Infrastructure.Extensions;
-using Infrastructure.Interfaces;
-using Infrastructure.Interfaces.Models;
-using Microsoft.Extensions.Logging;
+﻿using DeviceProfiles.Application.Common.Interfaces;
+using DeviceProfiles.Domain.Enums;
+using DeviceProfiles.Domain.ValueObjects;
+using DeviceProfiles.Infrastructure.Environment.Windows.Common.User32.Interfaces;
+using DeviceProfiles.Infrastructure.Environment.Windows.Common.User32.NativeTypes.Enums;
+using DeviceProfiles.Infrastructure.Extensions;
+using DeviceProfiles.Infrastructure.Interfaces;
+using DeviceProfiles.Infrastructure.Interfaces.Models;
 
-namespace Infrastructure.Environment.Windows.Services.Keyboard;
+namespace DeviceProfiles.Infrastructure.Environment.Windows.Services.Keyboard;
 
 /// <summary>
 /// Infrastructure for subscribing and receiving hot key values. This has to be registered as a Singleton.

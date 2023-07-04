@@ -1,8 +1,7 @@
-﻿using Application.Features.Profiles.Commands.ActivateProfile;
-using Domain.Entities;
-using FluentValidation;
+﻿using DeviceProfiles.Application.Features.Profiles.Commands.ActivateProfile;
+using DeviceProfiles.Domain.Entities;
 
-namespace Application.IntegrationTests.Features.Profiles.Commands;
+namespace DeviceProfiles.Application.IntegrationTests.Features.Profiles.Commands;
 
 public sealed class ActivateProfileCommandTests : BaseTestFixture
 {

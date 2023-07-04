@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace Infrastructure.Environment.Windows.Common.User32.NativeTypes.Structs;
+namespace DeviceProfiles.Infrastructure.Environment.Windows.Common.User32.NativeTypes.Structs;
 
 /// <summary>
 /// The DISPLAYCONFIG_SOURCE_DEVICE_NAME structure contains the GDI device name for the source or view

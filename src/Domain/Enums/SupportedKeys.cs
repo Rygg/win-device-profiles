@@ -1,4 +1,4 @@
-﻿namespace Domain.Enums;
+﻿namespace DeviceProfiles.Domain.Enums;
 
 /// <summary>
 /// Enumeration for Supported Keys by the application. These values are an identical match for Windows Forms Keys enumeration, so the conversion should be identical.

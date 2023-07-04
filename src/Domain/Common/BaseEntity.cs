@@ -1,4 +1,4 @@
-namespace Domain.Common;
+namespace DeviceProfiles.Domain.Common;
 
 public class BaseEntity
 {

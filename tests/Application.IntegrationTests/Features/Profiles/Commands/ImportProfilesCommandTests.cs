@@ -1,8 +1,8 @@
-﻿using Application.Features.Profiles.Commands.Common;
-using Application.Features.Profiles.Commands.ImportProfiles;
-using Domain.Entities;
+﻿using DeviceProfiles.Application.Features.Profiles.Commands.Common;
+using DeviceProfiles.Application.Features.Profiles.Commands.ImportProfiles;
+using DeviceProfiles.Domain.Entities;
 
-namespace Application.IntegrationTests.Features.Profiles.Commands;
+namespace DeviceProfiles.Application.IntegrationTests.Features.Profiles.Commands;
 
 public sealed class ImportProfilesCommandTests : BaseTestFixture
 {

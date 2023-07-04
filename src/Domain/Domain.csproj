@@ -6,5 +6,7 @@
     <AnalysisLevel>latest-all</AnalysisLevel>
     <DebugType>embedded</DebugType>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    <AssemblyName>DeviceProfiles.Domain</AssemblyName>
+    <RootNamespace>DeviceProfiles.Domain</RootNamespace>
   </PropertyGroup>
 </Project>

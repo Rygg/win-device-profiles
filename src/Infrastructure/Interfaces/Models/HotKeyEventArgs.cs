@@ -1,6 +1,6 @@
-﻿using Domain.Enums;
+﻿using DeviceProfiles.Domain.Enums;
 
-namespace Infrastructure.Interfaces.Models;
+namespace DeviceProfiles.Infrastructure.Interfaces.Models;
 
 /// <summary>
 /// Event Arguments for the key press events.

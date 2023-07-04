@@ -1,6 +1,6 @@
-﻿using Infrastructure.Environment.Windows.Common.User32.NativeTypes.Structs;
+﻿using DeviceProfiles.Infrastructure.Environment.Windows.Common.User32.NativeTypes.Structs;
 
-namespace Infrastructure.Environment.Windows.Services.Displays.Models;
+namespace DeviceProfiles.Infrastructure.Environment.Windows.Services.Displays.Models;
 
 /// <summary>
 /// Record for containing windows display data.

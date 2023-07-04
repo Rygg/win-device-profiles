@@ -1,12 +1,11 @@
-﻿using Application.Features.HotKeys.Commands;
-using Application.Features.HotKeys.Queries;
-using Application.Features.Profiles.Commands.ActivateProfile;
-using Application.Features.Profiles.Queries;
-using Microsoft.Extensions.Logging;
-using TrayApplication.Components.Interfaces;
-using TrayApplication.Extensions;
+﻿using DeviceProfiles.Application.Features.HotKeys.Commands;
+using DeviceProfiles.Application.Features.HotKeys.Queries;
+using DeviceProfiles.Application.Features.Profiles.Commands.ActivateProfile;
+using DeviceProfiles.Application.Features.Profiles.Queries;
+using DeviceProfiles.TrayApplication.Components.Interfaces;
+using DeviceProfiles.TrayApplication.Extensions;
 
-namespace TrayApplication.Components.Windows.Forms.Context;
+namespace DeviceProfiles.TrayApplication.Components.Windows.Forms.Context;
 
 public sealed class DeviceProfilesApplicationContext : ApplicationContext
 {

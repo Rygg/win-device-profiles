@@ -1,12 +1,11 @@
 using System.ComponentModel;
-using Domain.Entities;
-using Infrastructure.Environment.Windows.Common.User32.NativeTypes.Enums;
-using Infrastructure.Environment.Windows.Common.User32.NativeTypes.Structs;
-using Infrastructure.Environment.Windows.Services.Displays;
-using Infrastructure.UnitTests.Environment.Windows.Mocks;
-using Microsoft.Extensions.Logging;
+using DeviceProfiles.Domain.Entities;
+using DeviceProfiles.Infrastructure.Environment.Windows.Common.User32.NativeTypes.Enums;
+using DeviceProfiles.Infrastructure.Environment.Windows.Common.User32.NativeTypes.Structs;
+using DeviceProfiles.Infrastructure.Environment.Windows.Services.Displays;
+using DeviceProfiles.Infrastructure.UnitTests.Environment.Windows.Mocks;
 
-namespace Infrastructure.UnitTests.Environment.Windows.Services.Displays;
+namespace DeviceProfiles.Infrastructure.UnitTests.Environment.Windows.Services.Displays;
 
 [TestFixture]
 public sealed class DisplayDeviceServiceTests

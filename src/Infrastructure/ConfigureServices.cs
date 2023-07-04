@@ -1,18 +1,16 @@
-﻿using Application.Common.Interfaces;
-using Infrastructure.Environment.Windows.Services.Displays;
-using Infrastructure.Environment.Windows.Services.Keyboard;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using System.Runtime.CompilerServices;
-using Infrastructure.Environment.Windows.Common.User32;
-using Infrastructure.Environment.Windows.Common.User32.Interfaces;
-using Infrastructure.Persistence;
+﻿using System.Runtime.CompilerServices;
+using DeviceProfiles.Application.Common.Interfaces;
+using DeviceProfiles.Infrastructure.Environment.Windows.Common.User32;
+using DeviceProfiles.Infrastructure.Environment.Windows.Common.User32.Interfaces;
+using DeviceProfiles.Infrastructure.Environment.Windows.Services.Displays;
+using DeviceProfiles.Infrastructure.Environment.Windows.Services.Keyboard;
+using DeviceProfiles.Infrastructure.Persistence;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
-[assembly: InternalsVisibleTo("Infrastructure.UnitTests")]
+[assembly: InternalsVisibleTo("DeviceProfiles.Infrastructure.UnitTests")]
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
-namespace Infrastructure;
+namespace DeviceProfiles.Infrastructure;
 
 /// <summary>
 /// Extension methods for injecting required infrastructure components.

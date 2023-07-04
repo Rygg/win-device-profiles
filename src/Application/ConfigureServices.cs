@@ -1,12 +1,9 @@
-﻿using Application.Common.Behaviors;
-using FluentValidation;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
+using DeviceProfiles.Application.Common.Behaviors;
 
 [assembly: InternalsVisibleTo("Application.UnitTests")]
 [assembly: InternalsVisibleTo("Application.IntegrationTests")]
-namespace Application;
+namespace DeviceProfiles.Application;
 /// <summary>
 /// Extension methods for injecting required application components.
 /// </summary>
@@ -19,7 +16,7 @@ public static class ConfigureServices
     {
         ArgumentNullException.ThrowIfNull(builder);
         
-        builder.ConfigureServices((context, services) =>
+        builder.ConfigureServices((_, services) =>
         {
             services
                 .AddValidatorsFromAssembly(typeof(ConfigureServices).Assembly)

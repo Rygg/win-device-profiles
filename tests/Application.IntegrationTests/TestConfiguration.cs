@@ -1,8 +1,8 @@
-﻿using Domain.Entities;
-using Domain.Enums;
-using Domain.ValueObjects;
+﻿using DeviceProfiles.Domain.Entities;
+using DeviceProfiles.Domain.Enums;
+using DeviceProfiles.Domain.ValueObjects;
 
-namespace Application.IntegrationTests;
+namespace DeviceProfiles.Application.IntegrationTests;
 
 /// <summary>
 /// Helper class contains DeviceProfile domain models based on the appsettings.json used in the tests.

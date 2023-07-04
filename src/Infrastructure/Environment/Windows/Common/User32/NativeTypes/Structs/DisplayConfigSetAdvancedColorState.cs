@@ -1,7 +1,7 @@
 ﻿using System.Runtime.InteropServices;
-using Infrastructure.Environment.Windows.Common.User32.NativeTypes.Enums;
+using DeviceProfiles.Infrastructure.Environment.Windows.Common.User32.NativeTypes.Enums;
 
-namespace Infrastructure.Environment.Windows.Common.User32.NativeTypes.Structs;
+namespace DeviceProfiles.Infrastructure.Environment.Windows.Common.User32.NativeTypes.Structs;
 
 /// <summary>
 /// The DISPLAYCONFIG_SET_ADVANCED_COLOR_STATE structure contains information about desired advanced color state.

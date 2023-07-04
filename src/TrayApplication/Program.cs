@@ -1,12 +1,10 @@
-﻿using Application;
-using Infrastructure;
-using Infrastructure.Persistence;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using TrayApplication.Components.Windows.Forms.Context;
-using TrayApplication.Extensions;
+﻿using DeviceProfiles.Application;
+using DeviceProfiles.Infrastructure;
+using DeviceProfiles.Infrastructure.Persistence;
+using DeviceProfiles.TrayApplication.Components.Windows.Forms.Context;
+using DeviceProfiles.TrayApplication.Extensions;
 
-namespace TrayApplication;
+namespace DeviceProfiles.TrayApplication;
 
 internal static class Program
 {

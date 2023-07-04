@@ -1,7 +1,7 @@
 ﻿using System.Runtime.InteropServices;
-using Infrastructure.Environment.Windows.Common.User32.NativeTypes.Enums;
+using DeviceProfiles.Infrastructure.Environment.Windows.Common.User32.NativeTypes.Enums;
 
-namespace Infrastructure.Environment.Windows.Common.User32.NativeTypes.Structs;
+namespace DeviceProfiles.Infrastructure.Environment.Windows.Common.User32.NativeTypes.Structs;
 /// <summary>
 /// The DISPLAYCONFIG_PATH_TARGET_INFO structure contains target information for a single path.
 /// </summary>

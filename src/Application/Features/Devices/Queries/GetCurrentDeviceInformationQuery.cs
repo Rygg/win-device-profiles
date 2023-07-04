@@ -1,7 +1,6 @@
-﻿using Application.Common.Interfaces;
-using MediatR;
+﻿using DeviceProfiles.Application.Common.Interfaces;
 
-namespace Application.Features.Devices.Queries;
+namespace DeviceProfiles.Application.Features.Devices.Queries;
 
 public sealed record GetCurrentDeviceInformationQuery : IRequest<string>;
 

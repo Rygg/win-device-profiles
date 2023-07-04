@@ -1,14 +1,13 @@
 using System.ComponentModel;
-using Domain.Enums;
-using Domain.ValueObjects;
-using Infrastructure.Environment.Windows.Common.User32.Interfaces;
-using Infrastructure.Environment.Windows.Common.User32.NativeTypes.Enums;
-using Infrastructure.Environment.Windows.Services.Keyboard;
-using Infrastructure.Interfaces;
-using Infrastructure.Interfaces.Models;
-using Microsoft.Extensions.Logging;
+using DeviceProfiles.Domain.Enums;
+using DeviceProfiles.Domain.ValueObjects;
+using DeviceProfiles.Infrastructure.Environment.Windows.Common.User32.Interfaces;
+using DeviceProfiles.Infrastructure.Environment.Windows.Common.User32.NativeTypes.Enums;
+using DeviceProfiles.Infrastructure.Environment.Windows.Services.Keyboard;
+using DeviceProfiles.Infrastructure.Interfaces;
+using DeviceProfiles.Infrastructure.Interfaces.Models;
 
-namespace Infrastructure.UnitTests.Environment.Windows.Services.Keyboard;
+namespace DeviceProfiles.Infrastructure.UnitTests.Environment.Windows.Services.Keyboard;
 
 [TestFixture]
 public sealed class KeyboardHotKeyServiceTests

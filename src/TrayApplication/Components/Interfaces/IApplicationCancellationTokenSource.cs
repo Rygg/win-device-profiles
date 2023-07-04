@@ -1,4 +1,4 @@
-﻿namespace TrayApplication.Components.Interfaces;
+﻿namespace DeviceProfiles.TrayApplication.Components.Interfaces;
 
 public interface IApplicationCancellationTokenSource : IDisposable
 {

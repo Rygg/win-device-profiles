@@ -1,6 +1,6 @@
-﻿using Domain.Entities;
+﻿using DeviceProfiles.Domain.Entities;
 
-namespace TrayApplication.Components.Interfaces;
+namespace DeviceProfiles.TrayApplication.Components.Interfaces;
 
 /// <summary>
 /// Interface for classes providing functionality for TrayIcons.

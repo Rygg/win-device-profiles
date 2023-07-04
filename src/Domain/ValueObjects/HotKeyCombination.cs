@@ -1,6 +1,6 @@
-﻿using Domain.Enums;
+﻿using DeviceProfiles.Domain.Enums;
 
-namespace Domain.ValueObjects;
+namespace DeviceProfiles.Domain.ValueObjects;
 
 /// <summary>
 /// Model for HotKey combinations.

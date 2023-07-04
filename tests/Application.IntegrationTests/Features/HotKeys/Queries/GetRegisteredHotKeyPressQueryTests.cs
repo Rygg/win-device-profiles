@@ -1,6 +1,6 @@
-﻿using Application.Features.HotKeys.Queries;
+﻿using DeviceProfiles.Application.Features.HotKeys.Queries;
 
-namespace Application.IntegrationTests.Features.HotKeys.Queries;
+namespace DeviceProfiles.Application.IntegrationTests.Features.HotKeys.Queries;
 
 public sealed class GetRegisteredHotKeyPressQueryTests : BaseTestFixture
 {

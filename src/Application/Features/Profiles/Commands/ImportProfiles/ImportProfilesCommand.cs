@@ -1,8 +1,7 @@
-﻿using Application.Common.Interfaces;
-using Application.Features.Profiles.Commands.Common;
-using MediatR;
+﻿using DeviceProfiles.Application.Common.Interfaces;
+using DeviceProfiles.Application.Features.Profiles.Commands.Common;
 
-namespace Application.Features.Profiles.Commands.ImportProfiles;
+namespace DeviceProfiles.Application.Features.Profiles.Commands.ImportProfiles;
 
 /// <summary>
 /// This command overrides all current profiles in the database with the imported ones.

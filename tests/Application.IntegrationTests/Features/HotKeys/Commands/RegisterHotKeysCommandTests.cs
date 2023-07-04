@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel;
-using Application.Features.HotKeys.Commands;
-using Domain.ValueObjects;
+using DeviceProfiles.Application.Features.HotKeys.Commands;
+using DeviceProfiles.Domain.ValueObjects;
 
-namespace Application.IntegrationTests.Features.HotKeys.Commands;
+namespace DeviceProfiles.Application.IntegrationTests.Features.HotKeys.Commands;
 
 public sealed class RegisterHotKeysCommandTests : BaseTestFixture
 {

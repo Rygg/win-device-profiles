@@ -1,7 +1,7 @@
 ﻿using System.Runtime.InteropServices;
-using Infrastructure.Environment.Windows.Common.User32.NativeTypes.Enums;
+using DeviceProfiles.Infrastructure.Environment.Windows.Common.User32.NativeTypes.Enums;
 
-namespace Infrastructure.Environment.Windows.Common.User32.NativeTypes.Structs;
+namespace DeviceProfiles.Infrastructure.Environment.Windows.Common.User32.NativeTypes.Structs;
 
 /// <summary>
 /// The DISPLAYCONFIG_SOURCE_MODE structure represents a point or an offset in a two-dimensional space.

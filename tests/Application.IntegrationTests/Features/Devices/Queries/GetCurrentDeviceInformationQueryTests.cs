@@ -1,6 +1,6 @@
-﻿using Application.Features.Devices.Queries;
+﻿using DeviceProfiles.Application.Features.Devices.Queries;
 
-namespace Application.IntegrationTests.Features.Devices.Queries;
+namespace DeviceProfiles.Application.IntegrationTests.Features.Devices.Queries;
 
 public sealed class GetCurrentDeviceInformationQueryTests : BaseTestFixture
 {

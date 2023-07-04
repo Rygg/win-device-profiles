@@ -1,10 +1,9 @@
-﻿using Domain.Enums;
-using Infrastructure.Interfaces;
-using Infrastructure.Interfaces.Models;
-using Microsoft.Extensions.Logging;
-using TrayApplication.Extensions;
+﻿using DeviceProfiles.Domain.Enums;
+using DeviceProfiles.Infrastructure.Interfaces;
+using DeviceProfiles.Infrastructure.Interfaces.Models;
+using DeviceProfiles.TrayApplication.Extensions;
 
-namespace TrayApplication.Components.Windows.Forms.HotKeys;
+namespace DeviceProfiles.TrayApplication.Components.Windows.Forms.HotKeys;
 
 /// <summary>
 /// Class for handling the hot key functionality. Inherited from<see cref="NativeWindow"/> to provide handler to native keyboard events.

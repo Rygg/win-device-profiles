@@ -1,6 +1,6 @@
-﻿using Domain.ValueObjects;
+﻿using DeviceProfiles.Domain.ValueObjects;
 
-namespace Application.Common.Interfaces;
+namespace DeviceProfiles.Application.Common.Interfaces;
 
 /// <summary>
 /// Interface for HotKey triggers.

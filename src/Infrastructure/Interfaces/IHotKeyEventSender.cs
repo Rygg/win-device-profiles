@@ -1,6 +1,6 @@
-﻿using Infrastructure.Interfaces.Models;
+﻿using DeviceProfiles.Infrastructure.Interfaces.Models;
 
-namespace Infrastructure.Interfaces;
+namespace DeviceProfiles.Infrastructure.Interfaces;
 
 /// <summary>
 /// Interface for key events.

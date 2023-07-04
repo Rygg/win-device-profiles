@@ -1,6 +1,4 @@
-﻿using FluentValidation;
-
-namespace Application.Features.Profiles.Commands.ImportProfiles;
+﻿namespace DeviceProfiles.Application.Features.Profiles.Commands.ImportProfiles;
 
 public sealed class ImportProfilesCommandValidator : AbstractValidator<ImportProfilesCommand>
 {

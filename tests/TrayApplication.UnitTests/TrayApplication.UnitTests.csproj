@@ -7,6 +7,8 @@
 
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
+    <AssemblyName>DeviceProfiles.TrayApplication.UnitTests</AssemblyName>
+    <RootNamespace>DeviceProfiles.TrayApplication.UnitTests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

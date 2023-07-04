@@ -1,11 +1,10 @@
-using Application.Features.HotKeys.Commands;
-using Application.Features.HotKeys.Queries;
-using Application.Features.Profiles.Queries;
-using Microsoft.Extensions.Logging;
-using TrayApplication.Components.Interfaces;
-using TrayApplication.Components.Windows.Forms.Context;
+using DeviceProfiles.Application.Features.HotKeys.Commands;
+using DeviceProfiles.Application.Features.HotKeys.Queries;
+using DeviceProfiles.Application.Features.Profiles.Queries;
+using DeviceProfiles.TrayApplication.Components.Interfaces;
+using DeviceProfiles.TrayApplication.Components.Windows.Forms.Context;
 
-namespace TrayApplication.UnitTests;
+namespace DeviceProfiles.TrayApplication.UnitTests;
 
 [TestFixture]
 public sealed class DeviceProfilesApplicationContextTests

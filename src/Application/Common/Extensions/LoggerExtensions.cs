@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-
-namespace Application.Common.Extensions;
+﻿namespace DeviceProfiles.Application.Common.Extensions;
 
 public static partial class LoggerExtensions
 {

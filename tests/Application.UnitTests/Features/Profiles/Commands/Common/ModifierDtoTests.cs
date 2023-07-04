@@ -1,7 +1,7 @@
-﻿using Application.Features.Profiles.Commands.Common;
-using Domain.Enums;
+﻿using DeviceProfiles.Application.Features.Profiles.Commands.Common;
+using DeviceProfiles.Domain.Enums;
 
-namespace Application.UnitTests.Features.Profiles.Commands.Common;
+namespace DeviceProfiles.Application.UnitTests.Features.Profiles.Commands.Common;
 
 [TestFixture]
 public sealed class ModifierDtoTests

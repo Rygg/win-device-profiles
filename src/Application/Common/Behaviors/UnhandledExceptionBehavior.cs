@@ -1,8 +1,6 @@
-﻿using Application.Common.Extensions;
-using MediatR;
-using Microsoft.Extensions.Logging;
+﻿using DeviceProfiles.Application.Common.Extensions;
 
-namespace Application.Common.Behaviors;
+namespace DeviceProfiles.Application.Common.Behaviors;
 
 public sealed class UnhandledExceptionBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest,TResponse> where TRequest : notnull
 {

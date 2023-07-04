@@ -1,6 +1,6 @@
-﻿using Application.Features.Profiles.Queries;
+﻿using DeviceProfiles.Application.Features.Profiles.Queries;
 
-namespace Application.IntegrationTests.Features.Profiles.Queries;
+namespace DeviceProfiles.Application.IntegrationTests.Features.Profiles.Queries;
 
 public sealed class GetProfilesQueryTests : BaseTestFixture
 {

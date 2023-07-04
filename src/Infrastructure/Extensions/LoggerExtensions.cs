@@ -1,8 +1,7 @@
-﻿using Domain.ValueObjects;
-using Infrastructure.Interfaces.Models;
-using Microsoft.Extensions.Logging;
+﻿using DeviceProfiles.Domain.ValueObjects;
+using DeviceProfiles.Infrastructure.Interfaces.Models;
 
-namespace Infrastructure.Extensions;
+namespace DeviceProfiles.Infrastructure.Extensions;
 
 public static partial class LoggerExtensions
 {

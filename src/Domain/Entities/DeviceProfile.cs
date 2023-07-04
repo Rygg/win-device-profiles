@@ -1,7 +1,7 @@
-﻿using Domain.Common;
-using Domain.ValueObjects;
+﻿using DeviceProfiles.Domain.Common;
+using DeviceProfiles.Domain.ValueObjects;
 
-namespace Domain.Entities;
+namespace DeviceProfiles.Domain.Entities;
 public sealed class DeviceProfile : BaseEntity
 {
     /// <summary>
@@ -18,5 +18,4 @@ public sealed class DeviceProfile : BaseEntity
     /// DisplaySettings for the profile. Required.
     /// </summary>
     public ICollection<DisplaySettings> DisplaySettings { get; init; } = new List<DisplaySettings>();
-
 }

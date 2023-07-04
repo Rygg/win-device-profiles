@@ -1,6 +1,6 @@
-﻿using Domain.Common;
+﻿using DeviceProfiles.Domain.Common;
 
-namespace Domain.Entities;
+namespace DeviceProfiles.Domain.Entities;
 
 /// <summary>
 /// Model for DisplaySettings.

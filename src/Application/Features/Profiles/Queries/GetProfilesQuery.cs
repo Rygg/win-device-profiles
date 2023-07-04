@@ -1,10 +1,8 @@
-﻿using Application.Common.Interfaces;
-using Domain.Entities;
-using MediatR;
+﻿using DeviceProfiles.Application.Common.Interfaces;
+using DeviceProfiles.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
-namespace Application.Features.Profiles.Queries;
+namespace DeviceProfiles.Application.Features.Profiles.Queries;
 
 public sealed record GetProfilesQuery : IRequest<DeviceProfile[]>;
 

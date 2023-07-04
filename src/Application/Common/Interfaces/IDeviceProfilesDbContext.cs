@@ -1,7 +1,7 @@
-﻿using Domain.Entities;
+﻿using DeviceProfiles.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Application.Common.Interfaces;
+namespace DeviceProfiles.Application.Common.Interfaces;
 
 public interface IDeviceProfilesDbContext
 {

@@ -1,8 +1,7 @@
-﻿using Microsoft.Extensions.Logging;
-using TrayApplication.Components.Interfaces;
-using TrayApplication.Extensions;
+﻿using DeviceProfiles.TrayApplication.Components.Interfaces;
+using DeviceProfiles.TrayApplication.Extensions;
 
-namespace TrayApplication.Components.Windows.Forms.Context;
+namespace DeviceProfiles.TrayApplication.Components.Windows.Forms.Context;
 
 /// <summary>
 /// Implementation for serving a common CancellationToken across the application.

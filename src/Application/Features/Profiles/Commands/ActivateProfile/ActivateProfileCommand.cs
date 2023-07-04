@@ -1,12 +1,8 @@
-﻿using Application.Common.Extensions;
-using Application.Common.Interfaces;
-using Domain.Entities;
-using MediatR;
+﻿using DeviceProfiles.Application.Common.Extensions;
+using DeviceProfiles.Application.Common.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
-namespace Application.Features.Profiles.Commands.ActivateProfile;
+namespace DeviceProfiles.Application.Features.Profiles.Commands.ActivateProfile;
 
 public sealed record ActivateProfileCommand : IRequest
 {

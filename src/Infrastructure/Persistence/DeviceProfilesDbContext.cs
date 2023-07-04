@@ -1,10 +1,10 @@
 ﻿using System.Reflection;
-using Application.Common.Interfaces;
-using Domain.Entities;
+using DeviceProfiles.Application.Common.Interfaces;
+using DeviceProfiles.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 
-namespace Infrastructure.Persistence;
+namespace DeviceProfiles.Infrastructure.Persistence;
 
 public sealed class DeviceProfilesDbContext : DbContext, IDeviceProfilesDbContext
 {
